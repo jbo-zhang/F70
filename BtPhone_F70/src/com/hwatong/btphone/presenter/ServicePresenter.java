@@ -17,13 +17,14 @@ import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IServiceView;
 import com.hwatong.btphone.iview.IUIView;
 import com.hwatong.btphone.model.HwatongModel;
+import com.hwatong.btphone.model.NForeModel;
 import com.hwatong.btphone.model.OldHwatongModel;
 
 public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	private IServiceView iServiceView;
 	
-	private IBTPhoneModel iModel = new HwatongModel(this);
+	private IBTPhoneModel iModel = new NForeModel(this);
 
 	public ServicePresenter(IServiceView iServiceView) {
 		this.iServiceView = iServiceView;
@@ -161,7 +162,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showLogsLoaded(boolean succeed, int reason) {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOADED);		
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOADED, succeed ? 1 : 0 , reason);		
 	}
 
 

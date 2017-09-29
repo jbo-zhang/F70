@@ -466,7 +466,6 @@ public class DialActivity extends BaseActivity {
 
 	@Override
 	protected void onStop() {
-		mHandler.removeMessages(MSG_UPDATE_TALKING_TIME);
 		super.onStop();
 	}
 

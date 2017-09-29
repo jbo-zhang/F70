@@ -240,7 +240,8 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void showBooksLoaded(boolean succeed, int reason) {
+	public void showLogsLoaded(boolean succeed, int reason) {
+		L.d(thiz, "showLogLoaded succeed= " + succeed + " reason= " + reason);
 		showTextDialog(R.string.dialog_updated);
 	}
 	

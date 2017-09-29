@@ -1,10 +1,13 @@
 package com.hwatong.btphone.activity;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hwatong.btphone.activity.base.BaseActivity;
 import com.hwatong.btphone.bean.CallLog;
@@ -48,21 +51,45 @@ public class PhoneActivity extends BaseActivity {
 		mBtnReturn.setOnClickListener(this);
 
 		tvTip = (TextView) findViewById(R.id.tv_tip);
+		
+		//默认为false
+		showBtConnected(false);
 	}
 
 	/**
 	 * 四指手势
 	 */
 	private boolean sended = false;
+	
+	private Handler handler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+				//手势启动升级界面
+				case 456:
+					L.d(thiz, "msg 456");
+					Intent intent = new Intent();
+					intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
+					if (intent.resolveActivity(getPackageManager()) != null) {
+						startActivity(intent);
+					} else {
+						Toast.makeText(PhoneActivity.this, "没有升级应用", Toast.LENGTH_SHORT).show();
+					}
+					break;
+				default:
+					break;
+				}
+		};
+	};
+	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (event.getPointerCount() >= 4) {
+		if (event.getPointerCount() >= 3) {
 			if (!sended) {
-				mHandler.sendEmptyMessageDelayed(456, 6000);
+				handler.sendEmptyMessageDelayed(456, 6000);
 				sended = true;
 			}
 		} else {
-			mHandler.removeMessages(456);
+			handler.removeMessages(456);
 			sended = false;
 		}
 		return super.onTouchEvent(event);

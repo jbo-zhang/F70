@@ -83,7 +83,9 @@ public class BtPhoneApplication extends Application {
 //	}
 	
 	public synchronized void notifyMsg(int what) {
-		mHandler.sendEmptyMessage(what);
+		if(mHandler != null) {
+			mHandler.sendEmptyMessage(what);
+		}
 	}
 	
 	
@@ -145,12 +147,9 @@ public class BtPhoneApplication extends Application {
 	 */
 	
 	private void notifyMsg(Message msg) {
-		for(Handler handler : mHandlers) {
-			handler.sendMessage(msg);
+		if(mHandler != null) {
+			mHandler.sendMessage(msg);
 		}
-		
-		
-		mHandler.sendMessage(msg);
 	}
 
 }

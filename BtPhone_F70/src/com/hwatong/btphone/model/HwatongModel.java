@@ -188,7 +188,7 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public void dial(String number) {
-		L.d(thiz, "dial() number = " + number);
+		L.d(thiz, "dial() number = " + number + " " + (iService != null));
 		if(iService != null) {
 			try {
 				iService.phoneDial(number.trim());
@@ -319,6 +319,9 @@ public class HwatongModel implements IBTPhoneModel {
 	@Override
 	public void loadLogs() {
 		L.d(thiz, "loadLogs()");
+		if(logsLoading) {
+			return;
+		}
 		if(iService != null) {
 			try {
 				boolean result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_MISS);
@@ -326,7 +329,6 @@ public class HwatongModel implements IBTPhoneModel {
 				result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_IN) || result;
 				if(result){
 					logsLoading = true;
-					clearAllLogs();
 					iView.showLogsLoadStart();
 					new Thread(new Runnable() {
 						@Override
@@ -527,6 +529,7 @@ public class HwatongModel implements IBTPhoneModel {
 
 			switch(error) {
 			case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
+				mAllCallLogList.clear();
 				//更新通话记录
 				for (int i = 0; i < mCallLogMap.size(); i++) {
 					mAllCallLogList.addAll(mCallLogMap.get(mCallLogMap.keyAt(i)));
