@@ -374,17 +374,18 @@ public class MainActivity extends Activity implements OnClickListener,
 
 		case R.id.iv_blower_up:
 			Log.d(TAG, "blower_up");
-			sendACKeyEvent("向上吹风", 4, v.getVisibility() == View.VISIBLE ? 0 : 1);
+			
+			sendACKeyEvent_2("向上吹风", 4, v.getVisibility() == View.VISIBLE ? 0 : 1);
 			//v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
 			break;
 		case R.id.iv_blower_front:
 			Log.d(TAG, "blower_front");
-			sendACKeyEvent("平行吹风", 5, v.getVisibility() == View.VISIBLE ? 0 : 1);
+			sendACKeyEvent_2("平行吹风", 5, v.getVisibility() == View.VISIBLE ? 0 : 1);
 			//v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
 			break;
 		case R.id.iv_blower_down:
 			Log.d(TAG, "blower_down");
-			sendACKeyEvent("向下吹风", 6, v.getVisibility() == View.VISIBLE ? 0 : 1);
+			sendACKeyEvent_2("向下吹风", 6, v.getVisibility() == View.VISIBLE ? 0 : 1);
 			//v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
 			break;
 
@@ -404,17 +405,16 @@ public class MainActivity extends Activity implements OnClickListener,
 			//onWindLevel(level);
 			break;
 			
-			
 		case R.id.btn_ac:
-			sendACKeyEvent("ac", 1, v.isSelected() ? 0 : 1);
+			sendACKeyEvent_2("ac", 1, v.isSelected() ? 0 : 1);
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_front_defrost:
-			sendACKeyEvent("前除霜", 0, v.isSelected() ? 0 : 1);
+			sendACKeyEvent_2("前除霜", 0, v.isSelected() ? 0 : 1);
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_rear_defrost:
-			sendACKeyEvent("后除霜", 2, v.isSelected() ? 0 : 1);
+			sendACKeyEvent_2("后除霜", 2, v.isSelected() ? 0 : 1);
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_wind_switch:
@@ -425,11 +425,11 @@ public class MainActivity extends Activity implements OnClickListener,
 			//onWindLevel(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? 0 : 1);
 			break;
 		case R.id.btn_rear:
-			sendACKeyEvent("后空调开关按下", 7, v.isSelected() ? 0 : 1);
+			sendACKeyEvent_2("后空调开关按下", 7, v.isSelected() ? 0 : 1);
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_loop:// 内外循环
-			sendACKeyEvent("内外循环", 9, v.isSelected() ? 0 : 1);
+			sendACKeyEvent_2("内外循环", 9, v.isSelected() ? 0 : 1);
 			//v.setSelected(!v.isSelected());
 			break;
 
@@ -437,6 +437,9 @@ public class MainActivity extends Activity implements OnClickListener,
 			break;
 		}
 	}
+	
+	
+	
 
 	/**
 	 * 弃用,改为onClickListener
@@ -490,7 +493,6 @@ public class MainActivity extends Activity implements OnClickListener,
 			left = temp * 9 / 5 + 32;
 		} else {
 			left = (temp - 32) * 5 / 9;
-
 		}
 		return left;
 	}
@@ -498,6 +500,13 @@ public class MainActivity extends Activity implements OnClickListener,
 	private void sendACKeyEvent(String tag, int code, int status) {
 		Log.d(TAG, tag + ":(" + code + "," + status + ")");
 		sendACKeyEvent(code, status);
+	}
+	
+	
+	private synchronized void sendACKeyEvent_2(String tag, int code, int status) {
+		Log.d(TAG, tag + ":(" + code + "," + status + ")");
+		sendACKeyEvent(code, 1);
+		sendACKeyEvent(code, 0);
 	}
 
 	/**
@@ -507,11 +516,12 @@ public class MainActivity extends Activity implements OnClickListener,
 	 */
 	private void sendACKeyEvent(int code, int status) {
 		try {
+			Log.d(TAG, "before write code = " + code + " status = " + status);
 			mCanbusService.writeACControl(code, status);
+			Log.d(TAG, "after write code = " + code + " status = " + status);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	/**
@@ -595,9 +605,7 @@ public class MainActivity extends Activity implements OnClickListener,
 				
 				// 风速开关
 				int windOnOff = status.getStatus2() & 0x0F;
-				mTvWindSwitch
-						.setText(windOnOff == 0x00 ? R.string.text_wind_off
-								: R.string.text_wind_on);
+				mTvWindSwitch.setText(windOnOff == 0x00 ? R.string.text_wind_off : R.string.text_wind_on);
 
 				// 后空调开关
 				int rear = status.getStatus3() & 0x03;
@@ -621,6 +629,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 				//吹风模式
 				modeWindNull();
+				
 				if ((status.getStatus8() & 0x03) == 0x01) {
 					mIvBlowerUp.setVisibility(View.VISIBLE);
 				}
