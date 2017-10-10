@@ -137,6 +137,7 @@ public class PhoneActivity extends BaseActivity {
 			break;
 		case R.id.btn_return:
 			L.d(thiz, "onclick finish!");
+			toHome();
 			finish();
 			break;
 
@@ -144,6 +145,20 @@ public class PhoneActivity extends BaseActivity {
 			break;
 		}
 	}
+	
+	/**
+	 * to home!
+	 */
+	private void toHome() {
+		 Intent intent = new Intent("com.hwatong.launcher.MAIN");
+         try {
+             startActivity(intent);
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+	}
+	
+	
 
 	@Override
 	protected int getLayoutId() {

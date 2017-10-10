@@ -24,7 +24,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	private IServiceView iServiceView;
 	
-	private IBTPhoneModel iModel = new NForeModel(this);
+	private IBTPhoneModel iModel = new HwatongModel(this);
 
 	public ServicePresenter(IServiceView iServiceView) {
 		this.iServiceView = iServiceView;
