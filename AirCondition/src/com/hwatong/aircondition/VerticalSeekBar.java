@@ -1,5 +1,8 @@
 package com.hwatong.aircondition;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
@@ -73,11 +76,13 @@ public class VerticalSeekBar extends SeekBar {
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_MOVE:
 			setProgress(getCurProgress(event));
+			//setProgress2(getCurProgress(event), true);
 			onSizeChanged(getWidth(), getHeight(), 0, 0);
 			break;
 		case MotionEvent.ACTION_UP:
 			int progress = getCurProgress(event);
 			setProgress(progress);
+			//setProgress2(progress, true);
 			onSizeChanged(getWidth(), getHeight(), 0, 0);
 			if(mListener != null){
 				mListener.onTouch(progress);
@@ -96,8 +101,6 @@ public class VerticalSeekBar extends SeekBar {
 		y = y < 0 ? 0 : y > getHeight() ? getHeight() : y;
 		return getMax() - (int)(getMax() * y/getHeight());
 	}
-
-
 
 
 	UpDownListener mListener;
@@ -133,6 +136,26 @@ public class VerticalSeekBar extends SeekBar {
 		super.setProgress(progress);
 		onSizeChanged(getWidth(), getHeight(), 0, 0);
 
+	}
+	
+	public synchronized void setProgress2(int progress, boolean fromUser) {
+		try {
+			Method setProgress = getClass().getMethod("setProgress", int.class, boolean.class);
+			setProgress.invoke(this, progress, fromUser);
+		} catch (NoSuchMethodException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		onSizeChanged(getWidth(), getHeight(), 0, 0);
 	}
 
 }

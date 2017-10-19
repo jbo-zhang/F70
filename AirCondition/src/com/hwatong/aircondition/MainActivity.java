@@ -182,7 +182,7 @@ public class MainActivity extends Activity implements OnClickListener,
 
 					@Override
 					public void onTouch(int progress) {
-
+						sendACKeyEvent("温度", 10, (int) (progress + 32));
 					}
 				});
 
@@ -209,9 +209,6 @@ public class MainActivity extends Activity implements OnClickListener,
 						mLeftTempSeekBar.setThumb(new BitmapDrawable(
 								toturn(drawableToBitmap(tempThumbDrable))));
 						Log.d(TAG, "fromUser = " + fromUser);
-						//if(fromUser) {
-							sendACKeyEvent("温度", 10, (int) (progress + 32));
-						//}
 					}
 				});
 
@@ -402,34 +399,40 @@ public class MainActivity extends Activity implements OnClickListener,
 		case R.id.btn_wind_level_7:
 			int level = Integer.parseInt((String) v.getTag());
 			sendACKeyEvent("风速", 3, level);
+			// for test
 			//onWindLevel(level);
 			break;
 			
 		case R.id.btn_ac:
 			sendACKeyEvent_2("ac", 1, v.isSelected() ? 0 : 1);
+			
+			// for test
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_front_defrost:
 			sendACKeyEvent_2("前除霜", 0, v.isSelected() ? 0 : 1);
+			//for test
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_rear_defrost:
 			sendACKeyEvent_2("后除霜", 2, v.isSelected() ? 0 : 1);
+			// for test
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_wind_switch:
 			sendACKeyEvent("风速开关", 3, 0);
-			//mTvWindSwitch
-			//.setText(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? R.string.text_wind_on
-			//		: R.string.text_wind_off);
+			// for test
+			//mTvWindSwitch.setText(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? R.string.text_wind_on : R.string.text_wind_off);
 			//onWindLevel(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? 0 : 1);
 			break;
 		case R.id.btn_rear:
 			sendACKeyEvent_2("后空调开关按下", 7, v.isSelected() ? 0 : 1);
+			//for test
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_loop:// 内外循环
 			sendACKeyEvent_2("内外循环", 9, v.isSelected() ? 0 : 1);
+			// for test
 			//v.setSelected(!v.isSelected());
 			break;
 
