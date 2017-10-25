@@ -12,10 +12,12 @@
     <string name="max_temp">32℃</string>
     
 
-    <string name="text_front_defrost">前部</string>
-    <string name="text_rear_defrost">后部</string>
+    <string name="text_front_defrost">前</string>
+    <string name="text_rear_defrost">后</string>
     <string name="text_air_condition">空调</string>
     <string name="text_loop_in">内循环</string>
+    <string name="text_loop_out">外循环</string>
+    <string name="text_loop_auto">自动循环</string>
     <string name="text_rear_condition">后空调</string>
     <string name="text_wind_off">OFF</string>
     <string name="text_wind_on">ON</string>

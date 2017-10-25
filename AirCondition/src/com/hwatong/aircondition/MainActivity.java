@@ -35,8 +35,7 @@ import android.widget.TextView;
 
 import com.hwatong.statusbarinfo.aidl.IStatusBarInfo;
 
-public class MainActivity extends Activity implements OnClickListener,
-		OnTouchListener {
+public class MainActivity extends Activity implements OnClickListener {
 
 	private static final String TAG = "kongtiao";
 	protected static final boolean DBG = false;
@@ -420,7 +419,8 @@ public class MainActivity extends Activity implements OnClickListener,
 			//v.setSelected(!v.isSelected());
 			break;
 		case R.id.btn_wind_switch:
-			sendACKeyEvent("风速开关", 3, 0);
+			//空调总开关
+			sendACKeyEvent("空调开关", 8, 0);
 			// for test
 			//mTvWindSwitch.setText(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? R.string.text_wind_on : R.string.text_wind_off);
 			//onWindLevel(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? 0 : 1);
@@ -444,50 +444,6 @@ public class MainActivity extends Activity implements OnClickListener,
 	
 	
 
-	/**
-	 * 弃用,改为onClickListener
-	 */
-	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		int status = -1;
-		status = event.getAction() == MotionEvent.ACTION_DOWN ? 1 : event.getAction() == MotionEvent.ACTION_UP ? 0 : status;
-		if (status == -1)
-			return true;
-
-		switch (v.getId()) {
-		case R.id.iv_blower_up:
-			Log.d(TAG, "blower_up");
-		case R.id.iv_blower_front:
-			Log.d(TAG, "blower_front");
-		case R.id.iv_blower_down:
-			Log.d(TAG, "blower_down");
-			Point point = new Point((int) event.getRawX(), (int) event.getRawY());
-			//touchBlowerMode(v.getId(), status, point);
-			break;
-		case R.id.btn_ac:
-			sendACKeyEvent("ac", 1, status);
-			break;
-		case R.id.btn_front_defrost:
-			sendACKeyEvent("前除霜", 0, status);
-			break;
-		case R.id.btn_rear_defrost:
-			sendACKeyEvent("后除霜", 2, status);
-			break;
-		case R.id.btn_wind_switch:
-			sendACKeyEvent("风速开关", 3, 0);
-			break;
-		case R.id.btn_rear:
-			sendACKeyEvent("后空调开关按下", 7, status);
-			break;
-		case R.id.btn_loop:// 内外循环
-			sendACKeyEvent("内外循环", 9, status);
-			break;
-
-		default:
-			break;
-		}
-		return false;
-	}
 
 	/* 摄氏度和华氏度转换 */
 	public float tempExchange(float temp) {
@@ -599,24 +555,30 @@ public class MainActivity extends Activity implements OnClickListener,
 				tempThumbDrable.setTemp(temp + "℃");
 				Log.e("temp", "" + temp);
 
-				// if (temp != mLeftTemp) { mLeftTemp = temp;
-				// onTempChange(temp); }
-
 				// 风速
 				int valuewind = status.getStatus2() & 0x0F;
 				onWindLevel(valuewind);
 				
-				// 风速开关
-				int windOnOff = status.getStatus2() & 0x0F;
+				// 空调开关
+				int windOnOff = status.getStatus7() & 0x0F;
 				mTvWindSwitch.setText(windOnOff == 0x00 ? R.string.text_wind_off : R.string.text_wind_on);
 
 				// 后空调开关
 				int rear = status.getStatus3() & 0x03;
 				mTvRearSwitch.setSelected(rear == 0x01);
 
-				// 内外循环模式 询问下ON/OFF 分别代表哪个循环
+				// 内外循环模式 0x0: 外循环模式      0x1: 内循环模式      0x2: 自动循环模式
 				int loop = status.getStatus4() & 0x03;
-				mTvLoop.setSelected(loop == 0x01);
+				if(loop == 0x00) {
+					//外循环
+					setLoopView(R.drawable.icon_loop_out, R.string.text_loop_out);
+				} else if(loop == 0x01) {
+					//内循环
+					setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
+				} else if(loop == 0x02) {
+					//自动循环
+					setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
+				}
 
 				// AC
 				int ac = status.getStatus5() & 0x03;
@@ -646,7 +608,14 @@ public class MainActivity extends Activity implements OnClickListener,
 				}
 			}
 		}
+	}
 
+	private void setLoopView(int iconId, int textId) {
+		Drawable drawable = getResources().getDrawable(iconId);
+		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+		mTvLoop.setCompoundDrawables(null, drawable, null, null);
+		mTvLoop.setText(textId);
+		mTvLoop.setSelected(true);
 	}
 
 	private IStatusBarInfo mStatusBarInfo; // 状态栏左上角信息
