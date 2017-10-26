@@ -45,9 +45,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	private ImageButton mBtnReturn;
 
 	private com.hwatong.aircondition.VerticalSeekBar mLeftTempSeekBar;
-	/**
-	 * @ViewIOC(id = R.id.tv_show_left_temp) private TextView mTvLeftTemp;
-	 */
+
 	// --吹风模式
 	private ImageView mIvBlowerUp;
 
@@ -93,7 +91,6 @@ public class MainActivity extends Activity implements OnClickListener {
 			R.drawable.wind_level_4, R.drawable.wind_level_5,
 			R.drawable.wind_level_6, R.drawable.wind_level_7 };
 
-	// private float mLeftTemp = 16f;
 
 	private static final int MSG_AC_STATUS_RECEIVED = 0;
 
@@ -213,15 +210,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		mCanbusService = ICanbusService.Stub.asInterface(ServiceManager
 				.getService("canbus"));
-		try {
-			mCanbusService.addACStatusListener(mACStatusListener);
-
-		} catch (RemoteException e) {
-			e.printStackTrace();
-		}
-
-		handleACStatusReceived();
-
 	}
 
 	private void initView() {
@@ -320,6 +308,17 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		syncStatusBar();
 		
+		
+		if(mCanbusService != null) {
+			try {
+				mCanbusService.addACStatusListener(mACStatusListener);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+
+			handleACStatusReceived();
+		}
+		
 	};
 	
 	protected IStatusBarInfo iStatusBarInfo;
@@ -370,19 +369,17 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		case R.id.iv_blower_up:
 			Log.d(TAG, "blower_up");
-			
 			sendACKeyEvent_2("向上吹风", 4, v.getVisibility() == View.VISIBLE ? 0 : 1);
-			//v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
 			break;
+			
 		case R.id.iv_blower_front:
 			Log.d(TAG, "blower_front");
 			sendACKeyEvent_2("平行吹风", 5, v.getVisibility() == View.VISIBLE ? 0 : 1);
-			//v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
 			break;
+			
 		case R.id.iv_blower_down:
 			Log.d(TAG, "blower_down");
 			sendACKeyEvent_2("向下吹风", 6, v.getVisibility() == View.VISIBLE ? 0 : 1);
-			//v.setVisibility(v.getVisibility() == View.VISIBLE ? View.INVISIBLE : View.VISIBLE);
 			break;
 
 		case R.id.btn_return:
@@ -398,42 +395,31 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.btn_wind_level_7:
 			int level = Integer.parseInt((String) v.getTag());
 			sendACKeyEvent("风速", 3, level);
-			// for test
-			//onWindLevel(level);
 			break;
 			
 		case R.id.btn_ac:
 			sendACKeyEvent_2("ac", 1, v.isSelected() ? 0 : 1);
-			
-			// for test
-			//v.setSelected(!v.isSelected());
 			break;
+			
 		case R.id.btn_front_defrost:
 			sendACKeyEvent_2("前除霜", 0, v.isSelected() ? 0 : 1);
-			//for test
-			//v.setSelected(!v.isSelected());
 			break;
+			
 		case R.id.btn_rear_defrost:
 			sendACKeyEvent_2("后除霜", 2, v.isSelected() ? 0 : 1);
-			// for test
-			//v.setSelected(!v.isSelected());
 			break;
+			
 		case R.id.btn_wind_switch:
 			//空调总开关
 			sendACKeyEvent("空调开关", 8, 0);
-			// for test
-			//mTvWindSwitch.setText(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? R.string.text_wind_on : R.string.text_wind_off);
-			//onWindLevel(getString(R.string.text_wind_off).equals(mTvWindSwitch.getText().toString()) ? 0 : 1);
 			break;
+			
 		case R.id.btn_rear:
 			sendACKeyEvent_2("后空调开关按下", 7, v.isSelected() ? 0 : 1);
-			//for test
-			//v.setSelected(!v.isSelected());
 			break;
-		case R.id.btn_loop:// 内外循环
+			
+		case R.id.btn_loop:
 			sendACKeyEvent_2("内外循环", 9, v.isSelected() ? 0 : 1);
-			// for test
-			//v.setSelected(!v.isSelected());
 			break;
 
 		default:
@@ -460,7 +446,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		Log.d(TAG, tag + ":(" + code + "," + status + ")");
 		sendACKeyEvent(code, status);
 	}
-	
 	
 	private synchronized void sendACKeyEvent_2(String tag, int code, int status) {
 		Log.d(TAG, tag + ":(" + code + "," + status + ")");
@@ -490,36 +475,12 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		@Override
 		public void onReceived(ACStatus arg0) throws RemoteException {
-			if (DBG)
-				Log.d(TAG, "onReceived: " + arg0);
+			Log.d(TAG, "onReceived: " + arg0);
 			mHandler.removeMessages(MSG_AC_STATUS_RECEIVED);
 			mHandler.sendEmptyMessage(MSG_AC_STATUS_RECEIVED);
 		}
 	};
 	
-	public void modeWindNull() {
-		mIvBlowerUp.setVisibility(View.INVISIBLE);
-		mIvBlowerFront.setVisibility(View.INVISIBLE);
-		mIvBlowerDown.setVisibility(View.INVISIBLE);
-	}
-
-	/**
-	 * 风速等级：1-7
-	 * 
-	 * @param level
-	 */
-
-	private void onWindLevel(int level) {
-		if (level > mWindLevels.length)
-			level = 0;
-
-		for (int i = 0; i < level; i++) {
-			mWindLevels[i].setImageAlpha(255);
-		}
-		for (int i = level; i < mWindLevels.length; i++) {
-			mWindLevels[i].setImageAlpha(0);
-		}
-	}
 	
 	private ACStatus mACStatus;
 
@@ -545,71 +506,197 @@ public class MainActivity extends Activity implements OnClickListener {
 				mACStatus.set(status);
 
 				Log.e(TAG, "handleACStatusReceived: mAPLStatus = " + mACStatus);
+				
+				// 首先判断空调开关状态     0x0: Off 按钮灰    0x1: On 按钮点亮
+				int windOnOff = status.getStatus7() & 0x0F;
+				//空调关
+				if(windOnOff == 0x01) {		
+					turnOffViews();
+					return;
+				//空调开
+				} else {
+					setSwitch(true);
+				}
 
-				// 左边温度
+				// 温度
 				int value = status.getStatus1() & 0xFF;
-				value = value < 32 ? 32 : value > 64 ? 64 : value;
-				mLeftTempSeekBar.setProgress(value - 32);
-
-				float temp = (float) value * 0.5f;
-				tempThumbDrable.setTemp(temp + "℃");
-				Log.e("temp", "" + temp);
-
+				setTemperature(value);
+				
+				//吹风模式
+				
+				//吹头
+				setBlowerUp((status.getStatus8() & 0x03) == 0x01);
+				
+				//吹胸
+				setBlowerMiddle((status.getStatus9() & 0x03) == 0x01);
+				
+				//吹脚
+				setBlowerDown((status.getStatus10() & 0x03) == 0x01);
+				
+				
 				// 风速
 				int valuewind = status.getStatus2() & 0x0F;
-				onWindLevel(valuewind);
+				setWindLevel(valuewind);
 				
-				// 空调开关
-				int windOnOff = status.getStatus7() & 0x0F;
-				mTvWindSwitch.setText(windOnOff == 0x00 ? R.string.text_wind_off : R.string.text_wind_on);
+				
+				// 前除霜
+				int frontDefrost = status.getStatus6() & 0x03;
+				setFrontDefrost(frontDefrost == 0x01);
 
-				// 后空调开关
-				int rear = status.getStatus3() & 0x03;
-				mTvRearSwitch.setSelected(rear == 0x01);
-
-				// 内外循环模式 0x0: 外循环模式      0x1: 内循环模式      0x2: 自动循环模式
-				int loop = status.getStatus4() & 0x03;
-				if(loop == 0x00) {
-					//外循环
-					setLoopView(R.drawable.icon_loop_out, R.string.text_loop_out);
-				} else if(loop == 0x01) {
-					//内循环
-					setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
-				} else if(loop == 0x02) {
-					//自动循环
-					setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
-				}
-
+				
+				// 后除霜
+				int rearDefrost = status.getStatus12() & 0x03;
+				setRearDefrost(rearDefrost == 0x01);
+				
+				
 				// AC
 				int ac = status.getStatus5() & 0x03;
-				mTvAc.setSelected(ac == 0x01);
-
-				// Air Front 前除霜UI变化
-				int frontDefrost = status.getStatus6() & 0x03;
-				mTvFrontDefrost.setSelected(frontDefrost == 0x01);
-
-				// Air Rear 后除霜UI变化
-				int rearDefrost = status.getStatus12() & 0x03;
-				mTvRearDefrost.setSelected(rearDefrost == 0x01);
-
-				//吹风模式
-				modeWindNull();
+				setAC(ac == 0x01);
 				
-				if ((status.getStatus8() & 0x03) == 0x01) {
-					mIvBlowerUp.setVisibility(View.VISIBLE);
-				}
-
-				if ((status.getStatus9() & 0x03) == 0x01) {
-					mIvBlowerFront.setVisibility(View.VISIBLE);
-				}
-
-				if ((status.getStatus10() & 0x03) == 0x01) {
-					mIvBlowerDown.setVisibility(View.VISIBLE);
-				}
+				// 循环模式 
+				int loop = status.getStatus4() & 0x03;
+				setLoop(loop);
+				
+				// 后空调开关
+				int rear = status.getStatus3() & 0x03;
+				setRear(rear == 0x01);
+				
 			}
 		}
 	}
 
+
+	/**
+	 * 空调关闭，所有状态清零
+	 */
+	private void turnOffViews() {
+		Log.d(TAG, "turn off Views !");
+		setSwitch(false);
+		setTemperature(32);
+		setBlowerUp(false);
+		setBlowerMiddle(false);
+		setBlowerDown(false);
+		setWindLevel(0);
+		setFrontDefrost(false);
+		setRearDefrost(false);
+		setAC(false);
+		setLoop(-1);
+		setRear(false);
+	}
+	
+	/**
+	 * 空调开关
+	 * @param isOn
+	 */
+	private void setSwitch(boolean isOn) {
+		mTvWindSwitch.setSelected(!isOn);
+	}
+	
+	
+	/**
+	 * 设置温度
+	 * @param value 32 ~ 64 
+	 */
+	private void setTemperature(int value) {
+		value = value < 32 ? 32 : value > 64 ? 64 : value;
+		mLeftTempSeekBar.setProgress(value - 32);
+
+		float temp = (float) value * 0.5f;
+		tempThumbDrable.setTemp(temp + "℃");
+		Log.e("temp", "" + temp);
+	}
+	
+	/**
+	 * 吹头
+	 * @param isOn
+	 */
+	private void setBlowerUp(boolean isOn) {
+		mIvBlowerUp.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+	}
+	
+	/**
+	 * 吹胸
+	 * @param isOn
+	 */
+	private void setBlowerMiddle(boolean isOn) {
+		mIvBlowerFront.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+	}
+	
+	/**
+	 * 吹脚
+	 * @param isOn
+	 */
+	private void setBlowerDown(boolean isOn) {
+		mIvBlowerDown.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+	}
+	
+	
+	/**
+	 * 风速
+	 * @param level
+	 */
+	private void setWindLevel(int level) {
+		if (level > mWindLevels.length)
+			level = mWindLevels.length;
+
+		for (int i = 0; i < level; i++) {
+			mWindLevels[i].setImageAlpha(255);
+		}
+		for (int i = level; i < mWindLevels.length; i++) {
+			mWindLevels[i].setImageAlpha(0);
+		}
+	}
+	
+	
+	/**
+	 * 前除霜
+	 * @param isOn
+	 */
+	private void setFrontDefrost(boolean isOn) {
+		mTvFrontDefrost.setSelected(isOn);
+	}
+	
+	/**
+	 * 后除霜
+	 * @param isOn
+	 */
+	private void setRearDefrost(boolean isOn) {
+		mTvRearDefrost.setSelected(isOn);
+	}
+	
+	/**
+	 * AC
+	 * @param isOn
+	 */
+	private void setAC(boolean isOn) {
+		mTvAc.setSelected(isOn);
+	}
+
+	/**
+	 * 循环模式
+	 * @param loop
+	 */
+	private void setLoop(int loop) {
+		//0x0: 外循环模式      0x1: 内循环模式      0x2: 自动循环模式
+		if(loop == 0x00) {
+			//外循环
+			setLoopView(R.drawable.icon_loop_out, R.string.text_loop_out);
+		} else if(loop == 0x01) {
+			//内循环
+			setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
+		} else if(loop == 0x02) {
+			//自动循环
+			setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
+		} else if(loop == -1){
+			mTvLoop.setSelected(false);
+		}
+		
+	}
+	/**
+	 * 设置循环模式按钮
+	 * @param iconId
+	 * @param textId
+	 */
 	private void setLoopView(int iconId, int textId) {
 		Drawable drawable = getResources().getDrawable(iconId);
 		drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
@@ -618,6 +705,15 @@ public class MainActivity extends Activity implements OnClickListener {
 		mTvLoop.setSelected(true);
 	}
 
+	/**
+	 * 后空调
+	 * @param isOn
+	 */
+	private void setRear(boolean isOn) {
+		mTvRearSwitch.setSelected(isOn);
+	}
+	
+	
 	private IStatusBarInfo mStatusBarInfo; // 状态栏左上角信息
 	private ServiceConnection mStatusBarConnection = new ServiceConnection() {
 
