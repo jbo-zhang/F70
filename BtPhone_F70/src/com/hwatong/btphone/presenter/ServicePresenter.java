@@ -54,14 +54,18 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showCalling(CallLog callLog) {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_CALLING, callLog);
+		if(!isDialForground()) {
+			iServiceView.gotoDialActivity(callLog);
+		} else {
+			BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_CALLING, callLog);
+		}
 	}
 
 
 	@Override
 	public void showTalking(CallLog callLog) {
 		if(!isDialForground()) {
-			iServiceView.hideWindow();
+			iServiceView.showTalking(callLog);
 		} else {
 			BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_TALKING, callLog);
 		}
@@ -86,32 +90,24 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void updateBooks(ArrayList<Contact> list) {
-//		Bundle bundle = new Bundle();
-//		bundle.putParcelableArrayList("books", list);
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_BOOKS);
 	}
 
 
 	@Override
 	public void updateMissedLogs(ArrayList<CallLog> list) {
-//		Bundle bundle = new Bundle();
-//		bundle.putParcelableArrayList("missed_logs", list);
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_MISSED_LOGS);
 	}
 
 
 	@Override
 	public void updateDialedLogs(ArrayList<CallLog> list) {
-//		Bundle bundle = new Bundle();
-//		bundle.putParcelableArrayList("dialed_logs", list);
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_DIALED_LOGS);
 	}
 
 
 	@Override
 	public void updateReceivedLogs(ArrayList<CallLog> list) {
-//		Bundle bundle = new Bundle();
-//		bundle.putParcelableArrayList("received_logs", list);
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_RECEIVED_LOGS);
 	}
 

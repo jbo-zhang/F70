@@ -12,4 +12,10 @@ public class L {
 		}
 	}
 	
+	public static void dRoll(String clazz, String info){
+		if(DEBUG) {
+			Log.d(TAG + "_roll", "[" + clazz + "] " + info);
+		}
+	}
+	
 }

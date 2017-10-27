@@ -473,7 +473,7 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onPhoneBook(String type, String name, String number)
 				throws RemoteException {
-			L.d(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
+			L.dRoll(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
 			if (TextUtils.isEmpty(number) || !number.matches("^\\d*")) {
 				return;
 			}
@@ -518,9 +518,9 @@ public class HwatongModel implements IBTPhoneModel {
 		
 		@Override
 		public void onContactsChange() throws RemoteException {
-			L.d(thiz, "onContactsChange");
+			L.dRoll(thiz, "onContactsChange");
 			List<com.hwatong.btphone.Contact> contactList = iService.getContactList();
-			L.d(thiz, "onContactsChange contactList : " + contactList.size());
+			L.dRoll(thiz, "onContactsChange contactList : " + contactList.size());
 		}
 		
 		@Override
@@ -565,9 +565,9 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onCalllogChange(String type) throws RemoteException {
 			// TODO Auto-generated method stub
-			L.d(thiz, "onCalllogChange type = " + type);
+			L.dRoll(thiz, "onCalllogChange type = " + type);
 			List<com.hwatong.btphone.CallLog> calllogList = iService.getCalllogList(type);
-			L.d(thiz, "onCalllogChange calllogList : " + calllogList.size() + " " + calllogList.get(0));
+			L.dRoll(thiz, "onCalllogChange calllogList : " + calllogList.size() + " " + calllogList.get(0));
 			
 			//来电
 			if(com.hwatong.btphone.CallLog.TYPE_CALL_IN.equals(type)) {
@@ -583,7 +583,7 @@ public class HwatongModel implements IBTPhoneModel {
 		
 		@Override
 		public void onCalllog(String type, String name, String number, String date) throws RemoteException {
-			L.d(thiz, "onCalllog type= " + type + " name= " + name + " number= " + number+ " date= " + date);
+			L.dRoll(thiz, "onCalllog type= " + type + " name= " + name + " number= " + number+ " date= " + date);
 			name = name.replaceAll(" +", "");
 			number = number.replaceAll(":", "");
 			int typeInt = Integer.parseInt(type);
@@ -604,7 +604,7 @@ public class HwatongModel implements IBTPhoneModel {
 
 			if (iService != null && iService.isHfpConnected()) {
 				CallStatus callStatus = iService.getCallStatus();
-
+				L.d(thiz, "onCallStatusChanged status : " + callStatus.status);
 				//闲置状态
 				if (CallStatus.PHONE_CALL_NONE.equals(callStatus.status)) {
 					if(phoneState == PhoneState.TALKING || phoneState == PhoneState.OUTGOING) {
@@ -664,6 +664,8 @@ public class HwatongModel implements IBTPhoneModel {
 			logsLoading = false;
 		}
 	};
+	
+	
 	
 	private CallLog getCallLogFromCallStatus(int type, CallStatus callStatus) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

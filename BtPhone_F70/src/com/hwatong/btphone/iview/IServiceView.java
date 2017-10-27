@@ -6,4 +6,6 @@ public interface IServiceView {
 	void showWindow(CallLog callLog);
 	void hideWindow();
 	void showTalking(CallLog callLog);
+	
+	void gotoDialActivity(CallLog callLog);
 }

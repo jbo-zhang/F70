@@ -39,6 +39,14 @@ public class Utils {
 		intent.putExtra("call_log", callLog);
 		context.startActivity(intent);
 	}
+	
+	public static void gotoDialActivityInService(Context context, CallLog callLog) {
+		Intent intent = new Intent(context, DialActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra("call_log", callLog);
+		context.startActivity(intent);
+	}
+	
 
 	@SuppressLint("DefaultLocale")
 	public static String getComFlg(String name) {

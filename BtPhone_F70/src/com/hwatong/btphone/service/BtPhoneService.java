@@ -11,6 +11,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -34,6 +35,7 @@ import com.hwatong.btphone.presenter.BroadcastPresenter;
 import com.hwatong.btphone.presenter.ServicePresenter;
 import com.hwatong.btphone.ui.R;
 import com.hwatong.btphone.util.L;
+import com.hwatong.btphone.util.Utils;
 
 /**
  * 
@@ -123,6 +125,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 				case R.id.fl_accept:
 					L.d(thiz, "accept!");
 					servicePresenter.pickUp();
+					
 					break;
 				case R.id.fl_reject:
 					L.d(thiz, "handup!");
@@ -220,7 +223,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	 * 
 	 * @param number
 	 */
-	private void showPhoneComingWindow() {
+	private synchronized void showPhoneComingWindow() {
 		if (viewAdded) {
 			return;
 		}
@@ -234,7 +237,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		viewAdded = true;
 	}
 
-	private void hidePhoneComingWindow() {
+	private synchronized void hidePhoneComingWindow() {
 		if (!viewAdded) {
 			return;
 		}
@@ -374,11 +377,10 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		gotoDialActivity(callLog);
 	}
 
-	private void gotoDialActivity(CallLog callLog) {
-		Intent intent = new Intent(BtPhoneService.this,DialActivity.class);
-		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra("call_log", callLog);
-		startActivity(intent);
+	@Override
+	public void gotoDialActivity(CallLog callLog) {
+		L.d(thiz, "goto dial activity in service");
+		Utils.gotoDialActivityInService(this, callLog);
 	}
 	
 }

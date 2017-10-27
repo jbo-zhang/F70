@@ -213,7 +213,6 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 		setContentView(getLayoutId());
 
 		initView();
-		
 
 		bindService(new Intent(this, BtPhoneService.class), mConn, Context.BIND_AUTO_CREATE);
 		
