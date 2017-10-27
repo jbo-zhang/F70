@@ -198,6 +198,9 @@ public class MainActivity extends Activity implements OnClickListener {
 					@Override
 					public void onProgressChanged(SeekBar arg0, int progress,
 							boolean fromUser) {
+						
+						refreshTimer();
+						
 						tempThumbDrable = new TempThumbDrable(BitmapFactory
 								.decodeResource(getResources(),
 										R.drawable.seekbar_pointer));
@@ -292,16 +295,9 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		Intent t = getIntent();
-		Log.d(TAG, "onResume");
-		if (t.hasExtra("mode")) {
-			String mode = t.getStringExtra("mode");
-			if ("pop".equals(mode)) {
-				mPopMode = true;
-				mHandler.removeMessages(20);
-				mHandler.sendEmptyMessageDelayed(20, DISAPPEAR_DELAY);
-			}
-		}
+		
+		refreshTimer();
+		
 		// 绑定状态栏服务
 		bindService(new Intent("com.remote.hwatong.statusinfoservice"),
 				mStatusBarConnection, BIND_AUTO_CREATE);
@@ -360,10 +356,7 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		if (mPopMode) {
-			mHandler.removeMessages(20);
-			mHandler.sendEmptyMessageDelayed(20, DISAPPEAR_DELAY);
-		}
+		refreshTimer();
 
 		switch (v.getId()) {
 
@@ -411,7 +404,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			
 		case R.id.btn_wind_switch:
 			//空调总开关
-			sendACKeyEvent("空调开关", 8, 0);
+			sendACKeyEvent_2("空调开关", 8, 0);
 			break;
 			
 		case R.id.btn_rear:
@@ -427,9 +420,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 	}
 	
-	
-	
-
 
 	/* 摄氏度和华氏度转换 */
 	public float tempExchange(float temp) {
@@ -512,6 +502,9 @@ public class MainActivity extends Activity implements OnClickListener {
 				//空调关
 				if(windOnOff == 0x01) {		
 					turnOffViews();
+					// 后空调开关
+					int rear = status.getStatus3() & 0x03;
+					setRear(rear == 0x00);
 					return;
 				//空调开
 				} else {
@@ -557,9 +550,8 @@ public class MainActivity extends Activity implements OnClickListener {
 				int loop = status.getStatus4() & 0x03;
 				setLoop(loop);
 				
-				// 后空调开关
 				int rear = status.getStatus3() & 0x03;
-				setRear(rear == 0x01);
+				setRear(rear == 0x00);
 				
 			}
 		}
@@ -681,6 +673,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		if(loop == 0x00) {
 			//外循环
 			setLoopView(R.drawable.icon_loop_out, R.string.text_loop_out);
+			mTvLoop.setSelected(false);
 		} else if(loop == 0x01) {
 			//内循环
 			setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
@@ -692,6 +685,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 		
 	}
+	
 	/**
 	 * 设置循环模式按钮
 	 * @param iconId
@@ -762,4 +756,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		mHandler.removeCallbacksAndMessages(null);
 		super.onDestroy();
 	}
+	
+	private synchronized void refreshTimer() {
+		mHandler.removeMessages(20);
+		mHandler.sendEmptyMessageDelayed(20, DISAPPEAR_DELAY);
+	}
+	
+	
 }

@@ -32,7 +32,6 @@
         style="@style/style_right_btn"
         android:layout_marginTop="@dimen/btn_margin"
         android:drawableTop="@drawable/icon_loop_in"
-        android:paddingTop="10dp"
         android:text="@string/text_loop_in" />
 
     <TextView

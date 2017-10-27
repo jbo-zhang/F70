@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:background="@drawable/btn_bg_selector"
+            android:background="@drawable/btn_back_selector"
             android:src="@drawable/btn_return" />
     </RelativeLayout>
 
@@ -114,7 +114,7 @@
                     android:id="@+id/btn_wind_switch"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/wind_switch_selector"
+                    android:background="@drawable/bt_switch_selector"
                     android:clickable="true"
                     android:drawableTop="@drawable/icon_wind"
                     android:gravity="center"
@@ -127,6 +127,7 @@
                     android:id="@+id/btn_wind_level_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_1"
                     android:tag="1" />
@@ -135,6 +136,7 @@
                     android:id="@+id/btn_wind_level_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_2"
                     android:tag="2" />
@@ -143,6 +145,7 @@
                     android:id="@+id/btn_wind_level_3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_3"
                     android:tag="3" />
@@ -151,6 +154,7 @@
                     android:id="@+id/btn_wind_level_4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_4"
                     android:tag="4" />
@@ -159,6 +163,7 @@
                     android:id="@+id/btn_wind_level_5"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_5"
                     android:tag="5" />
@@ -167,6 +172,7 @@
                     android:id="@+id/btn_wind_level_6"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_6"
                     android:tag="6" />
@@ -175,6 +181,7 @@
                     android:id="@+id/btn_wind_level_7"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="1px"
                     android:background="@drawable/wind_switch_selector"
                     android:src="@drawable/wind_level_7"
                     android:tag="7" />
