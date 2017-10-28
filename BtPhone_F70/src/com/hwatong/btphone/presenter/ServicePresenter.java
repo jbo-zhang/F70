@@ -44,6 +44,10 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showComing(CallLog callLog) {
+		if(callLog == null) {
+			return;
+		}
+		
 		if(!isDialForground()) {
 			iServiceView.showWindow(callLog);
 		} else {
@@ -54,6 +58,9 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showCalling(CallLog callLog) {
+		if(callLog == null) {
+			return;
+		}
 		if(!isDialForground()) {
 			iServiceView.gotoDialActivity(callLog);
 		} else {
@@ -64,6 +71,9 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showTalking(CallLog callLog) {
+		if(callLog == null) {
+			return;
+		}
 		if(!isDialForground()) {
 			iServiceView.showTalking(callLog);
 		} else {
@@ -74,12 +84,18 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showHangUp(CallLog callLog) {
+		if(callLog == null) {
+			return;
+		}
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_HANG_UP, callLog);
 	}
 
 
 	@Override
 	public void showReject(CallLog callLog) {
+		if(callLog == null) {
+			return;
+		}
 		if(!isDialForground()) {
 			iServiceView.hideWindow();
 		} else {

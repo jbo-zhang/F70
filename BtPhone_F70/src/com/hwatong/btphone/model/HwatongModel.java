@@ -188,9 +188,9 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public void dial(String number) {
-		L.d(thiz, "dial() number = " + number + " " + (iService != null));
 		if(iService != null) {
 			try {
+				L.d(thiz, "dial() number = " + number + " " + (iService != null));
 				iService.phoneDial(number.trim());
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -202,6 +202,7 @@ public class HwatongModel implements IBTPhoneModel {
 	public void pickUp() {
 		if(iService != null) {
 			try {
+				L.d(thiz,"pickUp()");
 				iService.phoneAnswer();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -213,6 +214,7 @@ public class HwatongModel implements IBTPhoneModel {
 	public void hangUp() {
 		if(iService != null) {
 			try {
+				L.d(thiz,"pickUp()");
 				iService.phoneFinish();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -224,6 +226,7 @@ public class HwatongModel implements IBTPhoneModel {
 	public void reject() {
 		if(iService != null) {
 			try {
+				L.d(thiz,"reject()");
 				iService.phoneReject();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -235,6 +238,7 @@ public class HwatongModel implements IBTPhoneModel {
 	public void dtmf(char code) {
 		if(iService != null) {
 			try {
+				L.d(thiz,"dtmf()");
 				iService.phoneTransmitDTMFCode(code);
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -246,6 +250,7 @@ public class HwatongModel implements IBTPhoneModel {
 	public void toggleMic() {
 		if(iService != null) {
 			try {
+				L.d(thiz,"toggleMic()");
 				iService.phoneMicOpenClose();
 				isMute = iService.isMicMute();
 				iView.showMicMute(isMute);
@@ -259,6 +264,7 @@ public class HwatongModel implements IBTPhoneModel {
 	public void toggleTrack() {
 		if(iService != null) {
 			try {
+				L.d(thiz,"toggleTrack()");
 				iService.phoneTransfer();
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -273,6 +279,7 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 		if(iService != null) {
 			try {
+				L.d(thiz,"loadBooks()");
 				boolean result = iService.phoneBookStartUpdate();
 				if(result) {
 					booksLoading = true;
@@ -318,12 +325,12 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public void loadLogs() {
-		L.d(thiz, "loadLogs()");
 		if(logsLoading) {
 			return;
 		}
 		if(iService != null) {
 			try {
+				L.d(thiz, "loadLogs()");
 				boolean result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_MISS);
 				result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_OUT) || result;
 				result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_IN) || result;
@@ -369,6 +376,7 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 		if(iService != null) {
 			try {
+				L.d(thiz, "loadLogsByType() type = " + type + " typeInt = " + typeInt);
 				boolean result = iService.callLogStartUpdate(type);
 				if(result) {
 					logsLoading = true;
@@ -625,7 +633,7 @@ public class HwatongModel implements IBTPhoneModel {
 					iView.showCalling(currentCall);
 					
 					phoneState = PhoneState.OUTGOING;
-					
+//					
 					
 				//来电状态
 				} else if (CallStatus.PHONE_COMING.equals(callStatus.status)) {
@@ -637,6 +645,9 @@ public class HwatongModel implements IBTPhoneModel {
 					
 				//通话状态
 				} else if (CallStatus.PHONE_TALKING.equals(callStatus.status)) {
+					if(currentCall == null) {
+						currentCall = getCallLogFromCallStatus(CallLog.TYPE_CALL_OUT, callStatus);
+					}
 					if(currentCall != null) {
 						currentCall.duration = 0;
 						
