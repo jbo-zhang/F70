@@ -174,6 +174,7 @@ public class Radio extends Activity implements OnClickListener,
 					radioPresenter.tune(true);
 					break;
 				case R.id.btn_back:
+					radioPresenter.stopScan();
 					finish();
 					break;
 				case R.id.btn_band_switch:

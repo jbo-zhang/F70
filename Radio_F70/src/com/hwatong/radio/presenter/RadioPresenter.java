@@ -122,6 +122,7 @@ public class RadioPresenter {
 				} else if (status[0] == 1) {
 					// OP_SCAN
 					L.d(thiz, "扫描状态！");
+					iRadioView.showLoading();
 				}
 
 				break;
@@ -473,6 +474,24 @@ public class RadioPresenter {
 			}
 		}
 	}
+	
+	/**
+	 * 停止扫描
+	 */
+	public void stopScan() {
+		try {
+			int[] status = mService.getStatus();
+			if (status != null && status.length >= 2 && status[0] == 1) {
+				// 正在扫描
+				L.d(thiz, "stopScan()");
+				play(mFreq);
+				return;
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
 
 	/**
 	 * 请求播放频率
