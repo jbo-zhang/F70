@@ -392,6 +392,7 @@ public class RadioPresenter {
 				try {
 					L.d(thiz, "mService.band()");
 					mService.band();
+					iRadioView.hideLoading();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}

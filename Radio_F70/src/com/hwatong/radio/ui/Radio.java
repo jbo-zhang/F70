@@ -156,24 +156,29 @@ public class Radio extends Activity implements OnClickListener,
 			 * 点击事件
 			 */
 			case MSG_DELAYCLICK:
-				hideLoading();
+				
 				if (msg.arg1 != R.id.btn_radio_preview) {
 					radioPresenter.stopPreview();
 				}
 				switch (msg.arg1) {
 				case R.id.btn_pre:
+					hideLoading();
 					radioPresenter.seek(false);
 					break;
 				case R.id.btn_next:
+					hideLoading();
 					radioPresenter.seek(true);
 					break;
 				case R.id.btn_down:
+					hideLoading();
 					radioPresenter.tune(false);
 					break;
 				case R.id.btn_up:
+					hideLoading();
 					radioPresenter.tune(true);
 					break;
 				case R.id.btn_back:
+					hideLoading();
 					radioPresenter.stopScan();
 					finish();
 					break;
@@ -181,9 +186,11 @@ public class Radio extends Activity implements OnClickListener,
 					radioPresenter.band();
 					break;
 				case R.id.btn_radio_update:
+					hideLoading();
 					radioPresenter.scan();
 					break;
 				case R.id.btn_radio_preview:
+					hideLoading();
 					radioPresenter.previewChannels();
 					break;
 				case R.id.btn_collect1:
@@ -192,6 +199,7 @@ public class Radio extends Activity implements OnClickListener,
 				case R.id.btn_collect4:
 				case R.id.btn_collect5:
 				case R.id.btn_collect6:
+					hideLoading();
 					L.d(thiz, "" + (Integer) ((View) msg.obj).getTag());
 					radioPresenter.play((Integer) ((View) msg.obj).getTag());
 					break;
