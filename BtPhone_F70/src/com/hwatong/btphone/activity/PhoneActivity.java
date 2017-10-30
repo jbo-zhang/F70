@@ -3,6 +3,8 @@ package com.hwatong.btphone.activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.provider.ContactsContract.CommonDataKinds.Event;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -35,6 +37,8 @@ public class PhoneActivity extends BaseActivity {
 	private ImageButton mBtnReturn;
 
 	private TextView tvTip;
+	
+	int totalY;
 
 	@Override
 	protected void initView() {
@@ -75,6 +79,10 @@ public class PhoneActivity extends BaseActivity {
 						Toast.makeText(PhoneActivity.this, "没有升级应用", Toast.LENGTH_SHORT).show();
 					}
 					break;
+					
+				case 321:
+					Toast.makeText(PhoneActivity.this, "触发tbox升级", Toast.LENGTH_SHORT).show();
+					break;
 				default:
 					break;
 				}
@@ -83,15 +91,37 @@ public class PhoneActivity extends BaseActivity {
 	
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		//系统升级
 		if (event.getPointerCount() >= 3) {
 			if (!sended) {
-				handler.sendEmptyMessageDelayed(456, 6000);
+				handler.sendEmptyMessageDelayed(456, 5000);
 				sended = true;
 			}
 		} else {
 			handler.removeMessages(456);
 			sended = false;
 		}
+		
+		//tbox升级
+		switch (event.getAction()) {
+		case MotionEvent.ACTION_MOVE:
+			if(event.getX() > 1000) {
+				totalY += event.getY();
+				L.d(thiz, "totalY : " + totalY);
+				if(totalY > (200 * 100)) {
+					handler.sendEmptyMessage(321);
+					totalY = 0;
+				}
+			}
+			break;
+		case MotionEvent.ACTION_UP:
+			handler.removeMessages(321);
+			totalY = 0;
+			break;
+		default:
+			break;
+		}
+		
 		return super.onTouchEvent(event);
 	}
 

@@ -253,6 +253,7 @@ public class HwatongModel implements IBTPhoneModel {
 				L.d(thiz,"toggleMic()");
 				iService.phoneMicOpenClose();
 				isMute = iService.isMicMute();
+				L.d(thiz,"is mic mute ？ " + isMute);
 				iView.showMicMute(isMute);
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -283,7 +284,7 @@ public class HwatongModel implements IBTPhoneModel {
 				boolean result = iService.phoneBookStartUpdate();
 				if(result) {
 					booksLoading = true;
-					clearBooks();
+					clearAll();
 					iView.showBooksLoadStart();
 					new Thread(new Runnable() {
 						@Override
@@ -294,13 +295,36 @@ public class HwatongModel implements IBTPhoneModel {
 					}).start();
 				} else {
 					booksLoading = false;
-					iView.showBooksLoaded(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
+					showBooksLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
+	private void showBooksLoadedAndSync(boolean succeed, int reason) {
+		iView.showBooksLoaded(succeed, reason);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SystemClock.sleep(1000);
+				iView.syncBooksAlreadyLoad();
+			}
+		}).start();
+	}
+	
+	private void showLogsLoadedAndSync(boolean succeed, int reason) {
+		iView.showLogsLoaded(succeed, reason);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SystemClock.sleep(1000);
+				iView.syncLogsAlreadyLoad();
+			}
+		}).start();
+	}
+	
 	
 	private void clearAll() {
 		clearBooks();
@@ -346,7 +370,7 @@ public class HwatongModel implements IBTPhoneModel {
 					}).start();
 				} else {
 					logsLoading = false;
-					iView.showLogsLoaded(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
+					showLogsLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
 				}
 			
 			} catch (RemoteException e) {
@@ -391,7 +415,7 @@ public class HwatongModel implements IBTPhoneModel {
 					}).start();
 				} else {
 					logsLoading = false;
-					iView.showLogsLoaded(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
+					showLogsLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
@@ -457,24 +481,16 @@ public class HwatongModel implements IBTPhoneModel {
 			case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
 				mContacts = new ArrayList<Contact>(mContactSet);
 				iView.updateBooks(mContacts);
-				iView.showBooksLoaded(true, error);
+				showBooksLoadedAndSync(true, error);
 				break;
 			case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
 			case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
 			case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
 				mContacts = new ArrayList<Contact>(mContactSet);
 				iView.updateBooks(mContacts);
-				iView.showBooksLoaded(false, error);
+				showBooksLoadedAndSync(false, error);
 				break;
 			}
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					SystemClock.sleep(1000);
-					iView.syncBooksAlreadyLoad();
-				}
-			}).start();
-			
 			booksLoading = false;
 		}
 		
@@ -544,7 +560,7 @@ public class HwatongModel implements IBTPhoneModel {
 				}
 				Collections.sort(mAllCallLogList, new CallLog.CallLogComparator());
 				
-				iView.showLogsLoaded(true, 0);
+				showLogsLoadedAndSync(true, 0);
 				
 				iView.updateAllLogs(mAllCallLogList);
 				iView.updateMissedLogs(mCallLogMap.get(CallLog.TYPE_CALL_MISS));
@@ -555,17 +571,9 @@ public class HwatongModel implements IBTPhoneModel {
 			case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
 			case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
 			case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
-				iView.showLogsLoaded(false, error);
+				showLogsLoadedAndSync(false, error);
 				break;
 			}
-			
-			new Thread(new Runnable() {
-				@Override
-				public void run() {
-					SystemClock.sleep(1000);
-					iView.syncLogsAlreadyLoad();
-				}
-			}).start();
 			
 			logsLoading = false;
 		}
