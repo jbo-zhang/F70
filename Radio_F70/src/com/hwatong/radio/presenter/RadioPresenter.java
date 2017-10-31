@@ -209,26 +209,44 @@ public class RadioPresenter {
 					refreshFmList();
 					mList = mFmList;
 					mFreq = mFmFreq = mService.getCurrentChannel(0);
+					
+					// 首次进入-->扫描
+					firstScan(mRadioPref.isFMInit());
+					
+					
 				} else {
 					refreshAmList();
 					mList = mAmList;
 					mFreq = mAmFreq = mService.getCurrentChannel(1);
+					
+					// 首次进入-->扫描
+					firstScan(mRadioPref.isAMInit());
 				}
+				
 				iRadioView.refreshView(mBand, mFreq, mList);
 
-				// 首次进入-->扫描
-				if (mRadioPref.isInit()) {
-					L.d(thiz, "First start true !" );
-					iRadioView.showFirstScan();
-					//scan();
-				} else {
-					L.d(thiz, "First start false !" );
-				}
+				
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
 		}
 	};
+	
+	/**
+	 * 首次扫描
+	 * @param scan
+	 */
+	private void firstScan(boolean scan) {
+		if(scan) {
+			L.d(thiz, "First scan !" );
+			iRadioView.showFirstScan();
+			scan();
+		} else {
+			L.d(thiz, "First fm start false !" );
+		}
+	}
+	
+	
 
 	protected ServiceConnection mConn2 = new ServiceConnection() {
 
@@ -322,6 +340,10 @@ public class RadioPresenter {
 					mHandler.removeMessages(MSG_CHANNELLIST_CHANGED);
 					mHandler.sendMessage(Message.obtain(mHandler,
 							MSG_CHANNELLIST_CHANGED, 0, 0));
+					
+					// 首次进入-->扫描
+					firstScan(mRadioPref.isFMInit());
+					
 				} else {
 					mFreq = mAmFreq = mService.getCurrentChannel(1);
 					mHandler.removeMessages(MSG_CHANNEL_CHANGED);
@@ -329,6 +351,11 @@ public class RadioPresenter {
 					mHandler.removeMessages(MSG_CHANNELLIST_CHANGED);
 					mHandler.sendMessage(Message.obtain(mHandler,
 							MSG_CHANNELLIST_CHANGED, 1, 0));
+					
+					// 首次进入-->扫描
+					firstScan(mRadioPref.isAMInit());
+					
+					
 				}
 			}
 		}

@@ -815,14 +815,26 @@ public class Radio extends Activity implements OnClickListener,
 
 	@Override
 	public void showLoading() {
-		dialog.show();
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				dialog.show();
+			}
+		});
 	}
 
 	@Override
 	public void hideLoading() {
-		if (dialog.isShowing()) {
-			dialog.dismiss();
-		}
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (dialog.isShowing()) {
+					dialog.dismiss();
+				}
+			}
+		});
 	}
 
 	@Override

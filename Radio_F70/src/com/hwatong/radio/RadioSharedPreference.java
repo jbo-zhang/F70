@@ -155,4 +155,23 @@ public class RadioSharedPreference {
 		} 
 		return false;
 	}
+	
+	public boolean isFMInit() {
+		if(mSp.getBoolean("is_init_fm", true)) {
+			mSp.edit().putBoolean("is_init_fm", false).commit();
+			return true;
+		} 
+		return false;
+	}
+	
+	public boolean isAMInit() {
+		if(mSp.getBoolean("is_init_am", true)) {
+			mSp.edit().putBoolean("is_init_am", false).commit();
+			return true;
+		} 
+		return false;
+	}
+	
+	
+	
 }
