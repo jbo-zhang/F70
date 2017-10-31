@@ -218,8 +218,11 @@ public class RadioPresenter {
 
 				// 首次进入-->扫描
 				if (mRadioPref.isInit()) {
+					L.d(thiz, "First start true !" );
 					iRadioView.showFirstScan();
-					scan();
+					//scan();
+				} else {
+					L.d(thiz, "First start false !" );
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
