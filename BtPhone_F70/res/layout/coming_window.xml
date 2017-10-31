@@ -42,7 +42,7 @@
             android:layout_height="63px"
             android:layout_marginLeft="108px"
             android:layout_marginTop="131px"
-            android:background="@drawable/btn_call_normal"
+            android:background="@drawable/call_selector"
             android:orientation="vertical" >
 
             <ImageView
@@ -68,7 +68,7 @@
             android:layout_height="63px"
             android:layout_marginLeft="301px"
             android:layout_marginTop="131px"
-            android:background="@drawable/btn_hand_up_normal"
+            android:background="@drawable/hand_up_selector"
             android:orientation="vertical" >
 
             <ImageView
