@@ -34,6 +34,8 @@ public class TBoxPresenter {
 
 	private static final String path = "/sdcard/ftp/";
 	
+	private static final String ftpPath = "/sdcard/ftp";
+	
 	private final static String USB_PATH="/mnt/udisk";
 	private final static String USB_PATH2="/mnt/udisk2";
 	private final static String TFCARD_PATH="/mnt/extsd";
@@ -61,6 +63,7 @@ public class TBoxPresenter {
 		this.context = context;
 		context.bindService(new Intent("com.tbox.service.TboxService"), tboxConnection, Context.BIND_AUTO_CREATE);
 		setFilter("^.*\\.tarbz2$");
+		
 	}
 	
 	public void unbindTbox(Context context) {
@@ -87,6 +90,14 @@ public class TBoxPresenter {
 			src = files.get(0).getAbsolutePath();
 			des = path + files.get(0).getName();
 			updateName = "/" + files.get(0).getName();
+			
+			File ftpDirectory = new File(ftpPath);
+			if (!ftpDirectory.exists()) {
+				if(!ftpDirectory.mkdirs()) {
+					tboxView.showNoFiles();
+					return ;
+				}
+			}
 			tboxView.showConfirmDialog(files.get(0).getName());
 		} else {
 			tboxView.showNoFiles();

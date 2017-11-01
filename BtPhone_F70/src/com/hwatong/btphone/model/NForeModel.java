@@ -166,6 +166,8 @@ public class NForeModel implements IBTPhoneModel {
 				try {
 					mCommandPbap.registerPbapCallback(mCallbackPbap);
 					loadBooks();
+					loadLogs();
+					
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -322,6 +324,11 @@ public class NForeModel implements IBTPhoneModel {
 
 					// 通话状态
 				} else if (callstate == NfHfpClientCall.CALL_STATE_ACTIVE) {
+					
+					if(currentCall == null) {
+						currentCall = getCallLogFromCallStatus(CallLog.TYPE_CALL_OUT, call);
+					}
+					
 					if (currentCall != null) {
 						currentCall.duration = 0;
 
@@ -396,20 +403,12 @@ public class NForeModel implements IBTPhoneModel {
           				}
           				Collections.sort(mAllCallLogList, new CallLog.CallLogComparator());
           				
-          				iView.showLogsLoaded(true, reason);
-          				
           				iView.updateAllLogs(mAllCallLogList);
           				iView.updateMissedLogs(mCallLogMap.get(CallLog.TYPE_CALL_MISS));
           				iView.updateDialedLogs(mCallLogMap.get(CallLog.TYPE_CALL_OUT));
           				iView.updateReceivedLogs(mCallLogMap.get(CallLog.TYPE_CALL_IN));
           				
-          				new Thread(new Runnable() {
-            				@Override
-            				public void run() {
-            					SystemClock.sleep(1000);
-            					iView.syncLogsAlreadyLoad();
-            				}
-            			}).start();
+          				showLogsLoadedAndSync(true, reason);
             			
             			logsLoading = false;
                     }
@@ -418,15 +417,8 @@ public class NForeModel implements IBTPhoneModel {
                     if(booksLoading) {
                     	mContacts = new ArrayList<Contact>(mContactSet);
         				iView.updateBooks(mContacts);
-        				iView.showBooksLoaded(true, reason);
         				
-        				new Thread(new Runnable() {
-            				@Override
-            				public void run() {
-            					SystemClock.sleep(1000);
-            					iView.syncBooksAlreadyLoad();
-            				}
-            			}).start();
+        				showBooksLoadedAndSync(true, reason);
             			
             			booksLoading = false;
                     }
@@ -437,30 +429,15 @@ public class NForeModel implements IBTPhoneModel {
                 case NfDef.REASON_DOWNLOAD_USER_REJECT:
                 	//通话记录加载失败
                 	if(logsLoading) {
-                		iView.showLogsLoaded(false, reason);
-                		new Thread(new Runnable() {
-            				@Override
-            				public void run() {
-            					SystemClock.sleep(1000);
-            					iView.syncLogsAlreadyLoad();
-            				}
-            			}).start();
-            			
+                		showLogsLoadedAndSync(false, reason);
             			logsLoading = false;
                 	}
                 	//通讯录加载失败
                 	if(booksLoading) {
                 		mContacts = new ArrayList<Contact>(mContactSet);
         				iView.updateBooks(mContacts);
-        				iView.showBooksLoaded(false, reason);
-                		
-                		new Thread(new Runnable() {
-            				@Override
-            				public void run() {
-            					SystemClock.sleep(1000);
-            					iView.syncBooksAlreadyLoad();
-            				}
-            			}).start();
+        				
+        				showBooksLoadedAndSync(false, reason);
             			
             			booksLoading = false;
                 	}
@@ -856,9 +833,12 @@ public class NForeModel implements IBTPhoneModel {
 		}
 		if (mCommandPbap != null) {
 			try {
+				L.d(thiz, "loadlogs missedcalls");
 				int storage = NfDef.PBAP_STORAGE_MISSED_CALLS;
 				mCommandPbap.reqPbapDownload(mCommandHfp.getHfpConnectedAddress(), storage, mProperty);
 
+				L.d(thiz, "loadlogs dialedcalls");
+				
 				storage = NfDef.PBAP_STORAGE_DIALED_CALLS;
 				mCommandPbap.reqPbapDownload(mCommandHfp.getHfpConnectedAddress(), storage, mProperty);
 
@@ -993,5 +973,35 @@ public class NForeModel implements IBTPhoneModel {
 		}
 		return contacts;
 	}
+	
+	
+	private void showBooksLoadedAndSync(boolean succeed, int reason) {
+		iView.showBooksLoaded(succeed, reason);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SystemClock.sleep(1000);
+				iView.syncBooksAlreadyLoad();
+			}
+		}).start();
+	}
+	
+	private void showLogsLoadedAndSync(boolean succeed, int reason) {
+		iView.showLogsLoaded(succeed, reason);
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SystemClock.sleep(1000);
+				iView.syncLogsAlreadyLoad();
+			}
+		}).start();
+	}
+	
+	
+	
+	
+	
+	
+	
 
 }
