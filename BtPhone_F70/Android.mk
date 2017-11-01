@@ -14,7 +14,8 @@ LOCAL_STATIC_JAVA_LIBRARIES := pinyin4j \
 	com.hwatong.systemui \
 	com.hwatong.btphone \
 	nForeAPI \
-	com.nforetek.bt.aidl
+	com.nforetek.bt.aidl \
+	com.tbox.service
 	
 
 LOCAL_PROGUARD_FLAG_FILES := proguard.flags

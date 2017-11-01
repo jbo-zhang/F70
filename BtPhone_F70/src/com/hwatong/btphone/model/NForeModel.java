@@ -165,6 +165,7 @@ public class NForeModel implements IBTPhoneModel {
 				dumpClassMethod(mCommandPbap.getClass());
 				try {
 					mCommandPbap.registerPbapCallback(mCallbackPbap);
+					loadBooks();
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
@@ -236,11 +237,15 @@ public class NForeModel implements IBTPhoneModel {
 			}
 		}
 
+		/**
+		 * 声音通道变化
+		 */
 		@Override
 		public void onHfpAudioStateChanged(String address, int prevState, int newState) throws RemoteException {
 			L.d(thiz, "onHfpAudioStateChanged() " + address + " state: " + prevState + "->" + newState);
 			String state = newState == NfDef.STATE_CONNECTED ? "At Speaker" : "At Phone";
-			iView.showSoundTrack(newState == NfDef.STATE_CONNECTED);
+			isCar = newState == NfDef.STATE_CONNECTED;
+			iView.showSoundTrack(isCar);
 		}
 
 		@Override
@@ -283,7 +288,9 @@ public class NForeModel implements IBTPhoneModel {
 
 		}
 
-		// 通话状态变化
+		/**
+		 * 通话状态变化
+		 */
 		@Override
 		public void onHfpCallChanged(String address, NfHfpClientCall call) throws RemoteException {
 
@@ -480,14 +487,14 @@ public class NForeModel implements IBTPhoneModel {
 		@Override
 		public void retPbapDownloadedContact(NfPbapContact nfContact) throws RemoteException {
 			L.d(thiz, "retPbapDownloadedContact()");
-//			Contact[] contacts = getContactsFromNfPbapContact(nfContact);
-//			for (Contact contact : contacts) {
-//				mContactSet.add(contact);
-//			}
-//			if (mContactSet.size() % 30 == 0) {
-//				mContacts = new ArrayList<Contact>(mContactSet);
-//				iView.updateBooks(mContacts);
-//			}
+			Contact[] contacts = getContactsFromNfPbapContact(nfContact);
+			for (Contact contact : contacts) {
+				mContactSet.add(contact);
+			}
+			if (mContactSet.size() % 30 == 0) {
+				mContacts = new ArrayList<Contact>(mContactSet);
+				iView.updateBooks(mContacts);
+			}
 		}
 
 		/**
@@ -498,30 +505,30 @@ public class NForeModel implements IBTPhoneModel {
 				String number, int type, String timestamp) throws RemoteException {
 			L.d(thiz, "retPbapDownloadedCallLog() " + address + " lastName: " + lastName + " (" + type + ")");
 
-//			String name = firstName + middleName + lastName;
-//			name = name.replaceAll(" +", "");
-//			number = number.replaceAll(":", "");
-//			int typeInt = CallLog.TYPE_CALL_MISS;
-//			switch (type) {
-//			case NfPbapContact.STORAGE_TYPE_MISSED_CALLS:
-//				typeInt = CallLog.TYPE_CALL_MISS;
-//				break;
-//			case NfPbapContact.STORAGE_TYPE_RECEIVED_CALLS:
-//				typeInt = CallLog.TYPE_CALL_IN;
-//				break;
-//			case NfPbapContact.STORAGE_TYPE_DIALED_CALLS:
-//				typeInt = CallLog.TYPE_CALL_OUT;
-//				break;
-//			}
-//
-//			CallLog callLog = new CallLog(typeInt, name, number, timestamp);
-//
-//			ArrayList<CallLog> callLogs = mCallLogMap.get(typeInt);
-//			if (callLogs == null) {
-//				callLogs = new ArrayList<CallLog>();
-//				mCallLogMap.put(typeInt, callLogs);
-//			}
-//			callLogs.add(callLog);
+			String name = firstName + middleName + lastName;
+			name = name.replaceAll(" +", "");
+			number = number.replaceAll(":", "");
+			int typeInt = CallLog.TYPE_CALL_MISS;
+			switch (type) {
+			case NfPbapContact.STORAGE_TYPE_MISSED_CALLS:
+				typeInt = CallLog.TYPE_CALL_MISS;
+				break;
+			case NfPbapContact.STORAGE_TYPE_RECEIVED_CALLS:
+				typeInt = CallLog.TYPE_CALL_IN;
+				break;
+			case NfPbapContact.STORAGE_TYPE_DIALED_CALLS:
+				typeInt = CallLog.TYPE_CALL_OUT;
+				break;
+			}
+
+			CallLog callLog = new CallLog(typeInt, name, number, timestamp);
+
+			ArrayList<CallLog> callLogs = mCallLogMap.get(typeInt);
+			if (callLogs == null) {
+				callLogs = new ArrayList<CallLog>();
+				mCallLogMap.put(typeInt, callLogs);
+			}
+			callLogs.add(callLog);
 		}
 
 		@Override
@@ -707,7 +714,6 @@ public class NForeModel implements IBTPhoneModel {
 					
 					//同步声音通道
 					iView.showSoundTrack(isCar);
-					
 					
 				} else {
 					iView.showDisconnected();

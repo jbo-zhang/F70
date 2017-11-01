@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import com.hwatong.btphone.activity.DialActivity;
 import com.hwatong.btphone.bean.CallLog;
@@ -268,5 +269,19 @@ public class Utils {
 
 		return -1;
 	}
+	
+	
+	private static Toast mToast;
+	public static void showToast(Context context, String msg) {
+		if (mToast != null) {
+			mToast.setText(msg);
+			mToast.setDuration(Toast.LENGTH_SHORT);
+		} else {
+			mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+		}
+		mToast.show();
+	}
+	
+	
 
 }

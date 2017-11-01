@@ -1,10 +1,12 @@
 package com.hwatong.btphone.activity;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.provider.ContactsContract.CommonDataKinds.Event;
-import android.view.KeyEvent;
+import android.os.SystemClock;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
@@ -13,6 +15,8 @@ import android.widget.Toast;
 
 import com.hwatong.btphone.activity.base.BaseActivity;
 import com.hwatong.btphone.bean.CallLog;
+import com.hwatong.btphone.iview.ITBoxUpdateView;
+import com.hwatong.btphone.presenter.TBoxPresenter;
 import com.hwatong.btphone.ui.DrawableTextView;
 import com.hwatong.btphone.ui.R;
 import com.hwatong.btphone.util.L;
@@ -24,7 +28,7 @@ import com.hwatong.btphone.util.Utils;
  * @author zxy zjb time:2017年5月25日
  * 
  */
-public class PhoneActivity extends BaseActivity {
+public class PhoneActivity extends BaseActivity implements ITBoxUpdateView{
 
 	private static final String thiz = PhoneActivity.class.getSimpleName();
 
@@ -37,7 +41,7 @@ public class PhoneActivity extends BaseActivity {
 	private ImageButton mBtnReturn;
 
 	private TextView tvTip;
-	
+
 	int totalY;
 
 	@Override
@@ -55,43 +59,80 @@ public class PhoneActivity extends BaseActivity {
 		mBtnReturn.setOnClickListener(this);
 
 		tvTip = (TextView) findViewById(R.id.tv_tip);
-		
-		//默认为false
+
+		// 默认为false
 		showBtConnected(false);
+
+		tBoxPresenter = new TBoxPresenter(this);
+		tBoxPresenter.initTboxService(this);
+		
 	}
 
 	/**
 	 * 四指手势
 	 */
 	private boolean sended = false;
-	
+
 	private Handler handler = new Handler() {
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
-				//手势启动升级界面
-				case 456:
-					L.d(thiz, "msg 456");
-					Intent intent = new Intent();
-					intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
-					if (intent.resolveActivity(getPackageManager()) != null) {
-						startActivity(intent);
-					} else {
-						Toast.makeText(PhoneActivity.this, "没有升级应用", Toast.LENGTH_SHORT).show();
-					}
-					break;
-					
-				case 321:
-					Toast.makeText(PhoneActivity.this, "触发tbox升级", Toast.LENGTH_SHORT).show();
-					break;
-				default:
-					break;
+			// 手势启动升级界面
+			case 456:
+				L.d(thiz, "msg 456");
+				Intent intent = new Intent();
+				intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
+				if (intent.resolveActivity(getPackageManager()) != null) {
+					startActivity(intent);
+				} else {
+					Toast.makeText(PhoneActivity.this, "没有升级应用", Toast.LENGTH_SHORT).show();
 				}
+				break;
+
+			case 321:
+				//Toast.makeText(PhoneActivity.this, "触发tbox升级", Toast.LENGTH_SHORT).show();
+
+				tBoxPresenter.updateTbox();
+				break;
+			default:
+				break;
+			}
 		};
 	};
+
+	private void showTboxUpdateDialog(String fileName) {
+        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
+        normalDialog.setTitle("TBox升级");
+        normalDialog.setMessage("找到文件 " + fileName +" ,确定升级TBox吗?");
+        normalDialog.setPositiveButton("确定", 
+            new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	tBoxPresenter.confirmUpdate();
+            }
+        });
+        normalDialog.setNegativeButton("关闭", 
+            new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //...To-do
+            }
+        });
+        // 显示
+        normalDialog.show();
+	}
 	
 	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		tBoxPresenter.unbindTbox(this);
+	}
+	
+
+	private TBoxPresenter tBoxPresenter;
+
+	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		//系统升级
+		// 系统升级
 		if (event.getPointerCount() >= 3) {
 			if (!sended) {
 				handler.sendEmptyMessageDelayed(456, 5000);
@@ -101,14 +142,14 @@ public class PhoneActivity extends BaseActivity {
 			handler.removeMessages(456);
 			sended = false;
 		}
-		
-		//tbox升级
+
+		// tbox升级
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_MOVE:
-			if(event.getX() > 1000) {
+			if (event.getX() > 1000) {
 				totalY += event.getY();
 				L.d(thiz, "totalY : " + totalY);
-				if(totalY > (200 * 100)) {
+				if (totalY > (200 * 100)) {
 					handler.sendEmptyMessage(321);
 					totalY = 0;
 				}
@@ -121,7 +162,7 @@ public class PhoneActivity extends BaseActivity {
 		default:
 			break;
 		}
-		
+
 		return super.onTouchEvent(event);
 	}
 
@@ -134,19 +175,23 @@ public class PhoneActivity extends BaseActivity {
 			int color = getResources().getColor(colorId);
 
 			// 拨号
-			Drawable drawable = getResources().getDrawable(connected ? R.drawable.icon_dial : R.drawable.icon_dial_gray);
+			Drawable drawable = getResources()
+					.getDrawable(connected ? R.drawable.icon_dial : R.drawable.icon_dial_gray);
 			Utils.setTextViewGray(mTvDial, connected, new Drawable[] { null, drawable, null, null }, color);
 
 			// 通讯录
-			Drawable drawable2 = getResources().getDrawable(connected ? R.drawable.icon_calllog : R.drawable.icon_calllog_gray);
+			Drawable drawable2 = getResources().getDrawable(
+					connected ? R.drawable.icon_calllog : R.drawable.icon_calllog_gray);
 			Utils.setTextViewGray(mTvCallLog, connected, new Drawable[] { null, drawable2, null, null }, color);
 
 			// 通话记录
-			Drawable drawable3 = getResources().getDrawable(connected ? R.drawable.icon_contacts : R.drawable.icon_contacts_gray);
+			Drawable drawable3 = getResources().getDrawable(
+					connected ? R.drawable.icon_contacts : R.drawable.icon_contacts_gray);
 			Utils.setTextViewGray(mTvContacts, connected, new Drawable[] { null, drawable3, null, null }, color);
 
 			// 连接提示
-			//tvTip.setText(connected ? "" : getString(R.string.bt_not_connect));
+			// tvTip.setText(connected ? "" :
+			// getString(R.string.bt_not_connect));
 		}
 	}
 
@@ -175,20 +220,18 @@ public class PhoneActivity extends BaseActivity {
 			break;
 		}
 	}
-	
+
 	/**
 	 * to home!
 	 */
 	private void toHome() {
-		 Intent intent = new Intent("com.hwatong.launcher.MAIN");
-         try {
-             startActivity(intent);
-         } catch (Exception e) {
-             e.printStackTrace();
-         }
+		Intent intent = new Intent("com.hwatong.launcher.MAIN");
+		try {
+			startActivity(intent);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
-	
 
 	@Override
 	protected int getLayoutId() {
@@ -199,7 +242,7 @@ public class PhoneActivity extends BaseActivity {
 	protected String getPageName() {
 		return "btphone_home";
 	}
-	
+
 	@Override
 	public void showConnected() {
 		showBtConnected(true);
@@ -219,11 +262,77 @@ public class PhoneActivity extends BaseActivity {
 	public void showCalling(CallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
-	
+
 	@Override
 	public void showHangUp(CallLog callLog) {
 		L.d(thiz, "showHangUp");
 	}
+
+	
+	//------------tbox升级相关--------------
+	@Override
+	public void showConfirmDialog(String fileName) {
+		showTboxUpdateDialog(fileName);
+	}
+
+	@Override
+	public void showCopyProgress(final long percent) {
+		runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				showToast(PhoneActivity.this, "复制进度：" + percent + "%");
+			}
+		});
+	}
+
+	@Override
+	public void showUpdateResult(int result, final String info) {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(PhoneActivity.this, info, Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
+	
+	private Toast mToast;
+	public void showToast(Context context, String msg) {
+		if (mToast != null) {
+			mToast.setText(msg);
+			mToast.setDuration(Toast.LENGTH_SHORT);
+		} else {
+			mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
+		}
+		mToast.show();
+	}
+	
+	@Override
+	public void copyEnd() {
+		tBoxPresenter.startUpdate();
+	}
+	
+	@Override
+	public void showNoFiles() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(PhoneActivity.this, "没有找到tbox升级文件", Toast.LENGTH_SHORT).show();
+			}
+		});
+	}
 	
 	
+	@Override
+	public void showUpdateStart() {
+		runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast.makeText(PhoneActivity.this, "开始升级", Toast.LENGTH_SHORT).show();
+			}
+		});
+		
+	}
+	
+
 }
