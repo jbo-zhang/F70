@@ -430,6 +430,7 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
 			L.d(thiz, "IService disconnected");
+			refreshStatus();
 			iService = null;
 		}
 
@@ -529,7 +530,7 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onHfpDisconnected() throws RemoteException {
 			L.d(thiz, "onHfpDisconnected");
-			clearAll();
+			refreshStatus();			
 			iView.showDisconnected();
 		}
 		
@@ -721,4 +722,16 @@ public class HwatongModel implements IBTPhoneModel {
 		L.d(thiz, "getDialedLogs mCallLogMap.get(CallLog.TYPE_CALL_OUT).size : " + mCallLogMap.get(CallLog.TYPE_CALL_OUT).size());
 		return mCallLogMap.get(CallLog.TYPE_CALL_OUT);
 	}
+	
+	
+	private void refreshStatus() {
+		booksLoading = false;
+		logsLoading = false;
+		
+		clearAll();
+		
+		phoneState = PhoneState.IDEL;
+	}
+	
+	
 }

@@ -130,6 +130,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 				case R.id.fl_reject:
 					L.d(thiz, "handup!");
 					servicePresenter.reject();
+					hidePhoneComingWindow();
 					break;
 				case R.id.iv_talking:
 					L.d(thiz, "click iv_talking!!!");

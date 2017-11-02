@@ -38,6 +38,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 	@Override
 	public void showDisconnected() {
+		iServiceView.hideWindow();
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_DISCONNECTED);
 	}
 

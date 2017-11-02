@@ -225,6 +225,11 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
+	public void showTalking(CallLog callLog) {
+		Utils.gotoDialActivity(this, callLog);
+	}
+	
+	@Override
 	public void showHangUp(CallLog callLog) {
 		onHangUp();
 	}
