@@ -199,6 +199,7 @@ public class NForeModel implements IBTPhoneModel {
 				mCommandBluetooth = null;
 			}
 			L.d(thiz, "end onServiceDisconnected");
+			refreshStatus();
 		};
 	};
 
@@ -231,7 +232,7 @@ public class NForeModel implements IBTPhoneModel {
 
 			} else if (newState == NfDef.STATE_READY) {
 				iView.showDisconnected();
-
+				refreshStatus();
 			} else if (newState == NfDef.STATE_CONNECTING) {
 
 			} else if (newState == NfDef.STATE_NOT_INITIALIZED) {
@@ -943,6 +944,11 @@ public class NForeModel implements IBTPhoneModel {
 		return mCallLogMap.get(CallLog.TYPE_CALL_OUT);
 	}
 
+	private void clearAll() {
+		clearBooks();
+		clearAllLogs();
+	}
+	
 	private void clearBooks() {
 		mContactSet.clear();
 	}
@@ -997,11 +1003,13 @@ public class NForeModel implements IBTPhoneModel {
 		}).start();
 	}
 	
-	
-	
-	
-	
-	
-	
+	private void refreshStatus() {
+		booksLoading = false;
+		logsLoading = false;
+		
+		clearAll();
+		
+		phoneState = PhoneState.IDEL;
+	}
 
 }
