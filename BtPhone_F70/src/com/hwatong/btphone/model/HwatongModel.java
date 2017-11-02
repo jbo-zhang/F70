@@ -128,6 +128,7 @@ public class HwatongModel implements IBTPhoneModel {
 		if(iService != null) {
 			try {
 				if(iService.isHfpConnected()) {
+					L.d(thiz, "sync hfp status : true");
 					//同步连接状态
 					iView.showConnected();
 					
@@ -174,6 +175,7 @@ public class HwatongModel implements IBTPhoneModel {
 					
 					
 				} else {
+					L.d(thiz, "sync hfp status : false");
 					iView.showDisconnected();
 				}
 				
@@ -181,6 +183,7 @@ public class HwatongModel implements IBTPhoneModel {
 				e.printStackTrace();
 			}
 		} else {
+			L.d(thiz, "sync iService null");
 			iView.showDisconnected();
 		}
 	}
