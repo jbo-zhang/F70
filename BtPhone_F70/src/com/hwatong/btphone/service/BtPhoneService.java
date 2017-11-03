@@ -107,7 +107,8 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		params.height = LayoutParams.WRAP_CONTENT;
 		params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR;
 		params.format = PixelFormat.TRANSLUCENT;
-		params.flags = LayoutParams.FLAG_NOT_FOCUSABLE | LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+		params.flags = LayoutParams.FLAG_LAYOUT_IN_SCREEN;
+		
 		params.y = 130;
 		params.gravity = Gravity.CENTER_HORIZONTAL | Gravity.TOP;
 

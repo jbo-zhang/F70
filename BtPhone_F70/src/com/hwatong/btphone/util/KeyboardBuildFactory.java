@@ -94,7 +94,7 @@ public class KeyboardBuildFactory {
 
 				int start = mEditText.getSelectionStart();
 				Editable editable = mEditText.getText();
-				if (primaryCode == -2 && editable.length() != 0) {// 删除
+				if (primaryCode == -2 && editable.length() != 0 && start != 0) {// 删除
 					editable.delete(start - 1, start);
 				} else if (primaryCode != -1 && primaryCode != -3 && primaryCode != -2) {
 					editable.insert(start, Character.toString((char) primaryCode));

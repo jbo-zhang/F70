@@ -297,7 +297,7 @@ public class NForeModel implements IBTPhoneModel {
 		@Override
 		public void onHfpCallChanged(String address, NfHfpClientCall call) throws RemoteException {
 
-			L.d(thiz, "onHfpCallChanged() " + address);
+			L.d(thiz, "onHfpCallChanged() " + address + " " + call);
 			if (call != null) {
 				int callstate = call.getState();
 				L.d(thiz, "callstate " + callstate);
@@ -325,6 +325,7 @@ public class NForeModel implements IBTPhoneModel {
 
 					// 通话状态
 				} else if (callstate == NfHfpClientCall.CALL_STATE_ACTIVE) {
+					L.d(thiz, "NfHfpClientCall.CALL_STATE_ACTIVE");
 					
 					if(currentCall == null) {
 						currentCall = getCallLogFromCallStatus(CallLog.TYPE_CALL_OUT, call);
