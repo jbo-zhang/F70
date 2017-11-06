@@ -25,6 +25,7 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 	public String comFlg = "";
 	public String firstLetters = "";
 	public long duration ;
+	public String dtmfStr = "";
 
 	public CallLog() {}
 
@@ -84,6 +85,7 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 		comFlg = in.readString();
 		firstLetters = in.readString();
 		duration = in.readLong();
+		dtmfStr = in.readString();
 	}
 
 	@Override
@@ -95,6 +97,7 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 		dest.writeString(comFlg);
 		dest.writeString(firstLetters);
 		dest.writeLong(duration);
+		dest.writeString(dtmfStr);
 	}
 	
 	

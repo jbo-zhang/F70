@@ -7,7 +7,6 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ComponentName;
 import android.content.Context;
-import android.os.Bundle;
 
 import com.hwatong.btphone.app.BtPhoneApplication;
 import com.hwatong.btphone.bean.CallLog;
@@ -17,8 +16,6 @@ import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IServiceView;
 import com.hwatong.btphone.iview.IUIView;
 import com.hwatong.btphone.model.HwatongModel;
-import com.hwatong.btphone.model.NForeModel;
-import com.hwatong.btphone.model.OldHwatongModel;
 
 public class ServicePresenter implements IUIView, IBTPhoneModel{
 
@@ -106,31 +103,31 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void updateBooks(ArrayList<Contact> list) {
+	public void updateBooks(List<Contact> list) {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_BOOKS);
 	}
 
 
 	@Override
-	public void updateMissedLogs(ArrayList<CallLog> list) {
+	public void updateMissedLogs(List<CallLog> list) {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_MISSED_LOGS);
 	}
 
 
 	@Override
-	public void updateDialedLogs(ArrayList<CallLog> list) {
+	public void updateDialedLogs(List<CallLog> list) {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_DIALED_LOGS);
 	}
 
 
 	@Override
-	public void updateReceivedLogs(ArrayList<CallLog> list) {
+	public void updateReceivedLogs(List<CallLog> list) {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_RECEIVED_LOGS);
 	}
 
 
 	@Override
-	public void updateAllLogs(ArrayList<CallLog> list) {
+	public void updateAllLogs(List<CallLog> list) {
 //		Bundle bundle = new Bundle();
 //		bundle.putParcelableArrayList("logs", list);
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_UPDATE_ALL_LOGS);
@@ -306,29 +303,34 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 	}
 
 	@Override
-	public ArrayList<Contact> getBooks() {
+	public List<Contact> getBooks() {
 		return iModel.getBooks();
 	}
 
 	@Override
-	public ArrayList<CallLog> getLogs() {
+	public List<CallLog> getLogs() {
 		return iModel.getLogs();
 	}
 
 	@Override
-	public ArrayList<CallLog> getMissedLogs() {
+	public List<CallLog> getMissedLogs() {
 		return iModel.getMissedLogs();
 	}
 
 	@Override
-	public ArrayList<CallLog> getReceivedLogs() {
+	public List<CallLog> getReceivedLogs() {
 		return iModel.getReceivedLogs();
 	}
 
 	@Override
-	public ArrayList<CallLog> getDialedLogs() {
+	public List<CallLog> getDialedLogs() {
 		return iModel.getDialedLogs();
 	}
 
+	@Override
+	public void showDTMFInput(CallLog callLog) {
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_DTMF_INPUT, callLog);
+	}
+	
 	
 }

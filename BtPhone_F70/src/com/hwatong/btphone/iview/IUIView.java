@@ -1,6 +1,6 @@
 package com.hwatong.btphone.iview;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.hwatong.btphone.bean.CallLog;
 import com.hwatong.btphone.bean.Contact;
@@ -33,6 +33,9 @@ public interface IUIView {
 	void showTalking(CallLog callLog);
 	
 	
+	void showDTMFInput(CallLog callLog);
+	
+	
 	/**
 	 * 
 	 */
@@ -52,31 +55,31 @@ public interface IUIView {
 	 * 更新通信录
 	 * @param list
 	 */
-	void updateBooks(ArrayList<Contact> list);
+	void updateBooks(List<Contact> list);
 	
 	/**
 	 * 更新未接记录
 	 * @param list
 	 */
-	void updateMissedLogs(ArrayList<CallLog> list);
+	void updateMissedLogs(List<CallLog> list);
 	
 	/**
 	 * 更新拨打记录
 	 * @param list
 	 */
-	void updateDialedLogs(ArrayList<CallLog> list);
+	void updateDialedLogs(List<CallLog> list);
 	
 	/**
 	 * 更新接听记录
 	 * @param list
 	 */
-	void updateReceivedLogs(ArrayList<CallLog> list);
+	void updateReceivedLogs(List<CallLog> list);
 	
 	/**
 	 * 更新全部记录
 	 * @param list
 	 */
-	void updateAllLogs(ArrayList<CallLog> list);
+	void updateAllLogs(List<CallLog> list);
 	
 	
 	/**

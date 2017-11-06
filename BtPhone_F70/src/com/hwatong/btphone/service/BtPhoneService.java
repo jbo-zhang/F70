@@ -335,23 +335,23 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 			servicePresenter.loadReceivedLogs();
 		}
 		
-		public ArrayList<Contact> getBooks() {
+		public List<Contact> getBooks() {
 			return servicePresenter.getBooks();
 		}
 		
-		public ArrayList<CallLog> getLogs() {
+		public List<CallLog> getLogs() {
 			return servicePresenter.getLogs();
 		}
 		
-		public ArrayList<CallLog> getMissedLogs() {
+		public List<CallLog> getMissedLogs() {
 			return servicePresenter.getMissedLogs();
 		}
 		
-		public ArrayList<CallLog> getDialedLogs() {
+		public List<CallLog> getDialedLogs() {
 			return servicePresenter.getDialedLogs();
 		}
 		
-		public ArrayList<CallLog> getReceivedLogs() {
+		public List<CallLog> getReceivedLogs() {
 			return servicePresenter.getReceivedLogs();
 		}
 		

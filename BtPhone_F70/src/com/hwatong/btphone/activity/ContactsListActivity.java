@@ -365,7 +365,7 @@ public class ContactsListActivity extends BaseActivity {
 	}
 
 	@Override
-	public void updateBooks(ArrayList<Contact> list) {
+	public void updateBooks(List<Contact> list) {
 		mContactsList.clear();
 		mContactsList.addAll(list);
 		searchContactsByLetter(mEtShowInputText.getText().toString().trim());

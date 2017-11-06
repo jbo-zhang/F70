@@ -1,6 +1,6 @@
 package com.hwatong.btphone.imodel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 
@@ -87,14 +87,14 @@ public interface IBTPhoneModel {
 	void loadReceivedLogs();
 	
 	
-	ArrayList<Contact> getBooks();
+	List<Contact> getBooks();
 	
-	ArrayList<CallLog> getLogs();
+	List<CallLog> getLogs();
 	
-	ArrayList<CallLog> getMissedLogs();
+	List<CallLog> getMissedLogs();
 	
-	ArrayList<CallLog> getReceivedLogs();
+	List<CallLog> getReceivedLogs();
 	
-	ArrayList<CallLog> getDialedLogs();
+	List<CallLog> getDialedLogs();
 	
 }

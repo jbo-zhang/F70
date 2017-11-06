@@ -1,6 +1,7 @@
 package com.hwatong.btphone.activity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Intent;
 import android.text.TextUtils;
@@ -282,7 +283,7 @@ public class DialActivity extends BaseActivity {
 	 */
 	private void updateDialPanel() {
 		// 若是未通话，或者通话过程中输入了按键，则头像需要去掉，显示输入数字
-		boolean isIdel = mCurPhoneState == PhoneState.IDEL | mCurPhoneState == PhoneState.INPUT;
+		boolean isIdel = mCurPhoneState == PhoneState.IDEL;
 		// 头像，人名，号码，时间
 		mDialPeopleView.setVisibility(isIdel ? View.GONE : View.VISIBLE);
 		// 电话号码文本
@@ -433,12 +434,6 @@ public class DialActivity extends BaseActivity {
 				char code = mKeyBoardCb.getChar(v.getId());
 				if (mService != null) {
 					mService.dtmf(code);
-					if (mCurPhoneState != PhoneState.INPUT) {
-						onStateChange(PhoneState.INPUT);
-						currentNumber = mTvInputNumber.getText();
-						mTvInputNumber.setText("");
-					}
-					mKeyBoardCb.append(v.getId(), dtmf);
 				}
 			}
 			break;
@@ -607,10 +602,15 @@ public class DialActivity extends BaseActivity {
 	}
 
 	@Override
-	public void updateAllLogs(ArrayList<CallLog> list) {
+	public void updateAllLogs(List<CallLog> list) {
 		mCallAdapter.refresh(list);
 	}
 	
 	
-
+	@Override
+	public void showDTMFInput(CallLog callLog) {
+		onStateChange(PhoneState.INPUT);
+		mTvName.setText(callLog.dtmfStr);
+		showTalkingTime(callLog.duration);
+	}
 }

@@ -256,7 +256,7 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void updateDialedLogs(ArrayList<CallLog> list) {
+	public void updateDialedLogs(List<CallLog> list) {
 		mCallLogMap.get(CallLog.TYPE_CALL_OUT).clear();
 		mCallLogMap.get(CallLog.TYPE_CALL_OUT).addAll(list);
 		if(CallLog.TYPE_CALL_OUT == mCurCallLogType) {
@@ -265,7 +265,7 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void updateMissedLogs(ArrayList<CallLog> list) {
+	public void updateMissedLogs(List<CallLog> list) {
 		mCallLogMap.get(CallLog.TYPE_CALL_MISS).clear();
 		mCallLogMap.get(CallLog.TYPE_CALL_MISS).addAll(list);
 		if(CallLog.TYPE_CALL_MISS == mCurCallLogType) {
@@ -274,7 +274,7 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void updateReceivedLogs(ArrayList<CallLog> list) {
+	public void updateReceivedLogs(List<CallLog> list) {
 		mCallLogMap.get(CallLog.TYPE_CALL_IN).clear();
 		mCallLogMap.get(CallLog.TYPE_CALL_IN).addAll(list);
 		if(CallLog.TYPE_CALL_IN == mCurCallLogType) {

@@ -8,13 +8,14 @@
 
     <com.hwatong.btphone.ui.DrawableTextView
         android:id="@+id/dtv_name"
-        android:layout_width="wrap_content"
+        android:layout_width="500px"
         android:layout_height="62px"
         android:layout_centerVertical="true"
         android:layout_marginLeft="30dp"
         android:drawablePadding="20dp"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:textColor="#FFFFFF"
+        android:singleLine="true"
         android:textSize="@dimen/item_contacts_textsize"
         hwatong:drawableHeight="@dimen/item_contacts_drawable_height"
         hwatong:drawableWidth="@dimen/item_contacts_drawable_width" />

@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeSet;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -28,6 +30,7 @@ import com.hwatong.btphone.constants.PhoneState;
 import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IUIView;
 import com.hwatong.btphone.util.L;
+import com.hwatong.btphone.util.ThreadPoolUtil;
 import com.hwatong.btphone.util.TimerTaskUtil;
 import com.hwatong.btphone.util.Utils;
 
@@ -43,23 +46,31 @@ public class HwatongModel implements IBTPhoneModel {
 	/**
 	 * 三个通话类型列表
 	 */
-	private SparseArray<ArrayList<CallLog>> mCallLogMap = new SparseArray<ArrayList<CallLog>>(3);
+	private SparseArray<List<CallLog>> mCallLogMap = new SparseArray<List<CallLog>>(3);
 
 	/**
 	 * 所有通话记录列表
 	 */
-	private ArrayList<CallLog> mAllCallLogList = new ArrayList<CallLog>();
+
+//	private ArrayList<CallLog> mAllCallLogList = new ArrayList<CallLog>();
+	
+	private List<CallLog> mAllCallLogList = Collections.synchronizedList(new ArrayList<CallLog>());
+	
 	
 	/**
 	 * 所有通讯录列表
 	 */
 	private ArrayList<Contact> mContacts = new ArrayList<Contact>();
-
+	
 	/**
 	 * 通讯录列表 去重 排序
 	 */
-	private TreeSet<Contact> mContactSet = new TreeSet<Contact>();
+	//private TreeSet<Contact> mContactSet = new TreeSet<Contact>();
 
+	private Set mContactSet = Collections.synchronizedSet(new TreeSet<Contact>());
+	
+	
+	
 	/**
 	 * 蓝牙服务Action
 	 */
@@ -107,9 +118,9 @@ public class HwatongModel implements IBTPhoneModel {
 	
 	public HwatongModel(IUIView iView) {
 		this.iView = iView;
-		mCallLogMap.put(CallLog.TYPE_CALL_IN, new ArrayList<CallLog>());
-		mCallLogMap.put(CallLog.TYPE_CALL_OUT, new ArrayList<CallLog>());
-		mCallLogMap.put(CallLog.TYPE_CALL_MISS, new ArrayList<CallLog>());
+		mCallLogMap.put(CallLog.TYPE_CALL_IN, Collections.synchronizedList((new ArrayList<CallLog>())));
+		mCallLogMap.put(CallLog.TYPE_CALL_OUT, Collections.synchronizedList(new ArrayList<CallLog>()));
+		mCallLogMap.put(CallLog.TYPE_CALL_MISS, Collections.synchronizedList(new ArrayList<CallLog>()));
 	}
 	
 	@Override
@@ -243,6 +254,9 @@ public class HwatongModel implements IBTPhoneModel {
 			try {
 				L.d(thiz,"dtmf()");
 				iService.phoneTransmitDTMFCode(code);
+				phoneState = PhoneState.INPUT;
+				currentCall.dtmfStr += code;
+				iView.showDTMFInput(currentCall);
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -287,6 +301,7 @@ public class HwatongModel implements IBTPhoneModel {
 				boolean result = iService.phoneBookStartUpdate();
 				if(result) {
 					booksLoading = true;
+					logsLoading = true;
 					clearAll();
 					iView.showBooksLoadStart();
 					new Thread(new Runnable() {
@@ -298,6 +313,7 @@ public class HwatongModel implements IBTPhoneModel {
 					}).start();
 				} else {
 					booksLoading = false;
+					logsLoading = false;
 					showBooksLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
 				}
 			} catch (RemoteException e) {
@@ -499,21 +515,28 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 		
 		@Override
-		public void onPhoneBook(String type, String name, String number)
+		public void onPhoneBook(final String type, final String name, final String number)
 				throws RemoteException {
-			L.dRoll(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
-			if (TextUtils.isEmpty(number) || !number.matches("^\\d*")) {
-				return;
-			}
-			name = name.replaceAll(" +", "");
-			number = number.replaceAll(":", "");
-			String[] strs = Utils.getPinyinAndFirstLetter(name);
-			Contact contact = new Contact(name, number,strs[0], strs[1]);
-			mContactSet.add(contact);
-			if(mContactSet.size() % 30 == 0) {
-				mContacts = new ArrayList<Contact>(mContactSet);
-				iView.updateBooks(mContacts);
-			}
+			
+			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					L.dRoll(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
+					if (TextUtils.isEmpty(number) || !number.matches("^\\d*")) {
+						return;
+					}
+					String name2 = name.replaceAll(" +", "");
+					String number2 = number.replaceAll(":", "");
+					String[] strs = Utils.getPinyinAndFirstLetter(name);
+					Contact contact = new Contact(name2, number2,strs[0], strs[1]);
+					mContactSet.add(contact);
+					if(mContactSet.size() % 50 == 0) {
+						mContacts = new ArrayList<Contact>(mContactSet);
+						iView.updateBooks(mContacts);
+					}
+				}
+			});
 		}
 		
 		@Override
@@ -547,75 +570,91 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onContactsChange() throws RemoteException {
 			L.dRoll(thiz, "onContactsChange");
-			List<com.hwatong.btphone.Contact> contactList = iService.getContactList();
-			L.dRoll(thiz, "onContactsChange contactList : " + contactList.size());
+//			List<com.hwatong.btphone.Contact> contactList = iService.getContactList();
+//			L.dRoll(thiz, "onContactsChange contactList : " + contactList.size());
 		}
 		
 		@Override
-		public void onCalllogDone(String type, int error) throws RemoteException {
+		public void onCalllogDone(final String type,final int error) throws RemoteException {
 			L.d(thiz, "onCalllogDone type= " + type + " error= " + error);
 
-			switch(error) {
-			case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
-				mAllCallLogList.clear();
-				//更新通话记录
-				for (int i = 0; i < mCallLogMap.size(); i++) {
-					mAllCallLogList.addAll(mCallLogMap.get(mCallLogMap.keyAt(i)));
-				}
-				Collections.sort(mAllCallLogList, new CallLog.CallLogComparator());
+			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
 				
-				showLogsLoadedAndSync(true, 0);
-				
-				iView.updateAllLogs(mAllCallLogList);
-				iView.updateMissedLogs(mCallLogMap.get(CallLog.TYPE_CALL_MISS));
-				iView.updateDialedLogs(mCallLogMap.get(CallLog.TYPE_CALL_OUT));
-				iView.updateReceivedLogs(mCallLogMap.get(CallLog.TYPE_CALL_IN));	
+				@Override
+				public void run() {
+					switch(error) {
+					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
+						mAllCallLogList.clear();
+						//更新通话记录
+						for (int i = 0; i < mCallLogMap.size(); i++) {
+							mAllCallLogList.addAll(mCallLogMap.get(mCallLogMap.keyAt(i)));
+						}
+						Collections.sort(mAllCallLogList, new CallLog.CallLogComparator());
+						
+						showLogsLoadedAndSync(true, 0);
+						
+						iView.updateAllLogs(mAllCallLogList);
+						iView.updateMissedLogs(mCallLogMap.get(CallLog.TYPE_CALL_MISS));
+						iView.updateDialedLogs(mCallLogMap.get(CallLog.TYPE_CALL_OUT));
+						iView.updateReceivedLogs(mCallLogMap.get(CallLog.TYPE_CALL_IN));	
 
-				break;
-			case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
-			case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
-			case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
-				showLogsLoadedAndSync(false, error);
-				break;
-			}
+						break;
+					case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
+					case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
+					case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
+						showLogsLoadedAndSync(false, error);
+						break;
+					}
+					
+					logsLoading = false;
+					
+				}
+			});
 			
-			logsLoading = false;
 		}
 		
 		@Override
 		public void onCalllogChange(String type) throws RemoteException {
 			// TODO Auto-generated method stub
 			L.dRoll(thiz, "onCalllogChange type = " + type);
-			List<com.hwatong.btphone.CallLog> calllogList = iService.getCalllogList(type);
-			L.dRoll(thiz, "onCalllogChange calllogList : " + calllogList.size() + " " + calllogList.get(0));
 			
-			//来电
-			if(com.hwatong.btphone.CallLog.TYPE_CALL_IN.equals(type)) {
-				
-			//漏接
-			} else if(com.hwatong.btphone.CallLog.TYPE_CALL_MISS.equals(type)) {
-				
-			//去电
-			} else if(com.hwatong.btphone.CallLog.TYPE_CALL_OUT.equals(type)) {
-				
-			}
+//			List<com.hwatong.btphone.CallLog> calllogList = iService.getCalllogList(type);
+//			L.dRoll(thiz, "onCalllogChange calllogList : " + calllogList.size() + " " + calllogList.get(0));
+//			
+//			//来电
+//			if(com.hwatong.btphone.CallLog.TYPE_CALL_IN.equals(type)) {
+//				
+//			//漏接
+//			} else if(com.hwatong.btphone.CallLog.TYPE_CALL_MISS.equals(type)) {
+//				
+//			//去电
+//			} else if(com.hwatong.btphone.CallLog.TYPE_CALL_OUT.equals(type)) {
+//				
+//			}
 		}
 		
 		@Override
-		public void onCalllog(String type, String name, String number, String date) throws RemoteException {
+		public void onCalllog(final String type, final String name, final String number, final String date) throws RemoteException {
 			L.dRoll(thiz, "onCalllog type= " + type + " name= " + name + " number= " + number+ " date= " + date);
-			name = name.replaceAll(" +", "");
-			number = number.replaceAll(":", "");
-			int typeInt = Integer.parseInt(type);
 			
-			CallLog callLog = new CallLog(typeInt, name, number, date);
-			
-			ArrayList<CallLog> callLogs = mCallLogMap.get(typeInt);
-			if (callLogs == null) {
-				callLogs = new ArrayList<CallLog>();
-				mCallLogMap.put(typeInt, callLogs);
-			}
-			callLogs.add(callLog);
+			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					String name2 = name.replaceAll(" +", "");
+					String number2 = number.replaceAll(":", "");
+					int typeInt = Integer.parseInt(type);
+					
+					CallLog callLog = new CallLog(typeInt, name, number, date);
+					
+					List<CallLog> callLogs = mCallLogMap.get(typeInt);
+					if (callLogs == null) {
+						callLogs = new ArrayList<CallLog>();
+						mCallLogMap.put(typeInt, callLogs);
+					}
+					callLogs.add(callLog);
+				}
+			});
 		}
 		
 		@Override
@@ -627,7 +666,7 @@ public class HwatongModel implements IBTPhoneModel {
 				L.d(thiz, "onCallStatusChanged status : " + callStatus.status);
 				//闲置状态
 				if (CallStatus.PHONE_CALL_NONE.equals(callStatus.status)) {
-					if(phoneState == PhoneState.TALKING || phoneState == PhoneState.OUTGOING) {
+					if(phoneState == PhoneState.TALKING || phoneState == PhoneState.OUTGOING || phoneState == PhoneState.INPUT) {
 						iView.showHangUp(currentCall);
 					} else if(phoneState == PhoneState.INCOMING) {
 						iView.showReject(currentCall);
@@ -670,7 +709,11 @@ public class HwatongModel implements IBTPhoneModel {
 							@Override
 							public void run() {
 								currentCall.duration += 1000;
-								iView.showTalking(currentCall);
+								if(phoneState == PhoneState.TALKING) {
+									iView.showTalking(currentCall);
+								} else if(phoneState == phoneState.INPUT) {
+									iView.showDTMFInput(currentCall);
+								}
 							}
 						});
 					}
@@ -697,31 +740,31 @@ public class HwatongModel implements IBTPhoneModel {
 	}
 
 	@Override
-	public ArrayList<Contact> getBooks() {
+	public List<Contact> getBooks() {
 		L.d(thiz, "getBooks mContacts.size : " + mContacts.size());
 		return mContacts;
 	}
 
 	@Override
-	public ArrayList<CallLog> getLogs() {
+	public List<CallLog> getLogs() {
 		L.d(thiz, "getLogs mAllCallLogList.size : " + mAllCallLogList.size());
 		return mAllCallLogList;
 	}
 
 	@Override
-	public ArrayList<CallLog> getMissedLogs() {
+	public List<CallLog> getMissedLogs() {
 		L.d(thiz, "getMissedLogs mCallLogMap.get(CallLog.TYPE_CALL_MISS).size : " + mCallLogMap.get(CallLog.TYPE_CALL_MISS).size());
 		return mCallLogMap.get(CallLog.TYPE_CALL_MISS);
 	}
 
 	@Override
-	public ArrayList<CallLog> getReceivedLogs() {
+	public List<CallLog> getReceivedLogs() {
 		L.d(thiz, "getReceivedLogs mCallLogMap.get(CallLog.TYPE_CALL_IN).size : " + mCallLogMap.get(CallLog.TYPE_CALL_IN).size());
 		return mCallLogMap.get(CallLog.TYPE_CALL_IN);
 	}
 
 	@Override
-	public ArrayList<CallLog> getDialedLogs() {
+	public List<CallLog> getDialedLogs() {
 		L.d(thiz, "getDialedLogs mCallLogMap.get(CallLog.TYPE_CALL_OUT).size : " + mCallLogMap.get(CallLog.TYPE_CALL_OUT).size());
 		return mCallLogMap.get(CallLog.TYPE_CALL_OUT);
 	}

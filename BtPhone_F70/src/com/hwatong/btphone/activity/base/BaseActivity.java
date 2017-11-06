@@ -1,6 +1,7 @@
 package com.hwatong.btphone.activity.base;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -52,7 +53,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			Constant.MSG_SHOW_BOOKS_LOADED,Constant.MSG_SHOW_LOGS_LOAD_START, 
 			Constant.MSG_SHOW_LOGS_LOADING,Constant.MSG_SHOW_LOGS_LOADED, 
 			Constant.MSG_SHOW_MIC_MUTE, Constant.MSG_SHOW_SOUND_TRACK,
-			Constant.MSG_CLOSE, Constant.MSG_SHOW_IDEL};
+			Constant.MSG_CLOSE, Constant.MSG_SHOW_IDEL, Constant.MSG_SHOW_DTMF_INPUT};
 
 	@SuppressLint("HandlerLeak")
 	protected Handler mHandler = new Handler() {
@@ -101,7 +102,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_UPDATE_BOOKS:				//更新通讯录			
 				L.d(thiz, "Constant.MSG_UPDATE_BOOKS");
 				if(mService != null) {
-					ArrayList<Contact> contacts = mService.getBooks();
+					List<Contact> contacts = mService.getBooks();
 					updateBooks(contacts);
 				}
 				
@@ -110,7 +111,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_UPDATE_MISSED_LOGS:		//更新未接列表
 				L.d(thiz, "Constant.MSG_UPDATE_MISSED_LOGS");
 				if(mService != null) {
-					ArrayList<CallLog> missedLogs = mService.getMissedLogs();
+					List<CallLog> missedLogs = mService.getMissedLogs();
 					updateMissedLogs(missedLogs);
 				}
 				break;
@@ -118,7 +119,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_UPDATE_DIALED_LOGS:		//更新拨出列表
 				L.d(thiz, "Constant.MSG_UPDATE_DIALED_LOGS");
 				if(mService != null) {
-					ArrayList<CallLog> dialedLogs = mService.getDialedLogs();
+					List<CallLog> dialedLogs = mService.getDialedLogs();
 					updateDialedLogs(dialedLogs);
 				}
 				break;
@@ -126,7 +127,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_UPDATE_RECEIVED_LOGS:		//更新接听列表
 				L.d(thiz, "Constant.MSG_UPDATE_RECEIVED_LOGS");
 				if(mService != null) {
-					ArrayList<CallLog> receivedLogs = mService.getReceivedLogs();
+					List<CallLog> receivedLogs = mService.getReceivedLogs();
 					updateReceivedLogs(receivedLogs);
 				}
 				break;
@@ -134,7 +135,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_UPDATE_ALL_LOGS:			//更新全部通话列表
 				L.d(thiz, "Constant.MSG_UPDATE_ALL_LOGS");
 				if(mService != null) {
-					ArrayList<CallLog> logs = mService.getLogs();
+					List<CallLog> logs = mService.getLogs();
 					updateAllLogs(logs);
 				}
 				break;
@@ -198,6 +199,11 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_CLOSE:
 				L.d(thiz, "Constant.MSG_CLOSE");
 				finish();
+				break;
+				
+			case Constant.MSG_SHOW_DTMF_INPUT:			//dtmf输入
+				L.d(thiz, "Constant.MSG_SHOW_DTMF_INPUT");
+				showDTMFInput((CallLog)msg.obj);
 				break;
 				
 			default:
@@ -388,31 +394,31 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public void updateBooks(ArrayList<Contact> list) {
+	public void updateBooks(List<Contact> list) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateMissedLogs(ArrayList<CallLog> list) {
+	public void updateMissedLogs(List<CallLog> list) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateDialedLogs(ArrayList<CallLog> list) {
+	public void updateDialedLogs(List<CallLog> list) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateReceivedLogs(ArrayList<CallLog> list) {
+	public void updateReceivedLogs(List<CallLog> list) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void updateAllLogs(ArrayList<CallLog> list) {
+	public void updateAllLogs(List<CallLog> list) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -483,6 +489,11 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 		
 	}
 	
+	
+	@Override
+	public void showDTMFInput(CallLog callLog) {
+		// TODO Auto-generated method stub
+	}
 	
 	
 
