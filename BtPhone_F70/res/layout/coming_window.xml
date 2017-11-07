@@ -24,6 +24,7 @@
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:singleLine="true"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="38px"
             android:textSize="25px" />

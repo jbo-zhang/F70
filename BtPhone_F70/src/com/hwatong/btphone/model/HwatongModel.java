@@ -29,6 +29,7 @@ import com.hwatong.btphone.constants.BtPhoneDef;
 import com.hwatong.btphone.constants.PhoneState;
 import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IUIView;
+import com.hwatong.btphone.presenter.PhoneBookPresenter;
 import com.hwatong.btphone.util.L;
 import com.hwatong.btphone.util.ThreadPoolUtil;
 import com.hwatong.btphone.util.TimerTaskUtil;
@@ -116,6 +117,11 @@ public class HwatongModel implements IBTPhoneModel {
 	 */
 	private boolean isMute;
 	
+	
+	private PhoneBookPresenter phoneBookPresenter;
+	
+	
+	
 	public HwatongModel(IUIView iView) {
 		this.iView = iView;
 		mCallLogMap.put(CallLog.TYPE_CALL_IN, Collections.synchronizedList((new ArrayList<CallLog>())));
@@ -126,6 +132,7 @@ public class HwatongModel implements IBTPhoneModel {
 	@Override
 	public void link(Context context) {
 		context.bindService(new Intent(ACTION_BT_SERVICE), mBtSdkConn, Context.BIND_AUTO_CREATE);
+		phoneBookPresenter = new PhoneBookPresenter(context);
 	}
 
 	@Override
@@ -156,10 +163,8 @@ public class HwatongModel implements IBTPhoneModel {
 					} else {
 						iView.syncLogsAlreadyLoad();
 					}
-					
 					//同步通讯录
 					iView.updateBooks(mContacts);
-					
 					//同步通话记录
 					iView.updateAllLogs(mAllCallLogList);
 					iView.updateDialedLogs(mCallLogMap.get(CallLog.TYPE_CALL_OUT));
@@ -311,6 +316,9 @@ public class HwatongModel implements IBTPhoneModel {
 							iView.showBooksLoading();
 						}
 					}).start();
+					
+					phoneBookPresenter.requestExit();
+					
 				} else {
 					booksLoading = false;
 					logsLoading = false;
@@ -494,35 +502,58 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 		
 		@Override
-		public void onPhoneBookDone(int error) throws RemoteException {
+		public void onPhoneBookDone(final int error) throws RemoteException {
 			L.d(thiz, "onPhoneBookDone error = " + error);
-
-			switch(error) {
-			case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
-				mContacts = new ArrayList<Contact>(mContactSet);
-				iView.updateBooks(mContacts);
-				showBooksLoadedAndSync(true, error);
-				break;
-			case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
-			case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
-			case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
-				mContacts = new ArrayList<Contact>(mContactSet);
-				iView.updateBooks(mContacts);
-				showBooksLoadedAndSync(false, error);
-				break;
-			}
-			booksLoading = false;
-		}
-		
-		@Override
-		public void onPhoneBook(final String type, final String name, final String number)
-				throws RemoteException {
 			
 			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
 				
 				@Override
 				public void run() {
-					L.dRoll(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
+					long start = System.currentTimeMillis();
+					
+					switch(error) {
+					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
+						mContacts = new ArrayList<Contact>(mContactSet);
+						iView.updateBooks(mContacts);
+						L.d(thiz, "onPhoneBookDone size : " + mContacts.size());
+						showBooksLoadedAndSync(true, error);
+						
+						break;
+					case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
+					case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
+					case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
+						mContacts = new ArrayList<Contact>(mContactSet);
+						iView.updateBooks(mContacts);
+						showBooksLoadedAndSync(false, error);
+						break;
+					}
+					booksLoading = false;
+					
+					//插入到数据库
+					new Thread(new Runnable() {
+						
+						@Override
+						public void run() {
+							phoneBookPresenter.addContacts(new ArrayList<Contact>(mContacts));
+						}
+					}).start();
+					
+					
+					L.d(thiz, "onPhoneBookDone cost : " + (System.currentTimeMillis() - start));
+				}
+			});
+		}
+		
+		@Override
+		public void onPhoneBook(final String type, final String name, final String number)
+				throws RemoteException {
+			L.dRoll(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
+			
+			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					long start = System.currentTimeMillis();
 					if (TextUtils.isEmpty(number) || !number.matches("^\\d*")) {
 						return;
 					}
@@ -531,10 +562,16 @@ public class HwatongModel implements IBTPhoneModel {
 					String[] strs = Utils.getPinyinAndFirstLetter(name);
 					Contact contact = new Contact(name2, number2,strs[0], strs[1]);
 					mContactSet.add(contact);
+					
+//					phoneBookPresenter.addContact(name2, number2);
+					
 					if(mContactSet.size() % 50 == 0) {
 						mContacts = new ArrayList<Contact>(mContactSet);
 						iView.updateBooks(mContacts);
 					}
+					
+					L.d(thiz, "onPhoneBook cost : " + (System.currentTimeMillis() - start));
+					
 				}
 			});
 		}
@@ -582,6 +619,8 @@ public class HwatongModel implements IBTPhoneModel {
 				
 				@Override
 				public void run() {
+					long start = System.currentTimeMillis();
+					
 					switch(error) {
 					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
 						mAllCallLogList.clear();
@@ -608,6 +647,7 @@ public class HwatongModel implements IBTPhoneModel {
 					
 					logsLoading = false;
 					
+					L.d(thiz, "onCalllogDone cost : " + (System.currentTimeMillis() - start));
 				}
 			});
 			
@@ -641,6 +681,8 @@ public class HwatongModel implements IBTPhoneModel {
 				
 				@Override
 				public void run() {
+					long start = System.currentTimeMillis();
+					
 					String name2 = name.replaceAll(" +", "");
 					String number2 = number.replaceAll(":", "");
 					int typeInt = Integer.parseInt(type);
@@ -653,6 +695,8 @@ public class HwatongModel implements IBTPhoneModel {
 						mCallLogMap.put(typeInt, callLogs);
 					}
 					callLogs.add(callLog);
+					
+					L.d(thiz, "onCalllog cost : " + (System.currentTimeMillis() - start));
 				}
 			});
 		}
@@ -730,8 +774,7 @@ public class HwatongModel implements IBTPhoneModel {
 			logsLoading = false;
 		}
 	};
-	
-	
+
 	
 	private CallLog getCallLogFromCallStatus(int type, CallStatus callStatus) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

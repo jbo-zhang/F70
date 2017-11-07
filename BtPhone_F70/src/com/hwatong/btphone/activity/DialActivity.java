@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -214,7 +215,6 @@ public class DialActivity extends BaseActivity {
 		mKeyBoardCb.bindTextView(mTvInputNumber);
 		
 		dtmf = new DailDTMF(this);
-
 		initListView();
 	}
 	
@@ -468,6 +468,7 @@ public class DialActivity extends BaseActivity {
 	protected void onDestroy() {
 		mKeyBoardCb.unBindTextView();
 		mKeyBoardCb.deleteAll();
+		dtmf.destory();
 		super.onDestroy();
 	}
 

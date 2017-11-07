@@ -9,6 +9,8 @@ import android.provider.Settings;
 
 public class DailDTMF {
 
+	private final static String thiz = DailDTMF.class.getSimpleName();
+	
 	private static final HashMap<Character, Integer> mToneMap = new HashMap<Character, Integer>();
 	static {
 		mToneMap.put('0', ToneGenerator.TONE_DTMF_0);
@@ -71,6 +73,7 @@ public class DailDTMF {
 			}
 
 			int tone = mToneMap.get(c);
+			L.d(thiz, "startTone() tone : " + tone);
 			mToneGenerator.startTone(tone, DTMF_DURATION_MS);
 		}
 	}
