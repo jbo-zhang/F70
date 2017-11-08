@@ -53,7 +53,20 @@ public class TBoxPresenter {
 		this.tboxView = tboxView;
 	}
 	
-	private String src, des, updateName;
+	/**
+	 * U盘文件路径
+	 */
+	private String src;
+	
+	/**
+	 * ftp文件路径
+	 */
+	private String des;
+	
+	/**
+	 * 升级方法参数
+	 */
+	private String updateName;
 	
 	
 	/**
@@ -72,53 +85,59 @@ public class TBoxPresenter {
 				L.d(thiz, "unregisterTboxCallback");
 				mTboxService.unregisterTboxCallback(mTboxCallback);
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		context.unbindService(tboxConnection);
 	}
 	
-	public void updateTbox() {
-		
+	public void loadFiles() {
 		List<File> files = getFiles(USB_PATH);
 		if(files == null || files.size() == 0) {
 			files = getFiles(USB_PATH2);
 		} 
 		
 		if(files != null && files.size() > 0) {
-			src = files.get(0).getAbsolutePath();
-			des = path + files.get(0).getName();
-			updateName = "/" + files.get(0).getName();
-			
-			File ftpDirectory = new File(ftpPath);
-			if (!ftpDirectory.exists()) {
-				if(!ftpDirectory.mkdirs()) {
-					tboxView.showNoFiles();
-					return ;
-				}
-			}
-			tboxView.showConfirmDialog(files.get(0).getName());
+			tboxView.showFiles(files);
 		} else {
 			tboxView.showNoFiles();
 		}
 		
 		L.d(thiz, "" + files);
-
+		
+	}
+	
+	
+	public void updateTbox(File file) {
+		if(file == null) {
+			return;
+		}
+		
+		src = file.getAbsolutePath();
+		des = path + file.getName();
+		updateName = "/" + file.getName();
+		
+		
+		File ftpDirectory = new File(ftpPath);
+		if (!ftpDirectory.exists()) {
+			if(!ftpDirectory.mkdirs()) {
+				tboxView.showNoFiles();
+				return ;
+			}
+		}
+		
+		tboxView.showConfirmDialog(file);
 	}
 	
 	public void confirmUpdate() {
 		L.d(thiz, "src: " + src + " des: " + des) ;
-		
 		new Thread(new Runnable() {
-			
 			@Override
 			public void run() {
 				FileUtil.copyFile(src, des, tboxView);
 			}
 		}).start();
 	}
-	
 	
 	public void startUpdate() {
 		L.d(thiz, "start update filename : " + updateName);
@@ -127,7 +146,6 @@ public class TBoxPresenter {
 				mTboxService.update(updateName);
 				tboxView.showUpdateStart();
 			} catch (RemoteException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

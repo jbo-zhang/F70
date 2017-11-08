@@ -1,5 +1,8 @@
 package com.hwatong.btphone.activity;
 
+import java.io.File;
+import java.util.List;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,7 +30,7 @@ import com.hwatong.btphone.util.Utils;
  * @author zxy zjb time:2017年5月25日
  * 
  */
-public class PhoneActivity extends BaseActivity implements ITBoxUpdateView{
+public class PhoneActivity extends BaseActivity{
 
 	private static final String thiz = PhoneActivity.class.getSimpleName();
 
@@ -62,9 +65,6 @@ public class PhoneActivity extends BaseActivity implements ITBoxUpdateView{
 		// 默认为false
 		showBtConnected(false);
 
-		tBoxPresenter = new TBoxPresenter(this);
-		tBoxPresenter.initTboxService(this);
-		
 	}
 
 	/**
@@ -88,9 +88,7 @@ public class PhoneActivity extends BaseActivity implements ITBoxUpdateView{
 				break;
 
 			case 321:
-				//Toast.makeText(PhoneActivity.this, "触发tbox升级", Toast.LENGTH_SHORT).show();
-
-				tBoxPresenter.updateTbox();
+				startActivity(new Intent(PhoneActivity.this, TboxUpdateActivity.class));
 				break;
 			default:
 				break;
@@ -98,36 +96,12 @@ public class PhoneActivity extends BaseActivity implements ITBoxUpdateView{
 		};
 	};
 
-	private void showTboxUpdateDialog(String fileName) {
-        final AlertDialog.Builder normalDialog = new AlertDialog.Builder(this);
-        normalDialog.setTitle("TBox升级");
-        normalDialog.setMessage("找到文件 " + fileName +" ,确定升级TBox吗?");
-        normalDialog.setPositiveButton("确定", 
-            new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            	tBoxPresenter.confirmUpdate();
-            }
-        });
-        normalDialog.setNegativeButton("关闭", 
-            new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //...To-do
-            }
-        });
-        // 显示
-        normalDialog.show();
-	}
+	
 	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		tBoxPresenter.unbindTbox(this);
 	}
-	
-
-	private TBoxPresenter tBoxPresenter;
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
@@ -271,72 +245,5 @@ public class PhoneActivity extends BaseActivity implements ITBoxUpdateView{
 	public void showHangUp(CallLog callLog) {
 		L.d(thiz, "showHangUp");
 	}
-
-	
-	//------------tbox升级相关--------------
-	@Override
-	public void showConfirmDialog(String fileName) {
-		showTboxUpdateDialog(fileName);
-	}
-
-	@Override
-	public void showCopyProgress(final long percent) {
-		runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				showToast(PhoneActivity.this, "复制进度：" + percent + "%");
-			}
-		});
-	}
-
-	@Override
-	public void showUpdateResult(int result, final String info) {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(PhoneActivity.this, info, Toast.LENGTH_SHORT).show();
-			}
-		});
-	}
-	
-	private Toast mToast;
-	public void showToast(Context context, String msg) {
-		if (mToast != null) {
-			mToast.setText(msg);
-			mToast.setDuration(Toast.LENGTH_SHORT);
-		} else {
-			mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-		}
-		mToast.show();
-	}
-	
-	@Override
-	public void copyEnd() {
-		tBoxPresenter.startUpdate();
-	}
-	
-	@Override
-	public void showNoFiles() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(PhoneActivity.this, "没有找到tbox升级文件", Toast.LENGTH_SHORT).show();
-			}
-		});
-	}
-	
-	
-	@Override
-	public void showUpdateStart() {
-		runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(PhoneActivity.this, "开始升级", Toast.LENGTH_SHORT).show();
-			}
-		});
-		
-	}
-	
 
 }

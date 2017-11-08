@@ -63,6 +63,7 @@ public class FileUtil {
 	private static final String thiz = FileUtil.class.getSimpleName();
 	
 	public static boolean copyFile(String src, String dest, ITBoxUpdateView iView) {
+		L.d(thiz, "copyFile src: " + src + " dest: " + dest);
 		boolean result = true;
 
 		FileInputStream fi = null;
@@ -82,7 +83,9 @@ public class FileUtil {
 			byte[] buffer = new byte[count];
 			int read = 0;
 			int i =0;
+			L.d(thiz, "before while");
 			while ((read = fi.read(buffer, 0, count)) != -1) {
+				L.d(thiz, "in while");
 				if((i++) == 10) {
 					i=0;
 					long percent = (destFile.length() * 100)/srcFile.length();
@@ -90,10 +93,7 @@ public class FileUtil {
 				}
 				fo.write(buffer, 0, read);
 			}
-
-			long percent = (destFile.length() * 100)/srcFile.length();
-			iView.showCopyProgress(percent);
-			
+			L.d(thiz, "after while");
 			iView.copyEnd();
 			
 		} catch (FileNotFoundException e) {

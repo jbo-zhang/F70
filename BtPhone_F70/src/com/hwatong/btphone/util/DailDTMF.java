@@ -73,7 +73,7 @@ public class DailDTMF {
 			}
 
 			int tone = mToneMap.get(c);
-			L.d(thiz, "startTone() tone : " + tone);
+			L.d(thiz, "startTone() tone 2 : " + tone);
 			mToneGenerator.startTone(tone, DTMF_DURATION_MS);
 		}
 	}

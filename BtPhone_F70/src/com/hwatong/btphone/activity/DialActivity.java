@@ -215,6 +215,9 @@ public class DialActivity extends BaseActivity {
 		mKeyBoardCb.bindTextView(mTvInputNumber);
 		
 		dtmf = new DailDTMF(this);
+		
+		//setVolumeControlStream(AudioManager.STREAM_RING);
+		
 		initListView();
 	}
 	
