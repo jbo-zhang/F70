@@ -13,7 +13,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
-import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,10 +22,8 @@ import android.os.Message;
 import android.os.RemoteException;
 import android.os.ServiceManager;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -754,6 +751,11 @@ public class MainActivity extends Activity implements OnClickListener {
 
 		mHandler.removeMessages(MSG_AC_STATUS_RECEIVED);
 		mHandler.removeCallbacksAndMessages(null);
+		
+		Intent intent = new Intent("com.hwatong.action.AIR_CONDITION_CLOSE");
+		sendBroadcast(intent);
+		Log.d(TAG, "onDestroy sendBroadcast!");
+		
 		super.onDestroy();
 	}
 	
