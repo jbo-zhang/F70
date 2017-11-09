@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    android:paddingTop="20dp"
+    android:paddingLeft="20dp"
+    android:orientation="vertical" >
+    
+	<TextView
+        android:id="@+id/tv_cpu_temperature"
+        android:layout_marginTop="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cpu_temperature"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        />
+    
+    <TextView
+        android:id="@+id/tv_ram"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/ram"
+        android:textColor="@color/text_color"
+        />
+    
+    <TextView
+        android:id="@+id/tv_rom"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/rom"
+        android:textColor="@color/text_color"
+        />
+    
+    <TextView
+        android:id="@+id/tv_bluetooth_address"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/bluetooth_address"
+        android:textColor="@color/text_color"
+        />
+    
+    <TextView
+        android:id="@+id/tv_wlan_address"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/wlan_address"
+        android:textColor="@color/text_color"
+        />
+    
+    <TextView
+        android:id="@+id/tv_device_series"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/device_series"
+        android:textColor="@color/text_color"
+        />
+    
+    <TextView
+        android:id="@+id/tv_net_signal"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"
+        android:text="@string/net_signal"
+        android:textColor="@color/text_color"
+        />
+    
+</LinearLayout>
