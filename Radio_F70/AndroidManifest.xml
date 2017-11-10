@@ -39,6 +39,12 @@
             </intent-filter>
 
         </activity>
+        
+        <receiver android:name="com.hwatong.radio.receiver.SoundReceiver">
+            <intent-filter>
+                <action android:name="com.hwatong.voice.OPEN_AM" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

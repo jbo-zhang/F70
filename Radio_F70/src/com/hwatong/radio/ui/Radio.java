@@ -226,12 +226,29 @@ public class Radio extends Activity implements OnClickListener,
 		startService(new Intent("com.hwatong.radio.service"));
 
 		broadcastPresenter.regVoiceBroadcast(this);
+		
+		if(getIntent() != null) {
+			int type = getIntent().getIntExtra("type", -1);
+			radioPresenter.setInitType(type);
+			L.d(thiz, "onResume type : " + type + " isFm : " + radioPresenter.isFm());
+		}
+		
 	}
+	
 
 	@Override
 	protected void onResume() {
 		super.onResume();
 		radioPresenter.bindService(this);
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		
+		int type = intent.getIntExtra("type", -1);
+		radioPresenter.setInitType(type);
+		L.d(thiz, "onNewIntent type : "+ type + " isFm : " + radioPresenter.isFm());
 	}
 
 	@Override

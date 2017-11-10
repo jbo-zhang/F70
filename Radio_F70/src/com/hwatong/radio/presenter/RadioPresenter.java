@@ -56,6 +56,8 @@ public class RadioPresenter {
 	private int mFmPlaying, mAmPlaying;
 
 	protected IStatusBarInfo iStatusBarInfo;
+	
+	private int initType = -1;
 
 	private Handler mHandler = new Handler() {
 		public void handleMessage(Message msg) {
@@ -145,8 +147,7 @@ public class RadioPresenter {
 
 	public void bindService(Context context) {
 		context.bindService(new Intent(SERVICE_ACTION), mConn, 0);
-		context.sendBroadcast(new Intent("com.hwatong.media.START").putExtra(
-				"tag", "FM"));
+		context.sendBroadcast(new Intent("com.hwatong.media.START").putExtra("tag", "FM"));
 
 		Intent intent = new Intent();
 		intent.setAction("com.remote.hwatong.statusinfoservice");
@@ -169,6 +170,11 @@ public class RadioPresenter {
 		context.unbindService(mConn2);
 		iStatusBarInfo = null;
 
+	}
+	
+	
+	public void setInitType(int initType) {
+		this.initType = initType;
 	}
 
 	private ServiceConnection mConn = new ServiceConnection() {
@@ -223,7 +229,15 @@ public class RadioPresenter {
 					firstScan(mRadioPref.isAMInit());
 				}
 				
-				iRadioView.refreshView(mBand, mFreq, mList);
+				L.d(thiz, "onServiceConnected initType : " + initType + " isFm : " + isFm());
+				
+				if(initType == 0 && !isFm()){
+					realBand();
+				} else if(initType == 1 && isFm()) {
+					realBand();
+				} else {
+					iRadioView.refreshView(mBand, mFreq, mList);
+				}
 
 				
 			} catch (RemoteException e) {
@@ -433,6 +447,20 @@ public class RadioPresenter {
 			mHandler.sendEmptyMessage(MSG_CHANNEL_CHANGED);
 		}
 	}
+	
+	public void realBand() {
+		L.d(thiz, "realBand");
+		if (mService != null) {
+			try {
+				L.d(thiz, "mService.realBand()");
+				mService.band();
+				iRadioView.hideLoading();
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 
 	/**
 	 * 请求有效电台(接口不确定是不是这个)
