@@ -21,4 +21,7 @@ public interface ITboxUpdateView {
 	
 	void showUpdateProgress(int step);
 	
+	void ftpCreatFailed();
+	
+	
 }

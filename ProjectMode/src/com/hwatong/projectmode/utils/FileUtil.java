@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import android.os.SystemClock;
+
 import com.hwatong.projectmode.iview.ITboxUpdateView;
 
 public class FileUtil {
@@ -73,18 +75,21 @@ public class FileUtil {
 			byte[] buffer = new byte[count];
 			int read = 0;
 			int i =0;
-			L.d(thiz, "before while");
+			
 			while ((read = fi.read(buffer, 0, count)) != -1) {
-				L.d(thiz, "in while");
-				if((i++) == 10) {
-					i=0;
-					long percent = (destFile.length() * 100)/srcFile.length();
+				
+				long percent = (destFile.length() * 100)/srcFile.length();
+				if(iView != null) {
 					iView.showCopyProgress(percent);
 				}
 				fo.write(buffer, 0, read);
 			}
-			L.d(thiz, "after while");
-			iView.copyEnd();
+			
+			SystemClock.sleep(500);
+			
+			if(iView != null) {
+				iView.copyEnd();
+			}
 			
 		} catch (FileNotFoundException e) {
 			result = false;

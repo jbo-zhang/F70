@@ -36,7 +36,7 @@ public class TBoxPresenter {
 	private final static String USB_PATH2="/mnt/udisk2";
 	private final static String TFCARD_PATH="/mnt/extsd";
 	
-	private Context context ;
+	private Context context;
 	
 	private ITboxUpdateView tboxView;
 	
@@ -87,6 +87,8 @@ public class TBoxPresenter {
 			}
 		}
 		context.unbindService(tboxConnection);
+		
+		tboxView = null;
 	}
 	
 	/**
@@ -98,13 +100,17 @@ public class TBoxPresenter {
 			files = getFiles(USB_PATH2);
 		} 
 		
-		if(files != null && files.size() > 0) {
-			tboxView.showFiles(files);
-		} else {
-			tboxView.showNoFiles();
-		}
-		
 		L.d(thiz, "" + files);
+		
+		if(files != null && files.size() > 0) {
+			if(tboxView != null) {
+				tboxView.showFiles(files);
+			}
+		} else {
+			if(tboxView != null) {
+				tboxView.showNoFiles();
+			}
+		}
 		
 	}
 	
@@ -123,13 +129,15 @@ public class TBoxPresenter {
 		
 		File ftpDirectory = new File(ftpPath);
 		if (!ftpDirectory.exists()) {
-			if(!ftpDirectory.mkdirs()) {
-				tboxView.showNoFiles();
+			if(!ftpDirectory.mkdirs() && tboxView != null) {
+				tboxView.ftpCreatFailed();
 				return ;
 			}
 		}
 		
-		tboxView.showConfirmDialog(file);
+		if(tboxView != null) {
+			tboxView.showConfirmDialog(file);
+		}
 	}
 	
 	/**
@@ -153,16 +161,25 @@ public class TBoxPresenter {
 		if(mTboxService != null) {
 			try {
 				mTboxService.update(updateName);
-				tboxView.showUpdateStart();
+				
+				if(tboxView != null) {
+					tboxView.showUpdateStart();
+				}
+				
+				L.d(thiz, "after start update filename : " + updateName);
 				
 //				TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
 //					
 //					@Override
 //					public void run() {
-//						tboxView.showUpdateProgress(i++);
+//						if(tboxView != null) {
+//							tboxView.showUpdateProgress(i++);
+//						}
 //						if(i >= 100) {
 //							TimerTaskUtil.cancelTimer("update_progress");
-//							tboxView.showUpdateResult(0, "升级成功！");
+//							if(tboxView != null) {
+//								tboxView.showUpdateResult(0, "升级成功！");
+//							}
 //							i = 0;
 //						}
 //					}
@@ -209,38 +226,32 @@ public class TBoxPresenter {
 
 		@Override
 		public void onFlow(FlowInfo arg0) throws RemoteException {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onIMEI(byte[] arg0) throws RemoteException {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onIccid(byte[] arg0) throws RemoteException {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onLog(byte[] arg0) throws RemoteException {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onNetworkStatusChanged(NetworkStatus arg0) throws RemoteException {
-			// TODO Auto-generated method stub
 
 		}
 
 		@Override
 		public void onTboxStatusChanged(int arg0) throws RemoteException {
-			// TODO Auto-generated method stub
-
+			L.d(thiz, "onTboxStatusChanged arg0 : " + arg0);
 		}
 
 		/**
@@ -249,22 +260,21 @@ public class TBoxPresenter {
 		 */
 		@Override
 		public void onUpdateCheckResult(int result) throws RemoteException {
-			
+			L.d(thiz, "onUpdateCheckResult result : " + result);
 			TimerTaskUtil.cancelTimer("update_progress");
 			i = 0;
-			
-			switch (result) {
-			case 0:
-				tboxView.showUpdateResult(0, "升级成功！");
-				break;
-			case 1:
-				tboxView.showUpdateResult(0, "升級失败！");
-				break;
-			default:
-				break;
+			if(tboxView != null) {
+				switch (result) {
+				case 0:
+					tboxView.showUpdateResult(0, "升级成功！");
+					break;
+				case 1:
+					tboxView.showUpdateResult(0, "升級失败！");
+					break;
+				default:
+					break;
+				}
 			}
-			
-			
 		}
 
 		/**
@@ -279,44 +289,49 @@ public class TBoxPresenter {
 		 */
 		@Override
 		public void onUpdateRsp(int result) throws RemoteException {
-			switch (result) {
-			case 0:
-				tboxView.showUpdateResult(0, "成功！");
-				break; 
-			case 1:
-				tboxView.showUpdateResult(0, "文件拆包解压错误！");
+			L.d(thiz, "onUpdateRsp result : " + result);
+			if(tboxView != null) {
+				switch (result) {
+				case 0:
+					tboxView.showUpdateResult(0, "成功！");
+					break; 
+				case 1:
+					tboxView.showUpdateResult(0, "文件拆包解压错误！");
+					break;
+				case 2:
+					tboxView.showUpdateResult(0, "文件路径错误！");
+					break;
+				case 3:
+					tboxView.showUpdateResult(0, "文件MD5校验错误！");
+					break;
+				case 4:
+					tboxView.showUpdateResult(0, "文件名错误！");
+					break;
+				case 5:
+					tboxView.showUpdateResult(0, "MCU升级失败！");
+					break;
+				case 6:
+					tboxView.showUpdateResult(0, "SOC升级失败！");
+					break;
+				case 7:
+					tboxView.showUpdateResult(0, "升级文件下载失败！");
 				break;
-			case 2:
-				tboxView.showUpdateResult(0, "文件路径错误！");
-				break;
-			case 3:
-				tboxView.showUpdateResult(0, "文件MD5校验错误！");
-				break;
-			case 4:
-				tboxView.showUpdateResult(0, "文件名错误！");
-				break;
-			case 5:
-				tboxView.showUpdateResult(0, "MCU升级失败！");
-				break;
-			case 6:
-				tboxView.showUpdateResult(0, "SOC升级失败！");
-				break;
-			case 7:
-				tboxView.showUpdateResult(0, "升级文件下载失败！");
-			break;
-			default:
-				break;
+				default:
+					break;
+				}
 			}
-
 		}
 
 		@Override
 		public void onUpdateStep(UpdateStep step) throws RemoteException {
+			L.d(thiz,"onUpdateStep step " + step);
 			TimerTaskUtil.startTimer("update_progress", 0, step.mUnitStep, new TimerTask() {
 				
 				@Override
 				public void run() {
-					tboxView.showUpdateProgress(i++);
+					if(tboxView != null) {
+						tboxView.showUpdateProgress(i++);
+					}
 					if(i >= 100) {
 						TimerTaskUtil.cancelTimer("update_progress");
 						i = 0;
@@ -327,14 +342,12 @@ public class TBoxPresenter {
 
 		@Override
 		public void onVersion(byte[] arg0) throws RemoteException {
-			// TODO Auto-generated method stub
-
+			L.d(thiz, "onVersion arg0 : " + arg0);
 		}
 
 		@Override
 		public void onVin(byte[] arg0) throws RemoteException {
-			// TODO Auto-generated method stub
-
+			L.d(thiz, "onVersion onVin : " + arg0);
 		}
 
 	};
@@ -375,20 +388,5 @@ public class TBoxPresenter {
     	}
         return fileList;
     }
-	
-	
-	private Toast mToast;
-	public void showToast(Context context, String msg) {
-		if (mToast != null) {
-			mToast.setText(msg);
-			mToast.setDuration(Toast.LENGTH_SHORT);
-		} else {
-			mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-		}
-		mToast.show();
-	}
-	
-	
-	
 
 }

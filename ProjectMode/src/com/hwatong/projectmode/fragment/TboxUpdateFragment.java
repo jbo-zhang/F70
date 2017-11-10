@@ -48,15 +48,12 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 
 	private File currentFile;
 	
-	ProgressDialog progressDialog;
-	ProgressDialog progressDialog2;
+	ProgressDialog copyDialog, updateDialog;
 
 	private Object lockObject = new Object();
 	
 	private Object lockObject2 = new Object();
 	
-	private Toast mToast;
-
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -70,6 +67,14 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		tBoxPresenter.loadFiles();
 		return view;
 	}
+	
+	@Override
+	public void onDestroy() {
+		L.d(thiz,"TboxUpdateFragment onDestroy !");
+		tBoxPresenter.unbindTbox(getActivity());
+		super.onDestroy();
+	}
+	
 
 	private void initViews(View view) {
 		lvList = (ListView) view.findViewById(R.id.lv_list);
@@ -229,6 +234,8 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		// 显示
 		normalDialog.show();
 	}
+	
+
 
 	/**
 	 * 显示复制进度
@@ -241,30 +248,33 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			@Override
 			public void run() {
 				synchronized (lockObject) {
-					if (progressDialog == null) {
-						progressDialog = new ProgressDialog(getActivity());
-						progressDialog.setTitle("正在复制文件...");
-						progressDialog.setCanceledOnTouchOutside(true);
-						progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-						progressDialog.show();
+					if (copyDialog == null) {
+						copyDialog = new ProgressDialog(getActivity());
+						copyDialog.setTitle("正在复制文件...");
+						copyDialog.setCanceledOnTouchOutside(true);
+						copyDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+						copyDialog.show();
 					} else {
-						if (!progressDialog.isShowing()) {
-							progressDialog.show();
+						if (!copyDialog.isShowing()) {
+							copyDialog.show();
 						}
-						progressDialog.setProgress((int) percent);
+						copyDialog.setProgress((int) percent);
 					}
 				}
 			}
 		});
 	}
 
+	/**
+	 * 升级结果
+	 */
 	@Override
 	public void showUpdateResult(int result, final String info) {
 		synchronized (lockObject2) {
-			if (progressDialog2 != null) {
-				progressDialog2.setProgress(100);
-				if (progressDialog2.isShowing()) {
-					progressDialog2.dismiss();
+			if (updateDialog != null) {
+				updateDialog.setProgress(100);
+				if (updateDialog.isShowing()) {
+					updateDialog.dismiss();
 				}
 			}
 		}
@@ -275,18 +285,8 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 				Toast.makeText(getActivity(), info, Toast.LENGTH_SHORT).show();
 			}
 		});
-		
 	}
 
-	public void showToast(Context context, String msg) {
-		if (mToast != null) {
-			mToast.setText(msg);
-			mToast.setDuration(Toast.LENGTH_SHORT);
-		} else {
-			mToast = Toast.makeText(context, msg, Toast.LENGTH_SHORT);
-		}
-		mToast.show();
-	}
 
 	/**
 	 * 复制完成
@@ -295,14 +295,14 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	public void copyEnd() {
 		L.d(thiz, "copyEnd()");
 		synchronized (lockObject) {
-			if (progressDialog != null) {
-				progressDialog.setProgress(100);
-				if (progressDialog.isShowing()) {
-					progressDialog.dismiss();
+			if (copyDialog != null) {
+				copyDialog.setProgress(100);
+				if (copyDialog.isShowing()) {
+					L.d(thiz, "copydialog dismiss");
+					copyDialog.dismiss();
 				}
 			}
 		}
-		L.d(thiz, "after dismiss");
 		tBoxPresenter.startUpdate();
 	}
 
@@ -345,21 +345,26 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			@Override
 			public void run() {
 				synchronized (lockObject2) {
-					if (progressDialog2 == null) {
-						progressDialog2 = new ProgressDialog(getActivity());
-						progressDialog2.setTitle("升级进度...");
-						progressDialog2.setCanceledOnTouchOutside(true);
-						progressDialog2.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-						progressDialog2.show();
+					if (updateDialog == null) {
+						updateDialog = new ProgressDialog(getActivity());
+						updateDialog.setTitle("升级进度...");
+						updateDialog.setCanceledOnTouchOutside(true);
+						updateDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+						updateDialog.show();
 					} else {
-						if (!progressDialog2.isShowing()) {
-							progressDialog2.show();
+						if (!updateDialog.isShowing()) {
+							updateDialog.show();
 						}
-						progressDialog2.setProgress((int) step);
+						updateDialog.setProgress((int) step);
 					}
 				}
 			}
 		});
+	}
+
+	@Override
+	public void ftpCreatFailed() {
+		Toast.makeText(getActivity(), "ftp目录创建失败！", Toast.LENGTH_SHORT).show();
 	}
 
 }
