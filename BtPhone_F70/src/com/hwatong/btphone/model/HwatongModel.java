@@ -312,7 +312,7 @@ public class HwatongModel implements IBTPhoneModel {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							SystemClock.sleep(500);
+							SystemClock.sleep(1000);
 							iView.showBooksLoading();
 						}
 					}).start();
@@ -391,7 +391,7 @@ public class HwatongModel implements IBTPhoneModel {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							SystemClock.sleep(500);
+							SystemClock.sleep(1000);
 							iView.showLogsLoading();
 						}
 					}).start();
@@ -436,7 +436,7 @@ public class HwatongModel implements IBTPhoneModel {
 					new Thread(new Runnable() {
 						@Override
 						public void run() {
-							SystemClock.sleep(500);
+							SystemClock.sleep(1000);
 							iView.showLogsLoading();
 						}
 					}).start();

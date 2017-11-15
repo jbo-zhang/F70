@@ -4,13 +4,13 @@
     <!-- 主界面 -->
     <dimen name="bt_phone_tab_margin_top">15dp</dimen>
     <dimen name="bt_phone_tab_margin_left">15dp</dimen>
-    <dimen name="bt_phone_tab_margin_right">60dp</dimen>
+    <dimen name="bt_phone_tab_margin_right">23dp</dimen>
     <dimen name="bt_phone_tab_drawablewidth">30dp</dimen>
     <dimen name="bt_phone_tab_drawableheight">30dp</dimen>
     <dimen name="bt_phone_tab_margin">8dp</dimen>
     <dimen name="bt_phone_tab_drawable_padding">-40dp</dimen>
     <dimen name="bt_phone_tab_padding">20dp</dimen>
-    <dimen name="bt_phone_tab_textsize">25dp</dimen>
+    <dimen name="bt_phone_tab_textsize">18sp</dimen>
     
     <!-- 拨号界面 -->
     <dimen name="dial_panel_margin">16dp</dimen>
@@ -43,7 +43,7 @@
     <dimen name="keyboard_padding">8dp</dimen>
     <dimen name="keyboard_key_textsize">25dp</dimen>
     
-    <dimen name="divide_line_width">3dp</dimen>
+    <dimen name="divide_line_width">2px</dimen>
     
     
     
