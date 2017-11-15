@@ -83,6 +83,8 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	private static final int DISAPPEAR_DELAY = 10000;
 
+	private IStatusBarInfo mStatusBarInfo; // 状态栏左上角信息
+	
 	private int[] drawableIds = new int[] { R.drawable.wind_level_1,
 			R.drawable.wind_level_2, R.drawable.wind_level_3,
 			R.drawable.wind_level_4, R.drawable.wind_level_5,
@@ -297,7 +299,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		
 		// 绑定状态栏服务
 		bindService(new Intent("com.remote.hwatong.statusinfoservice"),
-				mStatusBarConnection, BIND_AUTO_CREATE);
+				mConn2, BIND_AUTO_CREATE);
 		
 		syncStatusBar();
 		
@@ -479,7 +481,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		ACStatus status = null;
 		try {
 			status = mCanbusService.getLastACStatus(getPackageName());
-
+			Log.e(TAG, "status : " + status);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 			status = null;
@@ -704,33 +706,12 @@ public class MainActivity extends Activity implements OnClickListener {
 		mTvRearSwitch.setSelected(isOn);
 	}
 	
-	
-	private IStatusBarInfo mStatusBarInfo; // 状态栏左上角信息
-	private ServiceConnection mStatusBarConnection = new ServiceConnection() {
-
-		@Override
-		public void onServiceDisconnected(ComponentName name) {
-			mStatusBarInfo = null;
-		}
-
-		@Override
-		public void onServiceConnected(ComponentName name, IBinder service) {
-			mStatusBarInfo = IStatusBarInfo.Stub.asInterface(service);
-			try {
-				if (mStatusBarInfo != null) {
-					mStatusBarInfo.setCurrentPageName("launcher");
-				}
-			} catch (RemoteException e) {
-				e.printStackTrace();
-			}
-		}
-	};
 
 	@Override
 	protected void onPause() {
 		Log.d(TAG, "onPause");
 		mStatusBarInfo = null;
-		unbindService(mStatusBarConnection);
+		unbindService(mConn2);
 		super.onPause();
 	}
 
