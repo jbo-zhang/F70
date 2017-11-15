@@ -3,27 +3,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black"
-    android:padding="20dp"
     android:orientation="vertical" >
     
     <TextView
         android:id="@+id/tv_system_update"
-        android:layout_marginTop="5dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
+        style="@style/update_item"
         android:text="@string/system_update"
-        android:textColor="@color/text_color"
+        />
+     <View 
+        android:layout_height="1px"
+        android:layout_width="807px"
+        android:background="@drawable/line"
         />
     
     <TextView
         android:id="@+id/tv_tbox_update"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="24sp"
+        style="@style/update_item"
         android:text="@string/tbox_update"
-        android:textColor="@color/text_color"
         />
+    
+    <View 
+        android:layout_height="1px"
+        android:layout_width="807px"
+        android:background="@drawable/line"
+        />
+    
 
 </LinearLayout>

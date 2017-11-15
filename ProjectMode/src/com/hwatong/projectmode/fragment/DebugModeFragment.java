@@ -1,17 +1,27 @@
 package com.hwatong.projectmode.fragment;
 
-import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.hwatong.projectmode.R;
 import com.hwatong.projectmode.fragment.base.BaseFragment;
+import com.hwatong.projectmode.ui.MySlipSwitch;
+import com.hwatong.projectmode.ui.MySlipSwitch.OnSwitchListener;
+import com.hwatong.projectmode.ui.ToggleView;
+import com.hwatong.projectmode.ui.ToggleView.OnToggleStateChangeListener;
 
 public class DebugModeFragment extends BaseFragment{
-
+	
+	
+	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		return inflater.inflate(R.layout.fragment_debug_mode, container, false);
+	protected int getLayoutId() {
+		return R.layout.fragment_debug_mode;
 	}
+	
+	@Override
+	protected void initViews(View view) {
+        
+	}
+	
 }

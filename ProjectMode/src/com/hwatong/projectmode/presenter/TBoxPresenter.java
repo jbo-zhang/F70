@@ -175,7 +175,7 @@ public class TBoxPresenter {
 //						if(tboxView != null) {
 //							tboxView.showUpdateProgress(i++);
 //						}
-//						if(i >= 100) {
+//						if(i >= 88) {
 //							TimerTaskUtil.cancelTimer("update_progress");
 //							if(tboxView != null) {
 //								tboxView.showUpdateResult(0, "升级成功！");

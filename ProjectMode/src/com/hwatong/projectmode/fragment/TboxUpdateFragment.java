@@ -3,6 +3,7 @@ package com.hwatong.projectmode.fragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TimerTask;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -10,11 +11,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -26,8 +28,10 @@ import com.hwatong.projectmode.R;
 import com.hwatong.projectmode.fragment.base.BaseFragment;
 import com.hwatong.projectmode.iview.ITboxUpdateView;
 import com.hwatong.projectmode.presenter.TBoxPresenter;
+import com.hwatong.projectmode.ui.UpdateDialog;
 import com.hwatong.projectmode.utils.FileUtil;
 import com.hwatong.projectmode.utils.L;
+import com.hwatong.projectmode.utils.TimerTaskUtil;
 
 public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView {
 
@@ -48,35 +52,23 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 
 	private File currentFile;
 	
-	ProgressDialog copyDialog, updateDialog;
+	ProgressDialog copyDialog; // updateDialog;
+	
+	private UpdateDialog updateDialog;
 
 	private Object lockObject = new Object();
 	
 	private Object lockObject2 = new Object();
 	
+	private int i;
+	
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-		View view = inflater.inflate(R.layout.fragment_update_tbox, container, false);
-
-		initViews(view);
-
-		tBoxPresenter = new TBoxPresenter(this);
-		tBoxPresenter.initTboxService(getActivity());
-
-		tBoxPresenter.loadFiles();
-		return view;
+	protected int getLayoutId() {
+		return R.layout.fragment_update_tbox;
 	}
 	
 	@Override
-	public void onDestroy() {
-		L.d(thiz,"TboxUpdateFragment onDestroy !");
-		tBoxPresenter.unbindTbox(getActivity());
-		super.onDestroy();
-	}
-	
-
-	private void initViews(View view) {
+	protected void initViews(View view) {
 		lvList = (ListView) view.findViewById(R.id.lv_list);
 
 		btLeft = (Button) view.findViewById(R.id.bt_left);
@@ -87,10 +79,44 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		fileAdapter = new FileAdapter(getActivity(), files);
 		lvList.setAdapter(fileAdapter);
 		changeSelectedFile();
-
+		
 		setupClickEvent();
+		
+		tBoxPresenter = new TBoxPresenter(this);
+		tBoxPresenter.initTboxService(getActivity());
 
+		tBoxPresenter.loadFiles();
+
+		
+		
+//		TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
+//		
+//		@Override
+//		public void run() {
+//			showUpdateProgress(i++);
+//			if(i >= 100) {
+//				TimerTaskUtil.cancelTimer("update_progress");
+//				showUpdateResult(0, "升级成功！");
+//				i = 0;
+//			}
+//		}
+//	});
+		
 	}
+	
+	
+	
+	
+	
+	
+	
+	@Override
+	public void onDestroy() {
+		L.d(thiz,"TboxUpdateFragment onDestroy !");
+		tBoxPresenter.unbindTbox(getActivity());
+		super.onDestroy();
+	}
+	
 
 	private void setupClickEvent() {
 		btLeft.setOnClickListener(new OnClickListener() {
@@ -346,10 +372,14 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			public void run() {
 				synchronized (lockObject2) {
 					if (updateDialog == null) {
-						updateDialog = new ProgressDialog(getActivity());
-						updateDialog.setTitle("升级进度...");
-						updateDialog.setCanceledOnTouchOutside(true);
-						updateDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+						updateDialog = new UpdateDialog(getActivity());
+						Window window = updateDialog.getWindow();
+						window.setGravity(Gravity.LEFT|Gravity.TOP);
+						window.setLayout(571, 250);
+						LayoutParams attributes = window.getAttributes();
+						attributes.x = 145;
+						attributes.y = 80;
+						window.setAttributes(attributes);
 						updateDialog.show();
 					} else {
 						if (!updateDialog.isShowing()) {

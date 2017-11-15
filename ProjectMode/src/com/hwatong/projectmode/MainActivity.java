@@ -1,6 +1,5 @@
 package com.hwatong.projectmode;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -8,16 +7,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.ImageButton;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hwatong.projectmode.fragment.DebugModeFragment;
 import com.hwatong.projectmode.fragment.SystemProfileFragment;
+import com.hwatong.projectmode.fragment.SystemUpdateFragment;
 import com.hwatong.projectmode.fragment.TboxUpdateFragment;
 import com.hwatong.projectmode.fragment.UpdateFragment;
 import com.hwatong.projectmode.fragment.VersionInfoFragment;
@@ -38,6 +35,8 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 	private RadioButton versionRb, updateRb, debugRb, paramRb;
 	
 	int curPress = -1;
+
+	private SystemUpdateFragment systemUpdateFragment;
 	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +68,7 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 
 	private void setupClickEvent() {
 		radioGroup.setOnCheckedChangeListener(this);
+		
 		for (int i = 0; i < radioGroup.getChildCount(); i++) {
 			if(radioGroup.getChildAt(i) instanceof RadioButton) {
 				final RadioButton item = (RadioButton) radioGroup.getChildAt(i);
@@ -124,6 +124,10 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 		
 		systemProfileFragment = new SystemProfileFragment();
 		systemProfileFragment.setIActivity(this);
+		
+		systemUpdateFragment = new SystemUpdateFragment();
+		systemUpdateFragment.setIActivity(this);
+		
 	}
 
 	@Override
@@ -138,13 +142,7 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 
 	@Override
 	public void toSystemUpdate() {
-		Intent intent = new Intent();
-		intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
-		if (intent.resolveActivity(getPackageManager()) != null) {
-			startActivity(intent);
-		} else {
-			Toast.makeText(this, "找不到升级应用", Toast.LENGTH_SHORT).show();
-		}			
+		toFragment(systemUpdateFragment);
 	}
 
 	@Override
