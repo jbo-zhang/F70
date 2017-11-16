@@ -87,27 +87,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 
 		tBoxPresenter.loadFiles();
 
-		
-		
-//		TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
-//		
-//		@Override
-//		public void run() {
-//			showUpdateProgress(i++);
-//			if(i >= 100) {
-//				TimerTaskUtil.cancelTimer("update_progress");
-//				showUpdateResult(0, "升级成功！");
-//				i = 0;
-//			}
-//		}
-//	});
-		
 	}
-	
-	
-	
-	
-	
 	
 	
 	@Override
@@ -350,12 +330,15 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	 */
 	@Override
 	public void showUpdateStart() {
-		getActivity().runOnUiThread(new Runnable() {
-			@Override
-			public void run() {
-				Toast.makeText(getActivity(), "开始升级", Toast.LENGTH_SHORT).show();
-			}
-		});
+		
+		L.d(thiz, "showUpdateStart 开始升级！");
+		
+//		getActivity().runOnUiThread(new Runnable() {
+//			@Override
+//			public void run() {
+//				Toast.makeText(getActivity(), "开始升级", Toast.LENGTH_SHORT).show();
+//			}
+//		});
 	}
 
 

@@ -85,7 +85,7 @@ public class FileUtil {
 				fo.write(buffer, 0, read);
 			}
 			
-			SystemClock.sleep(500);
+			SystemClock.sleep(800);
 			
 			if(iView != null) {
 				iView.copyEnd();

@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/tv_product_model"
         style="@style/version_info_item"
-        android:layout_marginTop="10px"
+        android:layout_marginTop="20px"
         android:text="@string/product_model"
         />
     

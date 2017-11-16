@@ -16,7 +16,7 @@
     <string name="debug_mode">调试模式</string>
     <string name="system_profile">系统参数</string>
     
-    <string name="product_model">产品型号：%s</string>
+    <string name="product_model">版本型号：%s</string>
     <string name="android_version">Android版本：%s</string>
     <string name="mcu_version">MCU版本：%s</string>
     <string name="arm_version">ARM版本：%s</string>

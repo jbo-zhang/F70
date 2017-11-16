@@ -8,7 +8,7 @@
     
 	<TextView
         android:id="@+id/tv_cpu_temperature"
-        android:layout_marginTop="10px"
+        android:layout_marginTop="20px"
         style="@style/version_info_item"
         android:text="@string/cpu_temperature"
         />

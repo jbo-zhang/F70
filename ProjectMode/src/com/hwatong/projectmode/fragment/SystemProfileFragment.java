@@ -48,7 +48,7 @@ public class SystemProfileFragment extends BaseFragment{
 	}
 
 	private void setCpuTemerature() {
-		setFormatText(tvCpuTemerature, "32°C");
+		setFormatText(tvCpuTemerature, "23°");
 	}
 
 	private void setRam() {
@@ -60,19 +60,19 @@ public class SystemProfileFragment extends BaseFragment{
 	}
 
 	private void setBluetoothAddress() {
-		setFormatText(tvBluetoothAddress, SystemUtil.getSystemVersion());		
+		setFormatText(tvBluetoothAddress, "MAC地址");		
 	}
 
 	private void setWlanAddress() {
-		setFormatText(tvWlanAddress, SystemUtil.getSystemVersion());		
+		setFormatText(tvWlanAddress, "MAC地址");		
 	}
 
 	private void setDeviceSeries() {
-		setFormatText(tvDeviceSeries, SystemUtil.getSystemVersion());		
+		setFormatText(tvDeviceSeries, "flash ID");		
 	}
 
 	private void setNetSignal() {
-		setFormatText(tvNetSignal, SystemUtil.getSystemVersion());		
+		setFormatText(tvNetSignal, "TBOX信号强度");		
 	}
 
 	private void setFormatText(TextView tv, String str) {
