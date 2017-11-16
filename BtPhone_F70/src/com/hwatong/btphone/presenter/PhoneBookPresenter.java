@@ -155,7 +155,7 @@ public class PhoneBookPresenter {
 	
 	public void batchDeleteContact() {
 		long start = System.currentTimeMillis();
-        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
         ops.add(ContentProviderOperation.newDelete(android.provider.ContactsContract.Data.CONTENT_URI)
                 .withSelection(null,null)
                 .build());
