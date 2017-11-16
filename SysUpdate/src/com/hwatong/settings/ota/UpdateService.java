@@ -460,10 +460,10 @@ public class UpdateService extends Service {
 		Log.d(TAG, "BUILD_NUMBER=" + Build.VERSION.INCREMENTAL);//当前的版本
 		Log.d(TAG, "Received BUILD_NUMBER=" + buildNumber);//升级到的版本
 
-		if (buildNumber.equals(Build.VERSION.INCREMENTAL)) {
-			Log.d(TAG, "Current is up to date");
-			return true;
-		}
+//		if (buildNumber.equals(Build.VERSION.INCREMENTAL)) {
+//			Log.d(TAG, "Current is up to date");
+//			return true;
+//		}
 
 		File pkg = new File(mUpdatePackageLocation);//("/cache/t.zip");
 
