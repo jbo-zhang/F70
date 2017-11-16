@@ -32,4 +32,6 @@
     <string name="notfound">"Firmware file not found."</string> 
     
     <string name="quit">"Quit"</string> 
+    
+    <string name="error_mmc_size_not_match">Error: MMC size not match!</string>
 </resources>

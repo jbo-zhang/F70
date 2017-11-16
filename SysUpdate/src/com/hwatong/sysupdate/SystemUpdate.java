@@ -272,6 +272,11 @@ public class SystemUpdate extends Fragment implements UpdateService.OTAUIStateCh
 		} else if (error == ERROR_IMAGE_FILE_ERROR) {
 			mMessageTextView.setText(getText(R.string.error_image_file));
 			mQuitButton.setVisibility(View.VISIBLE);
+		
+		//添加mmc版本不符合错误
+		} else if(error == ERROR_MMC_SIZE_NOT_MATCH) {
+			mMessageTextView.setText(getText(R.string.error_mmc_size_not_match));
+			mQuitButton.setVisibility(View.VISIBLE);
 		}
 	}
 

@@ -32,4 +32,6 @@
     <string name="notfound">"没有发现可使用的升级包."</string> 
     <string name="quit">"退出"</string> 
     
+    <string name="error_mmc_size_not_match">Error: MMC 大小不匹配！</string>
+    
 </resources>

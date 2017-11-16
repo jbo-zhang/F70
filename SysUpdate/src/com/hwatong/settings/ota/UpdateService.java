@@ -1,10 +1,12 @@
 package com.hwatong.settings.ota;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,6 +38,8 @@ import com.hwatong.sysupdate.Util;
 public class UpdateService extends Service {
     private static final String TAG = "UpdateService";
     private static final boolean DBG = true;
+    
+    private static final String MMC_PATH = "/sys/devices/platform/sdhci-esdhc-imx.3/mmc_host/mmc0/mmc0:0001/name"; 
 
     public class ServiceBinder extends Binder {
         public UpdateService getService() {
@@ -204,7 +208,33 @@ public class UpdateService extends Service {
 			if (info==null) {
 				reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.ERROR_IMAGE_FILE_ERROR, null);
 			}else {
-				reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.NO_ERROR, info);
+				
+				//adb by zjb ++ 
+				//升级包MMC大小
+				String updateImgMMCSize = "";
+				String systemMMCSize = getMMCSize();
+				
+				String[] split = info.version.split("\\.");
+				if(split.length >= 2) {
+					updateImgMMCSize = split[1];
+				}
+				
+				Log.d("9095", "updateImgMMCSize: " + updateImgMMCSize + " systemMMCSize: " + systemMMCSize);
+				
+				if(updateImgMMCSize.equals("16") || updateImgMMCSize.equals("32")) {
+					if(!updateImgMMCSize.equals(systemMMCSize)) {
+						Log.d("9095", "mmc size not match!!!");
+						reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.ERROR_MMC_SIZE_NOT_MATCH, info);
+						
+					} else {
+						Log.d("9095", "mmc size match!!!");
+						reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.NO_ERROR, info);
+					}
+				} else {
+					Log.d("9095", "update package mmc is not 16 or 32!");
+					reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.NO_ERROR, info);
+				}
+				//adb by zjb -- 
 			}
 			return true;
 		}
@@ -577,11 +607,52 @@ public class UpdateService extends Service {
 		final int ERROR_PACKAGE_VERIFY_FAILED = 7;//错误包验证失败
 		final int ERROR_IMAGE_FILE_ERROR = 8;// 错误图像文件错误
 		
+		final int ERROR_MMC_SIZE_NOT_MATCH = 9; //MMC大小不符合
+		
 		// results
 		final int RESULTS_ALREADY_LATEST = 1;//最新结果已经
 
 		public void onUIStateChanged(int state, int error, Object info);
 		
 	}
+	
+	
+	private String getMMCSize() {
+		
+		String mmcVersion = getMMCVersion();
+		
+		if(mmcVersion.length() >= 6 && mmcVersion.substring(0, 6).equals("R1J57L")) {
+			return "32";
+		} else {
+			return "16";
+		}
+	}
+	
+	
+	/**
+	 * 获取MCU版本内容
+	 * @return
+	 */
+	public static String getMMCVersion() {
+        try {
+            FileReader fr = new FileReader(MMC_PATH);
+            BufferedReader br = new BufferedReader(fr);
+            String tmp = br.readLine();
+            Log.d("9095", "mmc: " + tmp);
+            br.close();
+            fr.close();
+            return tmp;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("TAG", "file not found");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		return "";
+	}
+	
+	
+	
+	
 
 }
