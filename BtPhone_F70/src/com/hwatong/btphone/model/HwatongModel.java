@@ -118,7 +118,7 @@ public class HwatongModel implements IBTPhoneModel {
 	private boolean isMute;
 	
 	
-	private PhoneBookPresenter phoneBookPresenter;
+	//private PhoneBookPresenter phoneBookPresenter;
 	
 	
 	
@@ -132,7 +132,7 @@ public class HwatongModel implements IBTPhoneModel {
 	@Override
 	public void link(Context context) {
 		context.bindService(new Intent(ACTION_BT_SERVICE), mBtSdkConn, Context.BIND_AUTO_CREATE);
-		phoneBookPresenter = new PhoneBookPresenter(context);
+//		phoneBookPresenter = new PhoneBookPresenter(context);
 	}
 
 	@Override
@@ -317,7 +317,7 @@ public class HwatongModel implements IBTPhoneModel {
 						}
 					}).start();
 					
-					phoneBookPresenter.requestExit();
+					//phoneBookPresenter.requestExit();
 					
 				} else {
 					booksLoading = false;
@@ -530,13 +530,13 @@ public class HwatongModel implements IBTPhoneModel {
 					booksLoading = false;
 					
 					//插入到数据库
-					new Thread(new Runnable() {
-						
-						@Override
-						public void run() {
-							phoneBookPresenter.addContacts(new ArrayList<Contact>(mContacts));
-						}
-					}).start();
+//					new Thread(new Runnable() {
+//						
+//						@Override
+//						public void run() {
+//							phoneBookPresenter.addContacts(new ArrayList<Contact>(mContacts));
+//						}
+//					}).start();
 					
 					
 					L.d(thiz, "onPhoneBookDone cost : " + (System.currentTimeMillis() - start));

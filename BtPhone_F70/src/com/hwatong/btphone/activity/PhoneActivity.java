@@ -78,17 +78,17 @@ public class PhoneActivity extends BaseActivity{
 			// 手势启动升级界面
 			case 456:
 				L.d(thiz, "msg 456");
-				Intent intent = new Intent();
-				intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
-				if (intent.resolveActivity(getPackageManager()) != null) {
-					startActivity(intent);
-				} else {
-					Toast.makeText(PhoneActivity.this, "没有升级应用", Toast.LENGTH_SHORT).show();
-				}
+//				Intent intent = new Intent();
+//				intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
+//				if (intent.resolveActivity(getPackageManager()) != null) {
+//					startActivity(intent);
+//				} else {
+//					Toast.makeText(PhoneActivity.this, "没有升级应用", Toast.LENGTH_SHORT).show();
+//				}
 				break;
 
 			case 321:
-				startActivity(new Intent(PhoneActivity.this, TboxUpdateActivity.class));
+//				startActivity(new Intent(PhoneActivity.this, TboxUpdateActivity.class));
 				break;
 			default:
 				break;

@@ -13,8 +13,6 @@ LOCAL_STATIC_JAVA_LIBRARIES := pinyin4j \
 	android-support-v4 \
 	com.hwatong.systemui \
 	com.hwatong.btphone \
-	nForeAPI \
-	com.nforetek.bt.aidl \
 	com.tbox.service
 	
 

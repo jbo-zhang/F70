@@ -171,7 +171,7 @@ public class Utils {
 	public static void setTextViewGray(DrawableTextView view, boolean enable,
 			Drawable[] newDrawables, int color) {
 		view.setEnabled(enable);
-		//view.setEnabled(true);
+//		view.setEnabled(true);
 		view.setDrawablesSize(newDrawables);
 		view.setTextColor(color);
 	}
