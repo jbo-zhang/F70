@@ -256,7 +256,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="@string/band_switch"
                 android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:textSize="22px" />
         </LinearLayout>
 
         <!-- 电台更新 -->
@@ -283,7 +283,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="@string/radio_update"
                 android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:textSize="22px" />
         </LinearLayout>
 
         <!-- 电台预览 -->
@@ -310,7 +310,7 @@
                 android:layout_marginLeft="20dp"
                 android:text="@string/radio_preview"
                 android:textColor="@color/white"
-                android:textSize="26sp" />
+                android:textSize="22px" />
         </LinearLayout>
     </LinearLayout>
 

@@ -229,7 +229,7 @@ public class RadioPresenter {
 					firstScan(mRadioPref.isAMInit());
 				}
 				
-				L.d(thiz, "onServiceConnected initType : " + initType + " isFm : " + isFm());
+				L.d(thiz, "onServiceConnected initType : " + initType + " isFm : " + isFm() + " mFreq:" + mFreq);
 				
 				if(initType == 0 && !isFm()){
 					realBand();

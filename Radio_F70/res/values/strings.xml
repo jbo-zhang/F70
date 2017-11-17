@@ -39,7 +39,7 @@
     <string name="ensuredelete">请确认是否移除频道？</string>
     <string name="ensureadd">请确认是否收藏频道？</string>
     <string name="initchann">正在搜索频道,请稍等&#8230;</string>
-    <string name="listdialognone">No </string>
+    <string name="listdialognone">No station</string>
     <string name="singlesave0">已成功存台</string>
     <string name="singlesave1">还在为您保存上一个，请稍等</string>
     <string name="singlesave2">这个台已经存过了</string>

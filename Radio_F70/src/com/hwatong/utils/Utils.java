@@ -2,8 +2,16 @@ package com.hwatong.utils;
 
 import java.text.DecimalFormat;
 
+import com.hwatong.radio.ui.Radio;
+
 public class Utils {
 	public static String numberToString(int frequence) {
+		if(frequence < Radio.MIN_FREQUENCE_FM) {
+			frequence = Radio.MIN_FREQUENCE_FM;
+		} else if(frequence > Radio.MAX_FREQUENCE_FM) {
+			frequence = Radio.MAX_FREQUENCE_FM;
+		}
+		
 		double f = frequence / 100.0;
 		DecimalFormat df = new DecimalFormat("#.0");
 		return df.format(f);
