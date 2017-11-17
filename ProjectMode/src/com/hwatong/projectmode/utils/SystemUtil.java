@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Environment;
 import android.os.StatFs;
+import android.os.SystemProperties;
 import android.telephony.TelephonyManager;
 import android.text.format.Formatter;
 import android.util.Log;
@@ -52,11 +53,19 @@ public class SystemUtil {
     }  
     
     /**
-	 * 获取ARM软件版本内容
+	 * 获取软件版本内容
 	 */
     public static String getSoftwareVersion() {
 		return android.os.Build.ID;
 	}
+    
+    /**
+     * 获取ARM版本号
+     * @return
+     */
+    public static String getArmVersion () {
+    	return SystemProperties.get("ro.build.lct_internal_version", "");
+    }
     
   
     /** 
@@ -92,6 +101,7 @@ public class SystemUtil {
     
     
     private final static String VERSION_URI = "/sys/devices/platform/imx-i2c.1/i2c-1/1-0019/version";
+    
     /**
 	 * 获取MCU版本内容
 	 * @return

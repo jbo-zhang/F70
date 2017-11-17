@@ -1,5 +1,6 @@
 package com.hwatong.projectmode.fragment;
 
+import android.os.SystemProperties;
 import android.view.View;
 import android.widget.TextView;
 
@@ -48,7 +49,7 @@ public class VersionInfoFragment extends BaseFragment{
 	}
 
 	private void setProductModel() {
-		setFormatText(tvProductModel, "F70");
+		setFormatText(tvProductModel, SystemUtil.getSoftwareVersion());
 	}
 
 	private void setAndroidVersion() {
@@ -60,7 +61,7 @@ public class VersionInfoFragment extends BaseFragment{
 	}
 
 	private void setArmVersion() {
-		setFormatText(tvArmVersion, SystemUtil.getSoftwareVersion());
+		setFormatText(tvArmVersion, SystemUtil.getArmVersion());
 	}
 
 	private void setMapVersion() {

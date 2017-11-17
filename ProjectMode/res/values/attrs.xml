@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-  <declare-styleable name="toggle">
-   <attr name="switchBackground" format="reference" />
-   <attr name="slidingBackground" format="reference" />
-   <attr name="toggleState" format="boolean" />
-  </declare-styleable>
   
   <declare-styleable name="SwitchButton">
         <attr name="kswThumbDrawable" format="reference"/>

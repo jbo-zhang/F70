@@ -189,6 +189,24 @@ public class TBoxPresenter {
 				e.printStackTrace();
 			}
 		}
+		
+//		TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
+//			
+//			@Override
+//			public void run() {
+//				if(tboxView != null) {
+//					tboxView.showUpdateProgress(i++);
+//				}
+//				if(i >= 88) {
+//					TimerTaskUtil.cancelTimer("update_progress");
+//					if(tboxView != null) {
+//						tboxView.showUpdateResult(0, "升级成功！");
+//					}
+//					i = 0;
+//				}
+//			}
+//		});
+		
 	}
 
 	private ServiceConnection tboxConnection = new ServiceConnection() {

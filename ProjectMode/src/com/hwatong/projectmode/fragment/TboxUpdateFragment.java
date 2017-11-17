@@ -3,7 +3,6 @@ package com.hwatong.projectmode.fragment;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.TimerTask;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -31,7 +30,6 @@ import com.hwatong.projectmode.presenter.TBoxPresenter;
 import com.hwatong.projectmode.ui.UpdateDialog;
 import com.hwatong.projectmode.utils.FileUtil;
 import com.hwatong.projectmode.utils.L;
-import com.hwatong.projectmode.utils.TimerTaskUtil;
 
 public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView {
 
@@ -229,6 +227,20 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				tBoxPresenter.confirmUpdate();
+				
+				//for test
+//				TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
+//					
+//					@Override
+//					public void run() {
+//						showCopyProgress(i++);
+//						if(i >= 100) {
+//							TimerTaskUtil.cancelTimer("update_progress");
+//							copyEnd();
+//							i = 0;
+//						}
+//					}
+//				});
 			}
 		});
 		normalDialog.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
@@ -237,8 +249,17 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 				// ...To-do
 			}
 		});
+		
+		AlertDialog create = normalDialog.create();
+		
+		Window window = create.getWindow();
+		window.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+		LayoutParams attributes = window.getAttributes();
+		attributes.x = 1280/3 - 170;
+		window.setAttributes(attributes);
+		
 		// 显示
-		normalDialog.show();
+		create.show();
 	}
 	
 
@@ -256,6 +277,11 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 				synchronized (lockObject) {
 					if (copyDialog == null) {
 						copyDialog = new ProgressDialog(getActivity());
+						Window window = copyDialog.getWindow();
+						window.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+						LayoutParams attributes = window.getAttributes();
+						attributes.x = 1280/3 - 200;
+						window.setAttributes(attributes);
 						copyDialog.setTitle("正在复制文件...");
 						copyDialog.setCanceledOnTouchOutside(true);
 						copyDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -288,7 +314,9 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getActivity(), info, Toast.LENGTH_SHORT).show();
+				Toast makeText = Toast.makeText(getActivity(), info, Toast.LENGTH_SHORT);
+				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
+				makeText.show();
 			}
 		});
 	}
@@ -320,7 +348,9 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast.makeText(getActivity(), "没有找到tbox升级文件", Toast.LENGTH_SHORT).show();
+				Toast makeText = Toast.makeText(getActivity(), "没有找到tbox升级文件", Toast.LENGTH_SHORT);
+				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
+				makeText.show();
 			}
 		});
 	}
@@ -330,15 +360,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	 */
 	@Override
 	public void showUpdateStart() {
-		
 		L.d(thiz, "showUpdateStart 开始升级！");
-		
-//		getActivity().runOnUiThread(new Runnable() {
-//			@Override
-//			public void run() {
-//				Toast.makeText(getActivity(), "开始升级", Toast.LENGTH_SHORT).show();
-//			}
-//		});
 	}
 
 
@@ -377,7 +399,9 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 
 	@Override
 	public void ftpCreatFailed() {
-		Toast.makeText(getActivity(), "ftp目录创建失败！", Toast.LENGTH_SHORT).show();
+		Toast makeText = Toast.makeText(getActivity(), "ftp目录创建失败！", Toast.LENGTH_SHORT);
+		makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
+		makeText.show();
 	}
 
 }
