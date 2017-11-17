@@ -36,14 +36,14 @@
                 android:text="@string/log_miss" />
 
             <TextView
-                android:id="@+id/tv_log_in"
-                style="@style/style_calllog_bottom_tab"
-                android:text="@string/log_in" />
-
-            <TextView
                 android:id="@+id/tv_log_out"
                 style="@style/style_calllog_bottom_tab"
                 android:text="@string/log_out" />
+            
+             <TextView
+                android:id="@+id/tv_log_in"
+                style="@style/style_calllog_bottom_tab"
+                android:text="@string/log_in" />
         </LinearLayout>
 
         <FrameLayout

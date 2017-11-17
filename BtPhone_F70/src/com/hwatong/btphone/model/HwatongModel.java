@@ -313,7 +313,9 @@ public class HwatongModel implements IBTPhoneModel {
 						@Override
 						public void run() {
 							SystemClock.sleep(1000);
-							iView.showBooksLoading();
+							if(booksLoading) {
+								iView.showBooksLoading();
+							}
 						}
 					}).start();
 					
@@ -392,7 +394,9 @@ public class HwatongModel implements IBTPhoneModel {
 						@Override
 						public void run() {
 							SystemClock.sleep(1000);
-							iView.showLogsLoading();
+							if(logsLoading) {
+								iView.showLogsLoading();
+							}
 						}
 					}).start();
 				} else {
@@ -437,7 +441,9 @@ public class HwatongModel implements IBTPhoneModel {
 						@Override
 						public void run() {
 							SystemClock.sleep(1000);
-							iView.showLogsLoading();
+							if(logsLoading) {
+								iView.showLogsLoading();
+							}
 						}
 					}).start();
 				} else {

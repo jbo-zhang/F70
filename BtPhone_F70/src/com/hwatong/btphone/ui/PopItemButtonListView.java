@@ -75,7 +75,6 @@ public class PopItemButtonListView extends ListView {
 				mItemView = view;
 			} else if (mItemView == view && animationStop) {
 				hideButton(holder);
-				mItemView = null;
 			} else {
 				//hideCurrentItemBtn();
 				showButton(holder);
@@ -224,6 +223,8 @@ public class PopItemButtonListView extends ListView {
 
 		ofFloatX.start();
 		ofFloatAlpha.start();
+		
+		mItemView = null;
 	}
 	
 }
