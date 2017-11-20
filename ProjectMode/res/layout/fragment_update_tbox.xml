@@ -23,10 +23,10 @@
 
             <TextView
                 android:id="@+id/title"
-                style="?android:attr/windowTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="52dp"
                 android:ellipsize="end"
+                android:textColor="@color/white"
                 android:paddingBottom="5dp"
                 android:paddingTop="5dp"
                 android:singleLine="true"
@@ -59,30 +59,38 @@
 
             <Button
                 android:id="@+id/bt_left"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="400px"
+                android:layout_height="50px"
                 android:layout_gravity="start"
                 android:layout_weight="1"
+                android:background="@drawable/bottom_btn_selector"
+                android:textColor="@color/confirm_text_color"
                 android:text="@string/cancel"
                 android:maxLines="2"
                 android:textSize="18sp" />
 
             <Button
                 android:id="@+id/bt_middle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="400px"
+                android:layout_height="50px"
                 android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
+                android:layout_marginLeft="1px"
+                android:background="@drawable/bottom_btn_selector"
+                android:textColor="@color/confirm_text_color"
                 android:maxLines="2"
                 android:textSize="18sp"
                 android:visibility="gone" />
 
             <Button
                 android:id="@+id/bt_right"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="400px"
+                android:layout_height="50px"
                 android:layout_gravity="end"
                 android:layout_weight="1"
+                android:layout_marginLeft="1px"
+                android:background="@drawable/bottom_btn_selector"
+                android:textColor="@color/confirm_text_color"
                 android:text="@string/confirm"
                 android:maxLines="2"
                 android:textSize="18sp" />
@@ -97,6 +105,6 @@
         android:layout_below="@id/topPanel"
         android:listSelector="@android:color/transparent"
         android:divider="#bcbcbc"
-        android:dividerHeight="1dp" />
+        android:dividerHeight="1px" />
 
 </RelativeLayout>

@@ -163,6 +163,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			File file = getItem(position);
 			if (view != null) {
 				view.setText(file.getName());
+				view.setTextSize(20);
 				view.setTextColor(Color.rgb(255, 255, 255));
 				if (file.isDirectory()) {
 					setDrawable(view, folderIcon);

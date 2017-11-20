@@ -13,7 +13,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.widget.Toast;
 
 import com.hwatong.projectmode.iview.ITboxUpdateView;
 import com.hwatong.projectmode.utils.FileUtil;
@@ -168,6 +167,7 @@ public class TBoxPresenter {
 				
 				L.d(thiz, "after start update filename : " + updateName);
 				
+				//for test
 //				TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
 //					
 //					@Override
@@ -190,6 +190,7 @@ public class TBoxPresenter {
 			}
 		}
 		
+		//for test
 //		TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
 //			
 //			@Override
