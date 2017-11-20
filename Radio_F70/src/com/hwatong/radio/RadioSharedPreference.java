@@ -1,15 +1,14 @@
 package com.hwatong.radio;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import android.R.integer;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
+
+import com.hwatong.utils.L;
 
 public class RadioSharedPreference {
 
+	private static final String thiz = RadioSharedPreference.class.getSimpleName();
+	
 	private static final String SP_NAME = "radio";
 
 	public static final String KEY_FM1_COLLECT = "key_fm1_collect";
@@ -159,16 +158,20 @@ public class RadioSharedPreference {
 	public boolean isFMInit() {
 		if(mSp.getBoolean("is_init_fm", true)) {
 			mSp.edit().putBoolean("is_init_fm", false).commit();
+			L.d(thiz, "isFMInit return true");
 			return true;
 		} 
+		L.d(thiz, "isFMInit return false");
 		return false;
 	}
 	
 	public boolean isAMInit() {
 		if(mSp.getBoolean("is_init_am", true)) {
 			mSp.edit().putBoolean("is_init_am", false).commit();
+			L.d(thiz, "isAMInit return true;");
 			return true;
 		} 
+		L.d(thiz, "isAMInit return false;");
 		return false;
 	}
 	

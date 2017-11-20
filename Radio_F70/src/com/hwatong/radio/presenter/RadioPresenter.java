@@ -251,13 +251,13 @@ public class RadioPresenter {
 	 * @param scan
 	 */
 	private void firstScan(boolean scan) {
-		if(scan) {
-			L.d(thiz, "First scan !" );
-			iRadioView.showFirstScan();
-			scan();
-		} else {
-			L.d(thiz, "First fm start false !" );
-		}
+//		if(scan) {
+//			L.d(thiz, "First scan !" );
+//			iRadioView.showFirstScan();
+//			scan();
+//		} else {
+//			L.d(thiz, "First fm start false !" );
+//		}
 	}
 	
 	
