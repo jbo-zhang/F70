@@ -16,7 +16,7 @@
     <string name="text_rear_defrost">RearDefrost</string>
     <string name="text_air_condition">AC</string>
     <string name="text_loop_in">Circulation</string>
-    <string name="text_loop_out">Outer</string>
+    <string name="text_loop_out">Circulation</string>
     <string name="text_loop_auto">AutoCirculation</string>
     <string name="text_rear_condition">RearClima</string>
     <string name="text_wind_off">OFF</string>
