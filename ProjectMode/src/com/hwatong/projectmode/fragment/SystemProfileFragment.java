@@ -16,6 +16,7 @@ public class SystemProfileFragment extends BaseFragment{
 	private TextView tvWlanAddress;
 	private TextView tvDeviceSeries;
 	private TextView tvNetSignal;
+	private TextView tvTboxIccid;
 	
 	@Override
 	protected int getLayoutId() {
@@ -31,6 +32,7 @@ public class SystemProfileFragment extends BaseFragment{
 		tvWlanAddress = (TextView) view.findViewById(R.id.tv_wlan_address);
 		tvDeviceSeries = (TextView) view.findViewById(R.id.tv_device_series);
 		tvNetSignal = (TextView) view.findViewById(R.id.tv_net_signal);
+		tvTboxIccid = (TextView) view.findViewById(R.id.tv_tbox_iccid);
 		
 		setViewsData();
 		
@@ -44,6 +46,7 @@ public class SystemProfileFragment extends BaseFragment{
 		setWlanAddress();
 		setDeviceSeries();
 		setNetSignal();
+		setTboxIccid();
 		
 	}
 
@@ -74,6 +77,11 @@ public class SystemProfileFragment extends BaseFragment{
 	private void setNetSignal() {
 		setFormatText(tvNetSignal, "TBOX信号强度");		
 	}
+	
+	private void setTboxIccid() {
+		setFormatText(tvTboxIccid, "");
+	}
+	
 
 	private void setFormatText(TextView tv, String str) {
 		tv.setText(String.format((String)tv.getText(), str));

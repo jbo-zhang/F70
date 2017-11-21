@@ -36,7 +36,7 @@
     <string name="wlan_address">WLAN地址：%s</string>
     <string name="device_series">设备序列号：%s</string>
     <string name="net_signal">网络信号：%s</string>
-    
+    <string name="tbox_iccid">TBOX ICCID：%s</string>
     
     <string name="upgrade">升级</string>
     <string name="check_for_upgrade">正在检查</string>

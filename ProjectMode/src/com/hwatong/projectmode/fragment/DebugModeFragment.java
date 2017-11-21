@@ -1,5 +1,6 @@
 package com.hwatong.projectmode.fragment;
 
+import android.os.SystemProperties;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -9,6 +10,13 @@ import com.hwatong.projectmode.fragment.base.BaseFragment;
 import com.hwatong.projectmode.ui.SwitchButton;
 import com.hwatong.projectmode.ui.SwitchButton.OnUserCheckedChangeListener;
 import com.hwatong.projectmode.utils.L;
+
+/**
+ * 	属性persist.sys.log.config和sys.log.config控制系统日志打印，persist.sys.log.config属性重启后仍生效sys.log.config只在本次开机时间内有效
+ *  属性persist.sys.gps.log和sys.gps.log控制gps日志打印，persist.sys.gps.log属性重启后仍生效sys.gps.log只在本次开机时间内有效
+ * @author zxy time:2017年11月21日
+ *
+ */
 
 public class DebugModeFragment extends BaseFragment{
 	
@@ -31,14 +39,25 @@ public class DebugModeFragment extends BaseFragment{
         sbTboxLogs = (SwitchButton) view.findViewById(R.id.switch_tbox_logs);
         sbGpsLogs = (SwitchButton) view.findViewById(R.id.switch_gps_logs);
         
-        sbAdbDebug.setChecked(false);
+        sbSystemLogs.setChecked(SystemProperties.getBoolean("persist.sys.log.config", false));
         
+        sbGpsLogs.setChecked(SystemProperties.getBoolean("persist.sys.gps.log", false));
         
-        sbAdbDebug.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        sbSystemLogs.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				L.d(thiz, "onCheckedChanged isChecked : " + isChecked);				
+				L.d(thiz, "persist.sys.log.config : " + isChecked);
+				SystemProperties.set("persist.sys.log.config", isChecked + "");
+			}
+		});
+        
+        sbGpsLogs.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				L.d(thiz, "persist.sys.gps.log : " + isChecked);
+				SystemProperties.set("persist.sys.gps.log", isChecked + "");			
 			}
 		});
         
