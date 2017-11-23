@@ -12,12 +12,12 @@
     <string name="max_temp">32℃</string>
     
 
-    <string name="text_front_defrost">FrontDefrost</string>
-    <string name="text_rear_defrost">RearDefrost</string>
+    <string name="text_front_defrost">Front</string>
+    <string name="text_rear_defrost">Rear</string>
     <string name="text_air_condition">AC</string>
-    <string name="text_loop_in">Circulation</string>
-    <string name="text_loop_out">Circulation</string>
-    <string name="text_loop_auto">AutoCirculation</string>
+    <string name="text_loop_in">Recirc</string>
+    <string name="text_loop_out">Recirc</string>
+    <string name="text_loop_auto">AutoRecirc</string>
     <string name="text_rear_condition">RearClima</string>
     <string name="text_wind_off">OFF</string>
     <string name="text_wind_on">ON</string>

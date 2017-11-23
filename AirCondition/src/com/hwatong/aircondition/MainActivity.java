@@ -102,6 +102,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				handleACStatusReceived();
 				break;
 			case 20:
+				sendCloseBroadcast();
 				MainActivity.this.finish();
 				break;
 			}
@@ -375,6 +376,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			break;
 
 		case R.id.btn_return:
+			sendCloseBroadcast();
 			finish();
 			break;
 
@@ -504,6 +506,10 @@ public class MainActivity extends Activity implements OnClickListener {
 					// 后空调开关
 					int rear = status.getStatus3() & 0x03;
 					setRear(rear == 0x00);
+					
+					// 后除霜
+					int rearDefrost = status.getStatus12() & 0x03;
+					setRearDefrost(rearDefrost == 0x01);
 					return;
 				//空调开
 				} else {
@@ -733,8 +739,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		mHandler.removeMessages(MSG_AC_STATUS_RECEIVED);
 		mHandler.removeCallbacksAndMessages(null);
 		
-		Intent intent = new Intent("com.hwatong.action.AIR_CONDITION_CLOSE");
-		sendBroadcast(intent);
+		sendCloseBroadcast();
 		Log.d(TAG, "onDestroy sendBroadcast!");
 		
 		super.onDestroy();
@@ -743,6 +748,12 @@ public class MainActivity extends Activity implements OnClickListener {
 	private synchronized void refreshTimer() {
 		mHandler.removeMessages(20);
 		mHandler.sendEmptyMessageDelayed(20, DISAPPEAR_DELAY);
+	}
+	
+	private void sendCloseBroadcast() {
+		Intent intent = new Intent("com.hwatong.action.AIR_CONDITION_CLOSE");
+		sendBroadcast(intent);
+		Log.d(TAG, "after send broadcast !");
 	}
 	
 	
