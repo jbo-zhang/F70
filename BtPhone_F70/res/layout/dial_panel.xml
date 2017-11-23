@@ -24,8 +24,8 @@
 			<!-- 头像 -->
             <ImageView
                 android:id="@+id/iv_people_icon"
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:src="@drawable/icon_dial_people" />
 			<!-- 人名 -->
             <TextView

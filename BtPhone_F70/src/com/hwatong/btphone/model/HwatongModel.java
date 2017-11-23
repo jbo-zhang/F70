@@ -117,6 +117,10 @@ public class HwatongModel implements IBTPhoneModel {
 	 */
 	private boolean isMute;
 	
+	/**
+	 * 防止电话挂断后仍然引用当前通话
+	 */
+	private Object currentCallLock = new Object();
 	
 	//private PhoneBookPresenter phoneBookPresenter;
 	
@@ -255,13 +259,17 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public void dtmf(char code) {
-		if(iService != null) {
+		if(iService != null && currentCall != null) {
 			try {
-				L.d(thiz,"dtmf()");
+				L.d(thiz,"dtmf() code : " + code);
 				iService.phoneTransmitDTMFCode(code);
 				phoneState = PhoneState.INPUT;
-				currentCall.dtmfStr += code;
-				iView.showDTMFInput(currentCall);
+				synchronized (currentCallLock) {
+					if(currentCall != null) {
+						currentCall.dtmfStr += code;
+						iView.showDTMFInput(currentCall);
+					}
+				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
@@ -721,8 +729,9 @@ public class HwatongModel implements IBTPhoneModel {
 					} else if(phoneState == PhoneState.INCOMING) {
 						iView.showReject(currentCall);
 					}
-					
-					currentCall = null;
+					synchronized (currentCallLock) {
+						currentCall = null;
+					}
 					TimerTaskUtil.cancelTimer("update_duration");
 					
 					phoneState = PhoneState.IDEL;
@@ -758,12 +767,24 @@ public class HwatongModel implements IBTPhoneModel {
 							
 							@Override
 							public void run() {
-								currentCall.duration += 1000;
-								if(phoneState == PhoneState.TALKING) {
-									iView.showTalking(currentCall);
-								} else if(phoneState == phoneState.INPUT) {
-									iView.showDTMFInput(currentCall);
+								try {
+									L.d(thiz, "onCallStatusChanged duration : " + iService.getCallStatus().duration);
+								} catch (Exception e) {
+									e.printStackTrace();
 								}
+								if(currentCall != null) {
+									synchronized (currentCallLock) {
+										if(currentCall != null) {
+											currentCall.duration += 1000;
+											if(phoneState == PhoneState.TALKING) {
+												iView.showTalking(currentCall);
+											} else if(phoneState == phoneState.INPUT) {
+												iView.showDTMFInput(currentCall);
+											}
+										}
+									}
+								}
+								
 							}
 						});
 					}
