@@ -19,7 +19,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true" >
+            android:layout_marginTop="20px"
+            android:layout_centerHorizontal="true" >
 
             <TextView
                 android:id="@+id/text_fmam"
@@ -28,7 +29,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/fm1"
                 android:textColor="@color/white"
-                android:textSize="30sp" />
+                android:textSize="39px" />
 
             <TextView
                 android:id="@+id/text_curfreq"
@@ -38,7 +39,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/initfreq"
                 android:textColor="@color/white"
-                android:textSize="68sp" />
+                android:textSize="65px" />
 
             <TextView
                 android:id="@+id/text_mhz"
@@ -51,7 +52,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/fmsign"
                 android:textColor="@color/white"
-                android:textSize="30sp" />
+                android:textSize="29px" />
         </RelativeLayout>
 
         <!-- 左按钮 -->
