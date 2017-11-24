@@ -13,7 +13,7 @@ import com.hwatong.btphone.util.Utils;
  * @author zhangjinbo
  *
  */
-public class CallLog implements Parcelable, Comparable<CallLog> {
+public class CallLog implements Parcelable {
 	public static final int TYPE_CALL_OUT = 4;
 	public static final int TYPE_CALL_IN = 5;
 	public static final int TYPE_CALL_MISS = 6;
@@ -22,8 +22,8 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 	public String name = "";
 	public String number = "";
 	public String date = "";
-	public String comFlg = "";
-	public String firstLetters = "";
+//	public String comFlg = "";
+//	public String firstLetters = "";
 	public long duration ;
 	public String dtmfStr = "";
 
@@ -34,10 +34,10 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 		this.name = name;
 		this.number = number;
 		this.date = date;
-		String[] str = Utils.getPinyinAndFirstLetter(name);
-		this.comFlg = str[0];
-		this.firstLetters = str[1];
-		comFlg = "".equals(comFlg) ? "#" : comFlg;
+//		String[] str = Utils.getPinyinAndFirstLetter(name);
+//		this.comFlg = str[0];
+//		this.firstLetters = str[1];
+//		comFlg = "".equals(comFlg) ? "#" : comFlg;
 	}
 
 	public static class CallLogComparator implements Comparator<CallLog> {
@@ -48,13 +48,13 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 		}
 	}
 
-	@Override
-	public int compareTo(CallLog another) {
-		if (this.comFlg.startsWith("#") || another.comFlg.startsWith("#")) {
-			return another.comFlg.compareToIgnoreCase(this.comFlg);
-		}
-		return this.comFlg.compareToIgnoreCase(another.comFlg);
-	}
+//	@Override
+//	public int compareTo(CallLog another) {
+//		if (this.comFlg.startsWith("#") || another.comFlg.startsWith("#")) {
+//			return another.comFlg.compareToIgnoreCase(this.comFlg);
+//		}
+//		return this.comFlg.compareToIgnoreCase(another.comFlg);
+//	}
 	
 
 	public static final Parcelable.Creator<CallLog> CREATOR = new Parcelable.Creator<CallLog>() {
@@ -82,8 +82,8 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 		name = in.readString();
 		number = in.readString();
 		date = in.readString();
-		comFlg = in.readString();
-		firstLetters = in.readString();
+//		comFlg = in.readString();
+//		firstLetters = in.readString();
 		duration = in.readLong();
 		dtmfStr = in.readString();
 	}
@@ -94,8 +94,8 @@ public class CallLog implements Parcelable, Comparable<CallLog> {
 		dest.writeString(name);
 		dest.writeString(number);
 		dest.writeString(date);
-		dest.writeString(comFlg);
-		dest.writeString(firstLetters);
+//		dest.writeString(comFlg);
+//		dest.writeString(firstLetters);
 		dest.writeLong(duration);
 		dest.writeString(dtmfStr);
 	}

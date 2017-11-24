@@ -70,32 +70,32 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				break;
 				
 			case Constant.MSG_SHOW_COMING:				//来电
-				L.d(thiz, "Constant.MSG_SHOW_COMING");
+				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_COMING");
 				showComing((CallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_CALLING:				//来电
-				L.d(thiz, "Constant.MSG_SHOW_CALLING");
+				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_CALLING");
 				showCalling((CallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_TALKING:				//通话中
-				L.d(thiz, "Constant.MSG_SHOW_TALKING");
+				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_TALKING");
 				showTalking((CallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_HANG_UP:				//挂断
-				L.d(thiz, "Constant.MSG_SHOW_HANG_UP");
+				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_HANG_UP");
 				showHangUp((CallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_REJECT:				//拒接
-				L.d(thiz, "Constant.MSG_SHOW_REJECT");
+				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_REJECT");
 				showReject((CallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_IDEL:
-				L.d(thiz, "Constant.MSG_SHOW_IDEL");
+				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_IDEL");
 				showIdel();
 				break;
 				

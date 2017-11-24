@@ -71,7 +71,6 @@ public class HwatongModel implements IBTPhoneModel {
 	private Set mContactSet = Collections.synchronizedSet(new TreeSet<Contact>());
 	
 	
-	
 	/**
 	 * 蓝牙服务Action
 	 */
@@ -122,8 +121,10 @@ public class HwatongModel implements IBTPhoneModel {
 	 */
 	private Object currentCallLock = new Object();
 	
+	/**
+	 * 插入电话本到数据库的类
+	 */
 	//private PhoneBookPresenter phoneBookPresenter;
-	
 	
 	
 	public HwatongModel(IUIView iView) {
@@ -316,16 +317,8 @@ public class HwatongModel implements IBTPhoneModel {
 					booksLoading = true;
 					logsLoading = true;
 					clearAll();
-					iView.showBooksLoadStart();
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							SystemClock.sleep(1000);
-							if(booksLoading) {
-								iView.showBooksLoading();
-							}
-						}
-					}).start();
+					
+					showBooksLoadStartAndStarted();
 					
 					//phoneBookPresenter.requestExit();
 					
@@ -340,6 +333,19 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 	}
 	
+	private void showBooksLoadStartAndStarted() {
+		iView.showBooksLoadStart();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SystemClock.sleep(1000);
+				if(booksLoading) {
+					iView.showBooksLoading();
+				}
+			}
+		}).start();
+	}
+	
 	private void showBooksLoadedAndSync(boolean succeed, int reason) {
 		iView.showBooksLoaded(succeed, reason);
 		new Thread(new Runnable() {
@@ -347,6 +353,19 @@ public class HwatongModel implements IBTPhoneModel {
 			public void run() {
 				SystemClock.sleep(1000);
 				iView.syncBooksAlreadyLoad();
+			}
+		}).start();
+	}
+	
+	private void showLogsLoadStartAndStarted() {
+		iView.showLogsLoadStart();
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				SystemClock.sleep(1000);
+				if(logsLoading) {
+					iView.showLogsLoading();
+				}
 			}
 		}).start();
 	}
@@ -397,16 +416,9 @@ public class HwatongModel implements IBTPhoneModel {
 				result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_IN) || result;
 				if(result){
 					logsLoading = true;
-					iView.showLogsLoadStart();
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							SystemClock.sleep(1000);
-							if(logsLoading) {
-								iView.showLogsLoading();
-							}
-						}
-					}).start();
+					
+					showLogsLoadStartAndStarted();
+					
 				} else {
 					logsLoading = false;
 					showLogsLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
@@ -444,16 +456,8 @@ public class HwatongModel implements IBTPhoneModel {
 				if(result) {
 					logsLoading = true;
 					clearLogsByType(typeInt);
-					iView.showLogsLoadStart();
-					new Thread(new Runnable() {
-						@Override
-						public void run() {
-							SystemClock.sleep(1000);
-							if(logsLoading) {
-								iView.showLogsLoading();
-							}
-						}
-					}).start();
+					
+					showLogsLoadStartAndStarted();
 				} else {
 					logsLoading = false;
 					showLogsLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
@@ -637,11 +641,13 @@ public class HwatongModel implements IBTPhoneModel {
 					
 					switch(error) {
 					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
+						
 						mAllCallLogList.clear();
 						//更新通话记录
 						for (int i = 0; i < mCallLogMap.size(); i++) {
 							mAllCallLogList.addAll(mCallLogMap.get(mCallLogMap.keyAt(i)));
 						}
+						
 						Collections.sort(mAllCallLogList, new CallLog.CallLogComparator());
 						
 						showLogsLoadedAndSync(true, 0);
@@ -665,6 +671,8 @@ public class HwatongModel implements IBTPhoneModel {
 				}
 			});
 			
+			showLogsLoadedAndSync(true, 0);
+			logsLoading = false;
 		}
 		
 		@Override
@@ -701,7 +709,7 @@ public class HwatongModel implements IBTPhoneModel {
 					String number2 = number.replaceAll(":", "");
 					int typeInt = Integer.parseInt(type);
 					
-					CallLog callLog = new CallLog(typeInt, name, number, date);
+					CallLog callLog = new CallLog(typeInt, name2, number2, date);
 					
 					List<CallLog> callLogs = mCallLogMap.get(typeInt);
 					if (callLogs == null) {
@@ -713,15 +721,24 @@ public class HwatongModel implements IBTPhoneModel {
 					L.d(thiz, "onCalllog cost : " + (System.currentTimeMillis() - start));
 				}
 			});
+			
 		}
 		
 		@Override
 		public void onCallStatusChanged() throws RemoteException {
-			L.d(thiz, "onCallStatusChanged");
-
-			if (iService != null && iService.isHfpConnected()) {
+			L.d(thiz, "onHfpCallChanged onCallStatusChanged");
+			long start = System.currentTimeMillis();
+			L.d(thiz, "onHfpCallChanged onCallStatusChanged 111 before isHfpConnected");
+			boolean isConnected = iService.isHfpConnected();
+			L.d(thiz, "onHfpCallChanged onCallStatusChanged 222 after isHfpConnected");
+			
+			if (iService != null && isConnected) {
+				
+				L.d(thiz, "onHfpCallChanged onCallStatusChanged 333 before getCallStatus");
+				
 				CallStatus callStatus = iService.getCallStatus();
-				L.d(thiz, "onCallStatusChanged status : " + callStatus.status);
+				
+				L.d(thiz, "onHfpCallChanged 444 onCallStatusChanged status : " + callStatus.status);
 				//闲置状态
 				if (CallStatus.PHONE_CALL_NONE.equals(callStatus.status)) {
 					if(phoneState == PhoneState.TALKING || phoneState == PhoneState.OUTGOING || phoneState == PhoneState.INPUT) {
@@ -791,6 +808,8 @@ public class HwatongModel implements IBTPhoneModel {
 					phoneState = PhoneState.TALKING;
 				}
 			}
+			
+			L.d(thiz, "onHfpCallChanged onCallStatusChanged cost : " + (System.currentTimeMillis() - start));
 		}
 		
 		
