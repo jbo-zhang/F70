@@ -556,6 +556,11 @@ public class HwatongModel implements IBTPhoneModel {
 //						}
 //					}).start();
 					
+//					try {
+//						L.d(thiz, "iService.getContactList().size(): " + iService.getContactList().size() + " mContacts.size(): " + mContacts.size());
+//					} catch (RemoteException e) {
+//						e.printStackTrace();
+//					}
 					
 					L.d(thiz, "onPhoneBookDone cost : " + (System.currentTimeMillis() - start));
 				}
@@ -729,16 +734,16 @@ public class HwatongModel implements IBTPhoneModel {
 			L.d(thiz, "onHfpCallChanged onCallStatusChanged");
 			long start = System.currentTimeMillis();
 			L.d(thiz, "onHfpCallChanged onCallStatusChanged 111 before isHfpConnected");
-			boolean isConnected = iService.isHfpConnected();
+			//boolean isConnected = iService.isHfpConnected();
 			L.d(thiz, "onHfpCallChanged onCallStatusChanged 222 after isHfpConnected");
 			
-			if (iService != null && isConnected) {
+			if (iService != null /* && isConnected */) {
 				
 				L.d(thiz, "onHfpCallChanged onCallStatusChanged 333 before getCallStatus");
 				
 				CallStatus callStatus = iService.getCallStatus();
 				
-				L.d(thiz, "onHfpCallChanged 444 onCallStatusChanged status : " + callStatus.status);
+				L.d(thiz, "onHfpCallChanged onCallStatusChanged 444 status : " + callStatus.status);
 				//闲置状态
 				if (CallStatus.PHONE_CALL_NONE.equals(callStatus.status)) {
 					if(phoneState == PhoneState.TALKING || phoneState == PhoneState.OUTGOING || phoneState == PhoneState.INPUT) {
@@ -784,11 +789,11 @@ public class HwatongModel implements IBTPhoneModel {
 							
 							@Override
 							public void run() {
-								try {
-									L.d(thiz, "onCallStatusChanged duration : " + iService.getCallStatus().duration);
-								} catch (Exception e) {
-									e.printStackTrace();
-								}
+//								try {
+//									L.d(thiz, "onCallStatusChanged duration : " + iService.getCallStatus().duration);
+//								} catch (Exception e) {
+//									e.printStackTrace();
+//								}
 								if(currentCall != null) {
 									synchronized (currentCallLock) {
 										if(currentCall != null) {
