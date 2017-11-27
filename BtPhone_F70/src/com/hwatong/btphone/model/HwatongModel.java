@@ -126,6 +126,10 @@ public class HwatongModel implements IBTPhoneModel {
 	 */
 	//private PhoneBookPresenter phoneBookPresenter;
 	
+	/**
+	 * 通讯录条数
+	 */
+	private int totalCount = 0, newCount = 0, ifCount = 0, addCount = 0;
 	
 	public HwatongModel(IUIView iView) {
 		this.iView = iView;
@@ -144,6 +148,8 @@ public class HwatongModel implements IBTPhoneModel {
 	public void unlink(Context context) {
 		context.unbindService(mBtSdkConn);
 	}
+	
+	
 	
 	
 	@Override
@@ -389,6 +395,8 @@ public class HwatongModel implements IBTPhoneModel {
 	
 	private void clearBooks() {
 		mContactSet.clear();
+		
+		totalCount = ifCount = newCount = addCount = 0;
 	}
 	
 	private void clearAllLogs() {
@@ -523,6 +531,8 @@ public class HwatongModel implements IBTPhoneModel {
 		public void onPhoneBookDone(final int error) throws RemoteException {
 			L.d(thiz, "onPhoneBookDone error = " + error);
 			
+			L.d(thiz, "total count: " + totalCount + " new count: " + newCount + " if count: " + ifCount);
+			
 			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
 				
 				@Override
@@ -556,11 +566,11 @@ public class HwatongModel implements IBTPhoneModel {
 //						}
 //					}).start();
 					
-//					try {
-//						L.d(thiz, "iService.getContactList().size(): " + iService.getContactList().size() + " mContacts.size(): " + mContacts.size());
-//					} catch (RemoteException e) {
-//						e.printStackTrace();
-//					}
+					try {
+						L.d(thiz, "iService.getContactList().size(): " + iService.getContactList().size() + " mContacts.size(): " + mContacts.size());
+					} catch (RemoteException e) {
+						e.printStackTrace();
+					}
 					
 					L.d(thiz, "onPhoneBookDone cost : " + (System.currentTimeMillis() - start));
 				}
@@ -570,21 +580,23 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onPhoneBook(final String type, final String name, final String number)
 				throws RemoteException {
-			L.dRoll(thiz, "onPhoneBook type= " + type + " name= " + name + " number= " + number);
+			L.dRoll(thiz,(++totalCount) + " onPhoneBook type= " + type + " name= " + name + " number= " + number);
 			
 			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
 				
 				@Override
 				public void run() {
 					long start = System.currentTimeMillis();
-					if (TextUtils.isEmpty(number) || !number.matches("^\\d*")) {
+					if (TextUtils.isEmpty(number) /* || !number.matches("^\\d*") */) {
 						return;
 					}
-					String name2 = name.replaceAll(" +", "");
-					String number2 = number.replaceAll(":", "");
+					L.dRoll(thiz, "if count: " + (++ifCount));
 					String[] strs = Utils.getPinyinAndFirstLetter(name);
-					Contact contact = new Contact(name2, number2,strs[0], strs[1]);
+					Contact contact = new Contact(name, number,strs[0], strs[1]);
+					//Contact contact = new Contact(name, number, "", "");
+					L.dRoll(thiz, "new count: " + (++newCount));
 					mContactSet.add(contact);
+					L.dRoll(thiz, "add count: " + (++addCount));
 					
 //					phoneBookPresenter.addContact(name2, number2);
 					
@@ -710,11 +722,9 @@ public class HwatongModel implements IBTPhoneModel {
 				public void run() {
 					long start = System.currentTimeMillis();
 					
-					String name2 = name.replaceAll(" +", "");
-					String number2 = number.replaceAll(":", "");
 					int typeInt = Integer.parseInt(type);
 					
-					CallLog callLog = new CallLog(typeInt, name2, number2, date);
+					CallLog callLog = new CallLog(typeInt, name, number, date);
 					
 					List<CallLog> callLogs = mCallLogMap.get(typeInt);
 					if (callLogs == null) {
@@ -835,7 +845,7 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public List<Contact> getBooks() {
-		L.d(thiz, "getBooks mContacts.size : " + mContacts.size());
+		L.d(thiz, "getBooks mContacts.size : " + mContacts.size() + " mContactSet.size : " + mContactSet.size());
 		return mContacts;
 	}
 
@@ -871,6 +881,19 @@ public class HwatongModel implements IBTPhoneModel {
 		clearAll();
 		
 		phoneState = PhoneState.IDEL;
+	}
+
+	@Override
+	public boolean isBtConnected() {
+		try {
+			if(iService != null && iService.isHfpConnected()) {
+				return true;
+			}
+			return false;
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 	
 	

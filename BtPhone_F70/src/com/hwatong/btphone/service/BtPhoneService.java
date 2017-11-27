@@ -3,7 +3,10 @@ package com.hwatong.btphone.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.ActivityManager;
 import android.app.Service;
+import android.app.ActivityManager.RunningTaskInfo;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -361,6 +364,20 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	public void close() {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_CLOSE);
 	}
+	
+	@Override
+	public void toMissedCalls() {
+		L.d(thiz, "toMissedCalls");
+		if(!servicePresenter.isBtConnected()) {
+			return ;
+		}
+		
+		if(isCallLogForground()) {
+			BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_OPEN_MISSED_CALLS);
+		} else {
+			Utils.gotoCallLogActivityInService(this);
+		}
+	}
 
 	@Override
 	public void showWindow(CallLog callLog) {
@@ -385,4 +402,16 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		Utils.gotoDialActivityInService(this, callLog);
 	}
 	
+	protected boolean isCallLogForground() {
+		ActivityManager am = (ActivityManager) BtPhoneApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
+		List<RunningTaskInfo> cn = am.getRunningTasks(1);
+		RunningTaskInfo taskInfo = cn.get(0);
+		ComponentName name = taskInfo.topActivity;
+		if ("com.hwatong.btphone.activity.CallLogActivity".equals(name.getClassName())) {
+			return true;
+		}
+		return false;
+	}
+	
+
 }

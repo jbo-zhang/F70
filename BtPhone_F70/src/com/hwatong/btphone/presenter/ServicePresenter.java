@@ -331,6 +331,17 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 	public void showDTMFInput(CallLog callLog) {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_DTMF_INPUT, callLog);
 	}
+
+	@Override
+	public boolean isBtConnected() {
+		return iModel.isBtConnected();
+	}
+
+	@Override
+	public void toMissedCalls() {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

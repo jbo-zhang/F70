@@ -19,6 +19,12 @@ public interface IBTPhoneModel {
 	void unlink(Context context);
 	
 	/**
+	 * 蓝牙是否连接
+	 * @return
+	 */
+	boolean isBtConnected();
+	
+	/**
 	 * 请求同步状态
 	 */
 	void sync();

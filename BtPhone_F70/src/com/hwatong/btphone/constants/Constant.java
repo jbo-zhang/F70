@@ -1,11 +1,14 @@
 package com.hwatong.btphone.constants;
 
+import android.os.Message;
+
 
 public class Constant {
 
 	public static final int RESULT_FINISH_ACTIVITY = 10;//返回DialActivity时是否结束activity
 	
 	public static final int MSG_CLOSE = 109;
+	public static final int MSG_OPEN_MISSED_CALLS = 110; 
 	
 	public static final int MSG_SHOW_CONNECTED = 999;
 	public static final int MSG_SHOW_DISCONNECTED = 1000;
@@ -31,7 +34,8 @@ public class Constant {
 	public static final int MSG_SYNC_BOOKS_ALREADY_LOAD = 1018;
 	public static final int MSG_SYNC_LOGS_ALREADY_LOAD = 1019;
 	
-	public static final int MSG_SHOW_DTMF_INPUT = 1020; 
+	public static final int MSG_SHOW_DTMF_INPUT = 1020;
+
 	
 	
 }

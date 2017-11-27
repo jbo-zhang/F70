@@ -2,6 +2,8 @@ package com.hwatong.btphone.bean;
 
 import java.util.Comparator;
 
+import com.hwatong.btphone.util.L;
+
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,6 +23,7 @@ public class Contact implements Parcelable, Comparable<Contact> {
 		this.number = number;
 		this.comFlg = comFlg;
 		this.firstLetters = firstLetters;
+		L.dRoll("[Contact]", "name: " + name + " number: " + number + " comFlg: " + comFlg + " firstLetters: " + firstLetters);
 	}
 
 	public static class ContactComparator implements Comparator<Contact> {

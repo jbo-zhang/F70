@@ -53,7 +53,8 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			Constant.MSG_SHOW_BOOKS_LOADED,Constant.MSG_SHOW_LOGS_LOAD_START, 
 			Constant.MSG_SHOW_LOGS_LOADING,Constant.MSG_SHOW_LOGS_LOADED, 
 			Constant.MSG_SHOW_MIC_MUTE, Constant.MSG_SHOW_SOUND_TRACK,
-			Constant.MSG_CLOSE, Constant.MSG_SHOW_IDEL, Constant.MSG_SHOW_DTMF_INPUT};
+			Constant.MSG_CLOSE, Constant.MSG_SHOW_IDEL, Constant.MSG_SHOW_DTMF_INPUT, 
+			Constant.MSG_OPEN_MISSED_CALLS};
 
 	@SuppressLint("HandlerLeak")
 	protected Handler mHandler = new Handler() {
@@ -204,6 +205,11 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 			case Constant.MSG_SHOW_DTMF_INPUT:			//dtmf输入
 				L.d(thiz, "Constant.MSG_SHOW_DTMF_INPUT");
 				showDTMFInput((CallLog)msg.obj);
+				break;
+				
+			case Constant.MSG_OPEN_MISSED_CALLS:		//打开未接来电
+				L.d(thiz, "Constant.MSG_OPEN_MISSED_CALLS");
+				toMissedCalls();
 				break;
 				
 			default:
@@ -495,6 +501,11 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 		// TODO Auto-generated method stub
 	}
 	
+	
+	@Override
+	public void toMissedCalls() {
+		
+	}
 	
 
 }

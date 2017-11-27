@@ -282,4 +282,9 @@ public class CallLogActivity extends BaseActivity {
 		}
 	}
 	
+	@Override
+	public void toMissedCalls() {
+		onCallLogTypeChange(CallLog.TYPE_CALL_MISS);
+	}
+	
 }

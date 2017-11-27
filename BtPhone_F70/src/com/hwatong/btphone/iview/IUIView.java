@@ -139,5 +139,9 @@ public interface IUIView {
 	 */
 	void showSoundTrack(boolean isCar);
 	
+	/**
+	 * 打开未接来电
+	 */
+	void toMissedCalls();
 	
 }

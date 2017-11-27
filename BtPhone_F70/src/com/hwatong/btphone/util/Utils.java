@@ -17,6 +17,7 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.hwatong.btphone.activity.CallLogActivity;
 import com.hwatong.btphone.activity.DialActivity;
 import com.hwatong.btphone.bean.CallLog;
 import com.hwatong.btphone.bean.Contact;
@@ -45,6 +46,13 @@ public class Utils {
 		Intent intent = new Intent(context, DialActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.putExtra("call_log", callLog);
+		context.startActivity(intent);
+	}
+	
+	public static void gotoCallLogActivityInService(Context context) {
+		Intent intent = new Intent(context, CallLogActivity.class);
+		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		intent.putExtra("type", 0);
 		context.startActivity(intent);
 	}
 	
@@ -79,8 +87,8 @@ public class Utils {
 		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
 		format.setVCharType(HanyuPinyinVCharType.WITH_V);
 		
-		StringBuilder pinyin = new StringBuilder("");
-		StringBuilder firstLetters = new StringBuilder("");
+		StringBuilder pinyin = new StringBuilder();
+		StringBuilder firstLetters = new StringBuilder();
 		
 		for(int i = 0; i < hanziChars.length; i++) {
 			//判断是否为汉字
@@ -95,8 +103,8 @@ public class Utils {
 					e.printStackTrace();
 				}
 			} else {
-				pinyin.append(Character.toString(hanziChars[i]).toLowerCase());
-				firstLetters.append(Character.toString(hanziChars[i]).toLowerCase().charAt(0));
+				pinyin.append(Character.toString(hanziChars[i]).toUpperCase());
+				firstLetters.append(Character.toString(hanziChars[i]).toUpperCase().charAt(0));
 			}
 		}
 		
