@@ -4,8 +4,8 @@ import java.util.List;
 
 import android.content.Context;
 
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
 
 public interface IBTPhoneModel {
 	/**

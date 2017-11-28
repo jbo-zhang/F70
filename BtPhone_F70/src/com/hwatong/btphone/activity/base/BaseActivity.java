@@ -1,6 +1,5 @@
 package com.hwatong.btphone.activity.base;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.annotation.SuppressLint;
@@ -19,9 +18,10 @@ import android.view.View.OnClickListener;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
 
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.app.BtPhoneApplication;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.iview.IUIView;
 import com.hwatong.btphone.service.BtPhoneService;
@@ -72,27 +72,27 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				
 			case Constant.MSG_SHOW_COMING:				//来电
 				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_COMING");
-				showComing((CallLog)msg.obj);
+				showComing((UICallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_CALLING:				//来电
 				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_CALLING");
-				showCalling((CallLog)msg.obj);
+				showCalling((UICallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_TALKING:				//通话中
 				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_TALKING");
-				showTalking((CallLog)msg.obj);
+				showTalking((UICallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_HANG_UP:				//挂断
 				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_HANG_UP");
-				showHangUp((CallLog)msg.obj);
+				showHangUp((UICallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_REJECT:				//拒接
 				L.d(thiz, "onHfpCallChanged Constant.MSG_SHOW_REJECT");
-				showReject((CallLog)msg.obj);
+				showReject((UICallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_SHOW_IDEL:
@@ -204,7 +204,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				
 			case Constant.MSG_SHOW_DTMF_INPUT:			//dtmf输入
 				L.d(thiz, "Constant.MSG_SHOW_DTMF_INPUT");
-				showDTMFInput((CallLog)msg.obj);
+				showDTMFInput((UICallLog)msg.obj);
 				break;
 				
 			case Constant.MSG_OPEN_MISSED_CALLS:		//打开未接来电
@@ -370,31 +370,31 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public void showComing(CallLog callLog) {
+	public void showComing(UICallLog callLog) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void showCalling(CallLog callLog) {
+	public void showCalling(UICallLog callLog) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void showHangUp(CallLog callLog) {
+	public void showHangUp(UICallLog callLog) {
 		// TODO Auto-generated method stub
 		L.d(thiz, "showHangUp");
 	}
 
 	@Override
-	public void showReject(CallLog callLog) {
+	public void showReject(UICallLog callLog) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -497,7 +497,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 	
 	
 	@Override
-	public void showDTMFInput(CallLog callLog) {
+	public void showDTMFInput(UICallLog callLog) {
 		// TODO Auto-generated method stub
 	}
 	

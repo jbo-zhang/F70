@@ -1,6 +1,5 @@
 package com.hwatong.btphone.presenter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ActivityManager;
@@ -8,9 +7,10 @@ import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ComponentName;
 import android.content.Context;
 
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.app.BtPhoneApplication;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IServiceView;
@@ -41,7 +41,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void showComing(CallLog callLog) {
+	public void showComing(UICallLog callLog) {
 		if(callLog == null) {
 			return;
 		}
@@ -55,7 +55,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void showCalling(CallLog callLog) {
+	public void showCalling(UICallLog callLog) {
 		if(callLog == null) {
 			return;
 		}
@@ -68,7 +68,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		if(callLog == null) {
 			return;
 		}
@@ -81,7 +81,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void showHangUp(CallLog callLog) {
+	public void showHangUp(UICallLog callLog) {
 		if(callLog == null) {
 			return;
 		}
@@ -90,7 +90,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void showReject(CallLog callLog) {
+	public void showReject(UICallLog callLog) {
 		if(callLog == null) {
 			return;
 		}
@@ -328,7 +328,7 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 	}
 
 	@Override
-	public void showDTMFInput(CallLog callLog) {
+	public void showDTMFInput(UICallLog callLog) {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_DTMF_INPUT, callLog);
 	}
 

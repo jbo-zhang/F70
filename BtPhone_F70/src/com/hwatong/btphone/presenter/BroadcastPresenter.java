@@ -11,7 +11,7 @@ import com.hwatong.btphone.util.L;
 public class BroadcastPresenter {
 	private VoiceBroadcast voiceBroadcast;
 	private static final String CLOSE_ACTION = "com.hwatong.voice.CLOSE_BTPHONE";
-	private static final String OPEN_MISSED_CALLS = "com.hwatong.voice.OPEN_MISSED_CALLS";
+	private static final String OPEN_MISSED_CALLS = "com.hwatong.bt.TELEPHONE_MISSED";
 	private static final String thiz = BroadcastPresenter.class.getSimpleName();
 	
 	private IReceiverView iView;

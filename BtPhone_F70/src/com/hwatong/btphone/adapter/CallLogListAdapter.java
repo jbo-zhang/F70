@@ -13,7 +13,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.hwatong.btphone.bean.CallLog;
+import com.hwatong.btphone.CallLog;
 import com.hwatong.btphone.ui.DrawableTextView;
 import com.hwatong.btphone.ui.R;
 import com.hwatong.btphone.ui.ViewHolder;

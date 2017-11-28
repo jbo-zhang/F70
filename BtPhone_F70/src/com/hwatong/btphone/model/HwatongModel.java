@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimerTask;
 import java.util.TreeSet;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -17,23 +16,22 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.SystemClock;
-import android.text.TextUtils;
 import android.util.SparseArray;
 
+import com.hwatong.btphone.CallLog;
 import com.hwatong.btphone.CallStatus;
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.ICallback;
 import com.hwatong.btphone.IService;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.bean.UICallLog;
+import com.hwatong.btphone.bean.UIContact;
 import com.hwatong.btphone.constants.BtPhoneDef;
 import com.hwatong.btphone.constants.PhoneState;
 import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IUIView;
-import com.hwatong.btphone.presenter.PhoneBookPresenter;
 import com.hwatong.btphone.util.L;
 import com.hwatong.btphone.util.ThreadPoolUtil;
 import com.hwatong.btphone.util.TimerTaskUtil;
-import com.hwatong.btphone.util.Utils;
 
 public class HwatongModel implements IBTPhoneModel {
 
@@ -61,14 +59,14 @@ public class HwatongModel implements IBTPhoneModel {
 	/**
 	 * 所有通讯录列表
 	 */
-	private ArrayList<Contact> mContacts = new ArrayList<Contact>();
+	private List<Contact> mContacts = Collections.synchronizedList(new ArrayList<Contact>());
 	
 	/**
 	 * 通讯录列表 去重 排序
 	 */
 	//private TreeSet<Contact> mContactSet = new TreeSet<Contact>();
 
-	private Set mContactSet = Collections.synchronizedSet(new TreeSet<Contact>());
+	//private Set mContactSet = Collections.synchronizedSet(new TreeSet<Contact>());
 	
 	
 	/**
@@ -104,7 +102,7 @@ public class HwatongModel implements IBTPhoneModel {
 	/**
 	 * 当前CallLog
 	 */
-	private CallLog currentCall;
+	private UICallLog currentCall;
 	
 	/**
 	 * 声音通道
@@ -133,9 +131,9 @@ public class HwatongModel implements IBTPhoneModel {
 	
 	public HwatongModel(IUIView iView) {
 		this.iView = iView;
-		mCallLogMap.put(CallLog.TYPE_CALL_IN, Collections.synchronizedList((new ArrayList<CallLog>())));
-		mCallLogMap.put(CallLog.TYPE_CALL_OUT, Collections.synchronizedList(new ArrayList<CallLog>()));
-		mCallLogMap.put(CallLog.TYPE_CALL_MISS, Collections.synchronizedList(new ArrayList<CallLog>()));
+		mCallLogMap.put(UICallLog.TYPE_CALL_IN, Collections.synchronizedList((new ArrayList<CallLog>())));
+		mCallLogMap.put(UICallLog.TYPE_CALL_OUT, Collections.synchronizedList(new ArrayList<CallLog>()));
+		mCallLogMap.put(UICallLog.TYPE_CALL_MISS, Collections.synchronizedList(new ArrayList<CallLog>()));
 	}
 	
 	@Override
@@ -178,9 +176,9 @@ public class HwatongModel implements IBTPhoneModel {
 					iView.updateBooks(mContacts);
 					//同步通话记录
 					iView.updateAllLogs(mAllCallLogList);
-					iView.updateDialedLogs(mCallLogMap.get(CallLog.TYPE_CALL_OUT));
-					iView.updateMissedLogs(mCallLogMap.get(CallLog.TYPE_CALL_MISS));
-					iView.updateReceivedLogs(mCallLogMap.get(CallLog.TYPE_CALL_IN));
+					iView.updateDialedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_OUT));
+					iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
+					iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));
 					
 					//同步通话状态
 					if(phoneState == PhoneState.TALKING) {
@@ -322,7 +320,7 @@ public class HwatongModel implements IBTPhoneModel {
 				if(result) {
 					booksLoading = true;
 					logsLoading = true;
-					clearAll();
+					//clearAll();
 					
 					showBooksLoadStartAndStarted();
 					
@@ -394,15 +392,14 @@ public class HwatongModel implements IBTPhoneModel {
 	}
 	
 	private void clearBooks() {
-		mContactSet.clear();
-		
+		mContacts.clear();
 		totalCount = ifCount = newCount = addCount = 0;
 	}
 	
 	private void clearAllLogs() {
-		mCallLogMap.get(CallLog.TYPE_CALL_OUT).clear();
-		mCallLogMap.get(CallLog.TYPE_CALL_IN).clear();
-		mCallLogMap.get(CallLog.TYPE_CALL_MISS).clear();
+		mCallLogMap.get(UICallLog.TYPE_CALL_OUT).clear();
+		mCallLogMap.get(UICallLog.TYPE_CALL_IN).clear();
+		mCallLogMap.get(UICallLog.TYPE_CALL_MISS).clear();
 		mAllCallLogList.clear();
 	}
 	
@@ -440,17 +437,17 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public void loadMissedLogs() {
-		loadLogsByType(com.hwatong.btphone.CallLog.TYPE_CALL_MISS, CallLog.TYPE_CALL_MISS);
+		loadLogsByType(com.hwatong.btphone.CallLog.TYPE_CALL_MISS, UICallLog.TYPE_CALL_MISS);
 	}
 
 	@Override
 	public void loadDialedLogs() {
-		loadLogsByType(com.hwatong.btphone.CallLog.TYPE_CALL_OUT, CallLog.TYPE_CALL_OUT);
+		loadLogsByType(com.hwatong.btphone.CallLog.TYPE_CALL_OUT, UICallLog.TYPE_CALL_OUT);
 	}
 
 	@Override
 	public void loadReceivedLogs() {
-		loadLogsByType(com.hwatong.btphone.CallLog.TYPE_CALL_IN, CallLog.TYPE_CALL_IN);
+		loadLogsByType(com.hwatong.btphone.CallLog.TYPE_CALL_IN, UICallLog.TYPE_CALL_IN);
 	}
 	
 	private void loadLogsByType(String type, int typeInt) {
@@ -531,8 +528,6 @@ public class HwatongModel implements IBTPhoneModel {
 		public void onPhoneBookDone(final int error) throws RemoteException {
 			L.d(thiz, "onPhoneBookDone error = " + error);
 			
-			L.d(thiz, "total count: " + totalCount + " new count: " + newCount + " if count: " + ifCount);
-			
 			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
 				
 				@Override
@@ -541,7 +536,27 @@ public class HwatongModel implements IBTPhoneModel {
 					
 					switch(error) {
 					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
-						mContacts = new ArrayList<Contact>(mContactSet);
+						try {
+							List<Contact> contacts = new ArrayList<Contact>(iService.getContactList());
+							
+							mContacts.clear();
+							
+							Collections.sort(contacts, new UIContact.ContactComparator());
+							
+							Contact lastContact = null;
+							
+							for (Contact contact : contacts) {
+								if(lastContact != null && contact.name.equals(lastContact.name) && contact.number.equals(lastContact.number)) {
+									continue;
+								}
+								mContacts.add(contact);
+								lastContact = contact;
+							}
+							
+						} catch (RemoteException e1) {
+							L.d(thiz, "PBAP_DOWNLOAD_SUCCESS : " + e1.toString());
+							e1.printStackTrace();
+						}
 						iView.updateBooks(mContacts);
 						L.d(thiz, "onPhoneBookDone size : " + mContacts.size());
 						showBooksLoadedAndSync(true, error);
@@ -550,8 +565,29 @@ public class HwatongModel implements IBTPhoneModel {
 					case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
 					case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
 					case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
-						mContacts = new ArrayList<Contact>(mContactSet);
+						try {
+							List<Contact> contacts = new ArrayList<Contact>(iService.getContactList());
+							
+							mContacts.clear();
+							
+							Collections.sort(contacts, new UIContact.ContactComparator());
+							
+							Contact lastContact = null;
+							
+							for (Contact contact : contacts) {
+								if(lastContact != null && contact.name.equals(lastContact.name) && contact.number.equals(lastContact.number)) {
+									continue;
+								}
+								mContacts.add(contact);
+								lastContact = contact;
+							}
+							
+						} catch (RemoteException e1) {
+							L.d(thiz, "!PBAP_DOWNLOAD_SUCCESS: " + e1.toString());
+							e1.printStackTrace();
+						}
 						iView.updateBooks(mContacts);
+						L.d(thiz, "onPhoneBookDone error size : " + mContacts.size());
 						showBooksLoadedAndSync(false, error);
 						break;
 					}
@@ -565,12 +601,6 @@ public class HwatongModel implements IBTPhoneModel {
 //							phoneBookPresenter.addContacts(new ArrayList<Contact>(mContacts));
 //						}
 //					}).start();
-					
-					try {
-						L.d(thiz, "iService.getContactList().size(): " + iService.getContactList().size() + " mContacts.size(): " + mContacts.size());
-					} catch (RemoteException e) {
-						e.printStackTrace();
-					}
 					
 					L.d(thiz, "onPhoneBookDone cost : " + (System.currentTimeMillis() - start));
 				}
@@ -587,26 +617,38 @@ public class HwatongModel implements IBTPhoneModel {
 				@Override
 				public void run() {
 					long start = System.currentTimeMillis();
-					if (TextUtils.isEmpty(number) /* || !number.matches("^\\d*") */) {
-						return;
-					}
-					L.dRoll(thiz, "if count: " + (++ifCount));
-					String[] strs = Utils.getPinyinAndFirstLetter(name);
-					Contact contact = new Contact(name, number,strs[0], strs[1]);
-					//Contact contact = new Contact(name, number, "", "");
-					L.dRoll(thiz, "new count: " + (++newCount));
-					mContactSet.add(contact);
-					L.dRoll(thiz, "add count: " + (++addCount));
-					
-//					phoneBookPresenter.addContact(name2, number2);
-					
-					if(mContactSet.size() % 50 == 0) {
-						mContacts = new ArrayList<Contact>(mContactSet);
-						iView.updateBooks(mContacts);
+					if(totalCount % 50 == 0) {
+						try {
+//							mContacts.clear();
+//							mContacts.addAll(iService.getContactList());
+//							Collections.sort(mContacts, new UIContact.ContactComparator());
+//							
+//							
+							List<Contact> contacts = new ArrayList<Contact>(iService.getContactList());
+//							
+							mContacts.clear();
+//							mContacts.addAll(iService.getContactList());
+							
+							Collections.sort(contacts, new UIContact.ContactComparator());
+							
+							Contact lastContact = null;
+							
+							for (Contact contact : contacts) {
+								if(lastContact != null && contact.name.equals(lastContact.name) && contact.number.equals(lastContact.number)) {
+									continue;
+								}
+								mContacts.add(contact);
+								lastContact = contact;
+							}
+							
+							iView.updateBooks(mContacts);
+						} catch (RemoteException e1) {
+							L.d(thiz, "PBAP_DOWNLOAD_SUCCESS : " + e1.toString());
+							e1.printStackTrace();
+						}
 					}
 					
 					L.d(thiz, "onPhoneBook cost : " + (System.currentTimeMillis() - start));
-					
 				}
 			});
 		}
@@ -658,21 +700,35 @@ public class HwatongModel implements IBTPhoneModel {
 					
 					switch(error) {
 					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
-						
-						mAllCallLogList.clear();
 						//更新通话记录
-						for (int i = 0; i < mCallLogMap.size(); i++) {
-							mAllCallLogList.addAll(mCallLogMap.get(mCallLogMap.keyAt(i)));
+						try {
+							
+							clearAllLogs();
+							
+							mCallLogMap.get(UICallLog.TYPE_CALL_MISS).addAll(iService.getCalllogList(CallLog.TYPE_CALL_MISS));
+							mCallLogMap.get(UICallLog.TYPE_CALL_OUT).addAll(iService.getCalllogList(CallLog.TYPE_CALL_OUT));
+							mCallLogMap.get(UICallLog.TYPE_CALL_IN).addAll(iService.getCalllogList(CallLog.TYPE_CALL_IN));
+							
+							iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
+							iView.updateDialedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_OUT));
+							iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));	
+							
+							//更新通话记录
+							for (int i = 0; i < mCallLogMap.size(); i++) {
+								mAllCallLogList.addAll(mCallLogMap.get(mCallLogMap.keyAt(i)));
+							}
+							
+							Collections.sort(mAllCallLogList, new UICallLog.CallLogComparator());
+							
+							iView.updateAllLogs(mAllCallLogList);
+							
+							showLogsLoadedAndSync(true, 0);
+							
+						} catch (RemoteException e) {
+							e.printStackTrace();
 						}
 						
-						Collections.sort(mAllCallLogList, new CallLog.CallLogComparator());
 						
-						showLogsLoadedAndSync(true, 0);
-						
-						iView.updateAllLogs(mAllCallLogList);
-						iView.updateMissedLogs(mCallLogMap.get(CallLog.TYPE_CALL_MISS));
-						iView.updateDialedLogs(mCallLogMap.get(CallLog.TYPE_CALL_OUT));
-						iView.updateReceivedLogs(mCallLogMap.get(CallLog.TYPE_CALL_IN));	
 
 						break;
 					case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
@@ -688,8 +744,8 @@ public class HwatongModel implements IBTPhoneModel {
 				}
 			});
 			
-			showLogsLoadedAndSync(true, 0);
-			logsLoading = false;
+//			showLogsLoadedAndSync(true, 0);
+//			logsLoading = false;
 		}
 		
 		@Override
@@ -716,26 +772,26 @@ public class HwatongModel implements IBTPhoneModel {
 		public void onCalllog(final String type, final String name, final String number, final String date) throws RemoteException {
 			L.dRoll(thiz, "onCalllog type= " + type + " name= " + name + " number= " + number+ " date= " + date);
 			
-			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
-				
-				@Override
-				public void run() {
-					long start = System.currentTimeMillis();
-					
-					int typeInt = Integer.parseInt(type);
-					
-					CallLog callLog = new CallLog(typeInt, name, number, date);
-					
-					List<CallLog> callLogs = mCallLogMap.get(typeInt);
-					if (callLogs == null) {
-						callLogs = new ArrayList<CallLog>();
-						mCallLogMap.put(typeInt, callLogs);
-					}
-					callLogs.add(callLog);
-					
-					L.d(thiz, "onCalllog cost : " + (System.currentTimeMillis() - start));
-				}
-			});
+//			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					long start = System.currentTimeMillis();
+//					
+//					int typeInt = Integer.parseInt(type);
+//					
+//					CallLog callLog = new CallLog(typeInt, name, number, date);
+//					
+//					List<CallLog> callLogs = mCallLogMap.get(typeInt);
+//					if (callLogs == null) {
+//						callLogs = new ArrayList<CallLog>();
+//						mCallLogMap.put(typeInt, callLogs);
+//					}
+//					callLogs.add(callLog);
+//					
+//					L.d(thiz, "onCalllog cost : " + (System.currentTimeMillis() - start));
+//				}
+//			});
 			
 		}
 		
@@ -770,7 +826,7 @@ public class HwatongModel implements IBTPhoneModel {
 					
 				//拨打状态
 				} else if (CallStatus.PHONE_CALLING.equals(callStatus.status)) {
-					currentCall = getCallLogFromCallStatus(CallLog.TYPE_CALL_OUT, callStatus);
+					currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_OUT, callStatus);
 					
 					iView.showCalling(currentCall);
 					
@@ -779,7 +835,7 @@ public class HwatongModel implements IBTPhoneModel {
 					
 				//来电状态
 				} else if (CallStatus.PHONE_COMING.equals(callStatus.status)) {
-					currentCall = getCallLogFromCallStatus(CallLog.TYPE_CALL_IN, callStatus);
+					currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_IN, callStatus);
 					
 					iView.showComing(currentCall);
 					
@@ -788,7 +844,7 @@ public class HwatongModel implements IBTPhoneModel {
 				//通话状态
 				} else if (CallStatus.PHONE_TALKING.equals(callStatus.status)) {
 					if(currentCall == null) {
-						currentCall = getCallLogFromCallStatus(CallLog.TYPE_CALL_OUT, callStatus);
+						currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_OUT, callStatus);
 					}
 					if(currentCall != null) {
 						currentCall.duration = 0;
@@ -837,15 +893,15 @@ public class HwatongModel implements IBTPhoneModel {
 	};
 
 	
-	private CallLog getCallLogFromCallStatus(int type, CallStatus callStatus) {
+	private UICallLog getCallLogFromCallStatus(int type, CallStatus callStatus) {
 		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		CallLog log = new CallLog(type, callStatus.name, callStatus.number, df.format(new Date()));
+		UICallLog log = new UICallLog(type, callStatus.name, callStatus.number, df.format(new Date()));
 		return log;
 	}
 
 	@Override
 	public List<Contact> getBooks() {
-		L.d(thiz, "getBooks mContacts.size : " + mContacts.size() + " mContactSet.size : " + mContactSet.size());
+		L.d(thiz, "getBooks mContacts.size : " + mContacts.size());
 		return mContacts;
 	}
 
@@ -857,20 +913,20 @@ public class HwatongModel implements IBTPhoneModel {
 
 	@Override
 	public List<CallLog> getMissedLogs() {
-		L.d(thiz, "getMissedLogs mCallLogMap.get(CallLog.TYPE_CALL_MISS).size : " + mCallLogMap.get(CallLog.TYPE_CALL_MISS).size());
-		return mCallLogMap.get(CallLog.TYPE_CALL_MISS);
+		L.d(thiz, "getMissedLogs mCallLogMap.get(CallLog.TYPE_CALL_MISS).size : " + mCallLogMap.get(UICallLog.TYPE_CALL_MISS).size());
+		return mCallLogMap.get(UICallLog.TYPE_CALL_MISS);
 	}
 
 	@Override
 	public List<CallLog> getReceivedLogs() {
-		L.d(thiz, "getReceivedLogs mCallLogMap.get(CallLog.TYPE_CALL_IN).size : " + mCallLogMap.get(CallLog.TYPE_CALL_IN).size());
-		return mCallLogMap.get(CallLog.TYPE_CALL_IN);
+		L.d(thiz, "getReceivedLogs mCallLogMap.get(CallLog.TYPE_CALL_IN).size : " + mCallLogMap.get(UICallLog.TYPE_CALL_IN).size());
+		return mCallLogMap.get(UICallLog.TYPE_CALL_IN);
 	}
 
 	@Override
 	public List<CallLog> getDialedLogs() {
-		L.d(thiz, "getDialedLogs mCallLogMap.get(CallLog.TYPE_CALL_OUT).size : " + mCallLogMap.get(CallLog.TYPE_CALL_OUT).size());
-		return mCallLogMap.get(CallLog.TYPE_CALL_OUT);
+		L.d(thiz, "getDialedLogs mCallLogMap.get(CallLog.TYPE_CALL_OUT).size : " + mCallLogMap.get(UICallLog.TYPE_CALL_OUT).size());
+		return mCallLogMap.get(UICallLog.TYPE_CALL_OUT);
 	}
 	
 	

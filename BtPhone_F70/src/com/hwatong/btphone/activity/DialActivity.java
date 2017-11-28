@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
-import android.media.AudioManager;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,9 +12,10 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.hwatong.btphone.CallLog;
 import com.hwatong.btphone.activity.base.BaseActivity;
 import com.hwatong.btphone.adapter.CallLogListAdapter;
-import com.hwatong.btphone.bean.CallLog;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.constants.PhoneState;
 import com.hwatong.btphone.ui.DrawableTextView;
@@ -228,14 +228,14 @@ public class DialActivity extends BaseActivity {
 	
 	private void checkIntent(final Intent intent) {
 		if (intent != null) {
-			CallLog log = intent.getParcelableExtra("call_log");
+			UICallLog log = intent.getParcelableExtra("call_log");
 			if(log != null) {
 				mCallOverExit = true;
 				switch (log.type) {
-				case CallLog.TYPE_CALL_IN:
+				case UICallLog.TYPE_CALL_IN:
 					showComing(log);
 					break;
-				case CallLog.TYPE_CALL_OUT:
+				case UICallLog.TYPE_CALL_OUT:
 					showCalling(log);
 					break;
 				default:
@@ -508,21 +508,21 @@ public class DialActivity extends BaseActivity {
 	}
 
 	@Override
-	public void showComing(CallLog callLog) {
+	public void showComing(UICallLog callLog) {
 		onStateChange(PhoneState.INCOMING);
 		mTvName.setText(callLog.name);
 		mTvtalkNumber.setText(callLog.number);
 	}
 
 	@Override
-	public void showCalling(CallLog callLog) {
+	public void showCalling(UICallLog callLog) {
 		onStateChange(PhoneState.OUTGOING);
 		mTvName.setText(callLog.name);
 		mTvtalkNumber.setText(callLog.number);
 	}
 
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		L.d(thiz, "showTalking");
 		onStateChange(PhoneState.TALKING);
 		showTalkingTime(callLog.duration);
@@ -535,7 +535,7 @@ public class DialActivity extends BaseActivity {
 	}
 
 	@Override
-	public void showReject(CallLog callLog) {
+	public void showReject(UICallLog callLog) {
 		L.d(thiz, "showReject");
 		mBtnHandUp.setVisibility(View.GONE);
 		mBtnCall.setVisibility(View.GONE);
@@ -559,7 +559,7 @@ public class DialActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void showHangUp(CallLog callLog) {
+	public void showHangUp(UICallLog callLog) {
 		L.d(thiz, "showHangUp");
 		mBtnHandUp.setVisibility(View.GONE);
 		mBtnCall.setVisibility(View.GONE);
@@ -612,7 +612,7 @@ public class DialActivity extends BaseActivity {
 	
 	
 	@Override
-	public void showDTMFInput(CallLog callLog) {
+	public void showDTMFInput(UICallLog callLog) {
 		onStateChange(PhoneState.INPUT);
 		mTvName.setText(callLog.dtmfStr);
 		showTalkingTime(callLog.duration);

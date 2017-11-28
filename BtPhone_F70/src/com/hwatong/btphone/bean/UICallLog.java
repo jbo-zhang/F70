@@ -6,14 +6,14 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
-import com.hwatong.btphone.util.Utils;
+import com.hwatong.btphone.CallLog;
 
 /**
  * 一条通话记录
  * @author zhangjinbo
  *
  */
-public class CallLog implements Parcelable {
+public class UICallLog implements Parcelable {
 	public static final int TYPE_CALL_OUT = 4;
 	public static final int TYPE_CALL_IN = 5;
 	public static final int TYPE_CALL_MISS = 6;
@@ -27,9 +27,9 @@ public class CallLog implements Parcelable {
 	public long duration ;
 	public String dtmfStr = "";
 
-	public CallLog() {}
+	public UICallLog() {}
 
-	public CallLog(int type, String name, String number, String date) {
+	public UICallLog(int type, String name, String number, String date) {
 		this.type = type;
 		this.name = name;
 		this.number = number;
@@ -40,6 +40,14 @@ public class CallLog implements Parcelable {
 //		comFlg = "".equals(comFlg) ? "#" : comFlg;
 	}
 
+	public static class UICallLogComparator implements Comparator<UICallLog> {
+		@Override
+		public int compare(UICallLog arg0, UICallLog arg1) {
+			Log.d("BTPhone", "compare : " + arg0.date + " " + arg1.date);
+			return arg1.date.compareToIgnoreCase(arg0.date);
+		}
+	}
+	
 	public static class CallLogComparator implements Comparator<CallLog> {
 		@Override
 		public int compare(CallLog arg0, CallLog arg1) {
@@ -47,9 +55,10 @@ public class CallLog implements Parcelable {
 			return arg1.date.compareToIgnoreCase(arg0.date);
 		}
 	}
+	
 
 //	@Override
-//	public int compareTo(CallLog another) {
+//	public int compareTo(UICallLog another) {
 //		if (this.comFlg.startsWith("#") || another.comFlg.startsWith("#")) {
 //			return another.comFlg.compareToIgnoreCase(this.comFlg);
 //		}
@@ -57,13 +66,13 @@ public class CallLog implements Parcelable {
 //	}
 	
 
-	public static final Parcelable.Creator<CallLog> CREATOR = new Parcelable.Creator<CallLog>() {
-		public CallLog createFromParcel(Parcel in) {
-			return new CallLog(in);
+	public static final Parcelable.Creator<UICallLog> CREATOR = new Parcelable.Creator<UICallLog>() {
+		public UICallLog createFromParcel(Parcel in) {
+			return new UICallLog(in);
 		}
 
-		public CallLog[] newArray(int size) {
-			return new CallLog[size];
+		public UICallLog[] newArray(int size) {
+			return new UICallLog[size];
 		}
 	};
 
@@ -73,7 +82,7 @@ public class CallLog implements Parcelable {
 		return 0;
 	}
 
-	private CallLog(Parcel in) {
+	private UICallLog(Parcel in) {
 		readFromParcel(in);
 	}
 

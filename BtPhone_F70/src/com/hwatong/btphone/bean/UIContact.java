@@ -2,12 +2,13 @@ package com.hwatong.btphone.bean;
 
 import java.util.Comparator;
 
-import com.hwatong.btphone.util.L;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class Contact implements Parcelable, Comparable<Contact> {
+import com.hwatong.btphone.Contact;
+import com.hwatong.btphone.util.L;
+
+public class UIContact implements Parcelable, Comparable<UIContact> {
 	public String name = "";
 	public String number = "";
 	/**
@@ -16,26 +17,32 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	public String comFlg = "";
 	public String firstLetters = "";
 
-	public Contact() {}
+	public UIContact() {}
 
-	public Contact(String name, String number, String comFlg, String firstLetters) {
+	public UIContact(String name, String number, String comFlg, String firstLetters) {
 		this.name = name;
 		this.number = number;
 		this.comFlg = comFlg;
 		this.firstLetters = firstLetters;
-		L.dRoll("[Contact]", "name: " + name + " number: " + number + " comFlg: " + comFlg + " firstLetters: " + firstLetters);
+		L.dRoll("[UIContact]", "name: " + name + " number: " + number + " comFlg: " + comFlg + " firstLetters: " + firstLetters);
 	}
 
 	public static class ContactComparator implements Comparator<Contact> {
 		@Override
 		public int compare(Contact lhs, Contact rhs) {
-			return lhs.comFlg.compareToIgnoreCase(rhs.comFlg);
+			int nameCompare = 1;
+			nameCompare = lhs.comFlg.compareToIgnoreCase(rhs.comFlg);
+			if(nameCompare == 0) {
+				return lhs.number.compareToIgnoreCase(rhs.number);
+			} else {
+				return nameCompare;
+			}
 		}
 	}
 
 
 	@Override
-	public int compareTo(Contact another) {
+	public int compareTo(UIContact another) {
 		int nameCompare = 1;
 		if (this.comFlg.startsWith("#") || another.comFlg.startsWith("#")) {
 			nameCompare = another.comFlg.compareToIgnoreCase(this.comFlg);
@@ -61,26 +68,26 @@ public class Contact implements Parcelable, Comparable<Contact> {
 	
 	@Override
 	public boolean equals(Object o) {
-		if(o instanceof Contact){
-			Contact contact = (Contact) o;
-			return name.equals(contact.name) && number.equals(contact.number);
+		if(o instanceof UIContact){
+			UIContact UIContact = (UIContact) o;
+			return name.equals(UIContact.name) && number.equals(UIContact.number);
 		}
 		return super.equals(o);
 	}
 	
 
 	
-	public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
-		public Contact createFromParcel(Parcel in) {
-			return new Contact(in);
+	public static final Parcelable.Creator<UIContact> CREATOR = new Parcelable.Creator<UIContact>() {
+		public UIContact createFromParcel(Parcel in) {
+			return new UIContact(in);
 		}
 
-		public Contact[] newArray(int size) {
-			return new Contact[size];
+		public UIContact[] newArray(int size) {
+			return new UIContact[size];
 		}
 	};
 
-	private Contact(Parcel in) {
+	private UIContact(Parcel in) {
 		readFromParcel(in);
 	}
 

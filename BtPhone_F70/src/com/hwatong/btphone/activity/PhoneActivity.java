@@ -1,11 +1,5 @@
 package com.hwatong.btphone.activity;
 
-import java.io.File;
-import java.util.List;
-
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
@@ -13,12 +7,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.hwatong.btphone.activity.base.BaseActivity;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.iview.ITBoxUpdateView;
-import com.hwatong.btphone.presenter.TBoxPresenter;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.ui.DrawableTextView;
 import com.hwatong.btphone.ui.R;
 import com.hwatong.btphone.util.L;
@@ -227,22 +218,22 @@ public class PhoneActivity extends BaseActivity{
 	}
 
 	@Override
-	public void showComing(CallLog callLog) {
+	public void showComing(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 
 	@Override
-	public void showCalling(CallLog callLog) {
+	public void showCalling(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 	
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 
 	@Override
-	public void showHangUp(CallLog callLog) {
+	public void showHangUp(UICallLog callLog) {
 		L.d(thiz, "showHangUp");
 	}
 

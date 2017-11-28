@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.inputmethodservice.KeyboardView;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.Gravity;
@@ -21,9 +22,9 @@ import android.widget.ImageView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
 
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.activity.base.BaseActivity;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.ui.DialogViewControl;
 import com.hwatong.btphone.ui.DrawableTextView;
@@ -155,24 +156,49 @@ public class ContactsListActivity extends BaseActivity {
 	 */
 	private void searchContactsByLetter(String letters) {
 		L.d(thiz, "searchContactsByLetter! letters = " + letters + "mContactsList.size : " + mContactsList.size());
+		long start = SystemClock.currentThreadTimeMillis();
 		if (TextUtils.isEmpty(letters)) {
 			mAdapter.refresh(mContactsList);
+			
 		} else {
 			List<Contact> selectContacts1 = new ArrayList<Contact>();
 			List<Contact> selectContacts2 = new ArrayList<Contact>();
 			for (Contact contact : mContactsList) {
-				if (contact.firstLetters.startsWith(letters)) {
+				if (contact.comFlg.toUpperCase().startsWith(letters.substring(0, 1))) {
+					L.d(thiz, "name first letter: " + contact.name);
 					selectContacts1.add(contact);
-				} else if (contact.comFlg.startsWith(letters)) {
-					selectContacts2.add(contact);
 				}
 			}
-			if (selectContacts1.size() > 0) {
-				mAdapter.refresh(selectContacts1);
+			
+			if(letters.length() > 1) {
+				//汉字首字母匹配
+				for (Contact contact : selectContacts1) {
+					if(contact.comFlg.toUpperCase().contains(letters.substring(1, 2))) {
+						L.d(thiz, "name second letter: " + contact.name);
+						if(Utils.getPinyinAndFirstLetter(contact.name)[1].startsWith(letters)) {
+							selectContacts2.add(contact);
+						}
+					}
+				}
+				
+				if(selectContacts2.size() > 0) {
+					mAdapter.refresh(selectContacts2);
+				} else {
+					//全拼匹配
+					for (Contact contact : selectContacts1) {
+						if(contact.comFlg.toUpperCase().startsWith(letters)) {
+							selectContacts2.add(contact);
+						}
+					}
+					mAdapter.refresh(selectContacts2);
+				}
+				
 			} else {
-				mAdapter.refresh(selectContacts2);
+				mAdapter.refresh(selectContacts1);
 			}
 		}
+		
+		L.d(thiz,"search cost : " + (SystemClock.currentThreadTimeMillis() - start));
 	}
 
 	/**
@@ -393,22 +419,22 @@ public class ContactsListActivity extends BaseActivity {
 	}
 
 	@Override
-	public void showComing(CallLog callLog) {
+	public void showComing(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 
 	@Override
-	public void showCalling(CallLog callLog) {
+	public void showCalling(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 	
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 
 	@Override
-	public void showHangUp(CallLog callLog) {
+	public void showHangUp(UICallLog callLog) {
 		onHangUp();
 	}
 

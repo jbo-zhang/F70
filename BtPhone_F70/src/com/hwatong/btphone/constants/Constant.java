@@ -35,7 +35,6 @@ public class Constant {
 	public static final int MSG_SYNC_LOGS_ALREADY_LOAD = 1019;
 	
 	public static final int MSG_SHOW_DTMF_INPUT = 1020;
-
 	
 	
 }

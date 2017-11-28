@@ -16,9 +16,8 @@ import android.provider.ContactsContract.CommonDataKinds.Phone;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
 import android.provider.ContactsContract.RawContacts;
 import android.provider.ContactsContract.RawContacts.Data;
-import android.util.Log;
 
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.util.L;
 /**
  * 该类的作用是将通讯录插入到数据库，以便讯飞语音可以通过人名提取联系人拨打电话

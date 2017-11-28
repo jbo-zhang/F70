@@ -17,11 +17,11 @@ import android.net.wifi.WifiManager;
 import android.text.TextUtils;
 import android.widget.Toast;
 
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.activity.CallLogActivity;
 import com.hwatong.btphone.activity.DialActivity;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
-import com.hwatong.btphone.constants.Constant;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.ui.DrawableTextView;
 
 /**
@@ -36,13 +36,13 @@ public class Utils {
 		context.startActivity(intent);
 	}
 
-	public static void gotoDialActivity(Context context, CallLog callLog) {
+	public static void gotoDialActivity(Context context, UICallLog callLog) {
 		Intent intent = new Intent(context, DialActivity.class);
 		intent.putExtra("call_log", callLog);
 		context.startActivity(intent);
 	}
 	
-	public static void gotoDialActivityInService(Context context, CallLog callLog) {
+	public static void gotoDialActivityInService(Context context, UICallLog callLog) {
 		Intent intent = new Intent(context, DialActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		intent.putExtra("call_log", callLog);

@@ -2,8 +2,9 @@ package com.hwatong.btphone.iview;
 
 import java.util.List;
 
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
+import com.hwatong.btphone.bean.UICallLog;
 
 public interface IUIView {
 	
@@ -20,20 +21,20 @@ public interface IUIView {
 	/**
 	 * 来电
 	 */
-	void showComing(CallLog callLog);
+	void showComing(UICallLog callLog);
 	
 	/**
 	 * 去电
 	 */
-	void showCalling(CallLog callLog);
+	void showCalling(UICallLog callLog);
 	
 	/**
 	 * 通话
 	 */
-	void showTalking(CallLog callLog);
+	void showTalking(UICallLog callLog);
 	
 	
-	void showDTMFInput(CallLog callLog);
+	void showDTMFInput(UICallLog callLog);
 	
 	
 	/**
@@ -44,12 +45,12 @@ public interface IUIView {
 	/**
 	 * 挂断
 	 */
-	void showHangUp(CallLog callLog);
+	void showHangUp(UICallLog callLog);
 	
 	/**
 	 * 拒接
 	 */
-	void showReject(CallLog callLog);
+	void showReject(UICallLog callLog);
 	
 	/**
 	 * 更新通信录

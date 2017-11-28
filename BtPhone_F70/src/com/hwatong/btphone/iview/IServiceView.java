@@ -1,11 +1,11 @@
 package com.hwatong.btphone.iview;
 
-import com.hwatong.btphone.bean.CallLog;
+import com.hwatong.btphone.bean.UICallLog;
 
 public interface IServiceView {
-	void showWindow(CallLog callLog);
+	void showWindow(UICallLog callLog);
 	void hideWindow();
-	void showTalking(CallLog callLog);
+	void showTalking(UICallLog callLog);
 	
-	void gotoDialActivity(CallLog callLog);
+	void gotoDialActivity(UICallLog callLog);
 }

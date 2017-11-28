@@ -10,10 +10,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.hwatong.btphone.CallLog;
 import com.hwatong.btphone.activity.base.BaseActivity;
 import com.hwatong.btphone.adapter.CallLogListAdapter;
 import com.hwatong.btphone.adapter.CallLogListAdapter.ButtonOnClick;
-import com.hwatong.btphone.bean.CallLog;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.ui.DialogViewControl;
 import com.hwatong.btphone.ui.PopItemButtonListView;
@@ -45,7 +46,7 @@ public class CallLogActivity extends BaseActivity {
 
 	private CallLogListAdapter mAdapter;
 	private SparseArray<List<CallLog>> mCallLogMap = new SparseArray<List<CallLog>>(3);
-	private int mCurCallLogType = CallLog.TYPE_CALL_MISS;
+	private int mCurCallLogType = UICallLog.TYPE_CALL_MISS;
 
 	private DialogViewControl mDialogControl;
 
@@ -77,9 +78,9 @@ public class CallLogActivity extends BaseActivity {
 	}
 
 	private void initListView() {
-		mCallLogMap.put(CallLog.TYPE_CALL_MISS, new ArrayList<CallLog>());
-		mCallLogMap.put(CallLog.TYPE_CALL_IN, new ArrayList<CallLog>());
-		mCallLogMap.put(CallLog.TYPE_CALL_OUT, new ArrayList<CallLog>());
+		mCallLogMap.put(UICallLog.TYPE_CALL_MISS, new ArrayList<CallLog>());
+		mCallLogMap.put(UICallLog.TYPE_CALL_IN, new ArrayList<CallLog>());
+		mCallLogMap.put(UICallLog.TYPE_CALL_OUT, new ArrayList<CallLog>());
 		
 		mLvCallLog.setEmptyView(mTvNoData);
 
@@ -113,9 +114,9 @@ public class CallLogActivity extends BaseActivity {
 			return;
 		}
 		mCurCallLogType = callType;
-		mTvCallMiss.setSelected(CallLog.TYPE_CALL_MISS == mCurCallLogType);
-		mTvCallIn.setSelected(CallLog.TYPE_CALL_IN == mCurCallLogType);
-		mTvCallOut.setSelected(CallLog.TYPE_CALL_OUT == mCurCallLogType);
+		mTvCallMiss.setSelected(UICallLog.TYPE_CALL_MISS == mCurCallLogType);
+		mTvCallIn.setSelected(UICallLog.TYPE_CALL_IN == mCurCallLogType);
+		mTvCallOut.setSelected(UICallLog.TYPE_CALL_OUT == mCurCallLogType);
 		updateCallLogListView();
 	}
 
@@ -137,13 +138,13 @@ public class CallLogActivity extends BaseActivity {
 	private void clickUpdateCallLog() {
 		if (mService != null) {
 			switch (mCurCallLogType) {
-			case CallLog.TYPE_CALL_MISS:
+			case UICallLog.TYPE_CALL_MISS:
 				mService.loadMissedLogs();
 				break;
-			case CallLog.TYPE_CALL_IN:
+			case UICallLog.TYPE_CALL_IN:
 				mService.loadReceivedLogs();
 				break;
-			case CallLog.TYPE_CALL_OUT:
+			case UICallLog.TYPE_CALL_OUT:
 				mService.loadDialedLogs();
 				break;
 			default:
@@ -185,13 +186,13 @@ public class CallLogActivity extends BaseActivity {
 			clickUpdateCallLog();
 			break;
 		case R.id.tv_log_miss:
-			onCallLogTypeChange(CallLog.TYPE_CALL_MISS);
+			onCallLogTypeChange(UICallLog.TYPE_CALL_MISS);
 			break;
 		case R.id.tv_log_in:
-			onCallLogTypeChange(CallLog.TYPE_CALL_IN);
+			onCallLogTypeChange(UICallLog.TYPE_CALL_IN);
 			break;
 		case R.id.tv_log_out:
-			onCallLogTypeChange(CallLog.TYPE_CALL_OUT);
+			onCallLogTypeChange(UICallLog.TYPE_CALL_OUT);
 			break;
 
 		default:
@@ -215,22 +216,22 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void showComing(CallLog callLog) {
+	public void showComing(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 	
 	@Override
-	public void showCalling(CallLog callLog) {
+	public void showCalling(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 	
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		Utils.gotoDialActivity(this, callLog);
 	}
 	
 	@Override
-	public void showHangUp(CallLog callLog) {
+	public void showHangUp(UICallLog callLog) {
 		onHangUp();
 	}
 	
@@ -257,34 +258,34 @@ public class CallLogActivity extends BaseActivity {
 	
 	@Override
 	public void updateDialedLogs(List<CallLog> list) {
-		mCallLogMap.get(CallLog.TYPE_CALL_OUT).clear();
-		mCallLogMap.get(CallLog.TYPE_CALL_OUT).addAll(list);
-		if(CallLog.TYPE_CALL_OUT == mCurCallLogType) {
+		mCallLogMap.get(UICallLog.TYPE_CALL_OUT).clear();
+		mCallLogMap.get(UICallLog.TYPE_CALL_OUT).addAll(list);
+		if(UICallLog.TYPE_CALL_OUT == mCurCallLogType) {
 			mAdapter.refresh(list);
 		}
 	}
 	
 	@Override
 	public void updateMissedLogs(List<CallLog> list) {
-		mCallLogMap.get(CallLog.TYPE_CALL_MISS).clear();
-		mCallLogMap.get(CallLog.TYPE_CALL_MISS).addAll(list);
-		if(CallLog.TYPE_CALL_MISS == mCurCallLogType) {
+		mCallLogMap.get(UICallLog.TYPE_CALL_MISS).clear();
+		mCallLogMap.get(UICallLog.TYPE_CALL_MISS).addAll(list);
+		if(UICallLog.TYPE_CALL_MISS == mCurCallLogType) {
 			mAdapter.refresh(list);
 		}
 	}
 	
 	@Override
 	public void updateReceivedLogs(List<CallLog> list) {
-		mCallLogMap.get(CallLog.TYPE_CALL_IN).clear();
-		mCallLogMap.get(CallLog.TYPE_CALL_IN).addAll(list);
-		if(CallLog.TYPE_CALL_IN == mCurCallLogType) {
+		mCallLogMap.get(UICallLog.TYPE_CALL_IN).clear();
+		mCallLogMap.get(UICallLog.TYPE_CALL_IN).addAll(list);
+		if(UICallLog.TYPE_CALL_IN == mCurCallLogType) {
 			mAdapter.refresh(list);
 		}
 	}
 	
 	@Override
 	public void toMissedCalls() {
-		onCallLogTypeChange(CallLog.TYPE_CALL_MISS);
+		onCallLogTypeChange(UICallLog.TYPE_CALL_MISS);
 	}
 	
 }

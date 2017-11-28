@@ -1,11 +1,10 @@
 package com.hwatong.btphone.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.app.ActivityManager;
-import android.app.Service;
 import android.app.ActivityManager.RunningTaskInfo;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +13,6 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -27,10 +25,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.hwatong.btphone.activity.DialActivity;
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
 import com.hwatong.btphone.app.BtPhoneApplication;
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
+import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.iview.IReceiverView;
 import com.hwatong.btphone.iview.IServiceView;
@@ -67,7 +65,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	private BroadcastPresenter broadcastPresenter;
 	private ServicePresenter servicePresenter;
 	
-	private CallLog currentCall;
+	private UICallLog currentCall;
 	
 	@Override
 	public void onCreate() {
@@ -380,7 +378,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	}
 
 	@Override
-	public void showWindow(CallLog callLog) {
+	public void showWindow(UICallLog callLog) {
 		currentCall = callLog;
 		windowHandler.sendEmptyMessage(1);
 	}
@@ -391,13 +389,13 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	}
 	
 	@Override
-	public void showTalking(CallLog callLog) {
+	public void showTalking(UICallLog callLog) {
 		hideWindow();
 		gotoDialActivity(callLog);
 	}
 
 	@Override
-	public void gotoDialActivity(CallLog callLog) {
+	public void gotoDialActivity(UICallLog callLog) {
 		L.d(thiz, "goto dial activity in service");
 		Utils.gotoDialActivityInService(this, callLog);
 	}

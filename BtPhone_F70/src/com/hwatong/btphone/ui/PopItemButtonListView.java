@@ -11,9 +11,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.hwatong.btphone.bean.CallLog;
-import com.hwatong.btphone.bean.Contact;
-import com.hwatong.btphone.util.L;
+import com.hwatong.btphone.CallLog;
+import com.hwatong.btphone.Contact;
 
 /**
  * 特用于本应用需要点击listVew item弹出拨号按钮 注意:不要在外部调用 setOnItemClickListener
