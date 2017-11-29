@@ -3,6 +3,7 @@ package com.hwatong.aircondition;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.canbus.ACStatus;
+import android.canbus.CarStatus;
 import android.canbus.IACStatusListener;
 import android.canbus.ICanbusService;
 import android.content.ComponentName;
@@ -154,8 +155,20 @@ public class MainActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		mCanbusService = ICanbusService.Stub.asInterface(ServiceManager.getService("canbus"));
+		
+//		getAccStatus();
+//		
+//		if(acc != 2) {
+//			accNotOn();
+//			finish();
+//			return;
+//		}
+		
 		setContentView(R.layout.activity_main);
-
+		
+		
 		initView();
 
 		mWindLevels = new ImageView[] { mIvWindLevel1, mIvWindLevel2,
@@ -211,8 +224,6 @@ public class MainActivity extends Activity implements OnClickListener {
 					}
 				});
 
-		mCanbusService = ICanbusService.Stub.asInterface(ServiceManager
-				.getService("canbus"));
 	}
 
 	private void initView() {
@@ -755,6 +766,36 @@ public class MainActivity extends Activity implements OnClickListener {
 		sendBroadcast(intent);
 		Log.d(TAG, "after send broadcast !");
 	}
+	
+	
+	private int acc = 0;
+	/**
+	 * acc提示
+	 */
+	private void getAccStatus() {
+		try {
+			if (mCanbusService != null) {
+				CarStatus carStatus = mCanbusService.getLastCarStatus(getPackageName());
+				acc = carStatus.getStatus1();
+				Log.d(TAG, carStatus.toString() + " ; " + acc);
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * acc提示弹框
+	 */
+	private void accNotOn() {
+		Intent intent = new Intent("com.hwatong.backservice.BackService");
+		intent.putExtra("cmd", "alarm");
+		intent.putExtra("type", "noacc");
+		intent.putExtra("run", "true");
+		startService(intent);
+	}
+	
+	
 	
 	
 }
