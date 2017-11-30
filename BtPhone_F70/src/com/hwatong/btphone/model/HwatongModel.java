@@ -609,6 +609,7 @@ public class HwatongModel implements IBTPhoneModel {
 					L.d(thiz, "onPhoneBook cost : " + (System.currentTimeMillis() - start));
 				}
 			});
+			
 		}
 		
 		@Override
@@ -642,6 +643,19 @@ public class HwatongModel implements IBTPhoneModel {
 		@Override
 		public void onContactsChange() throws RemoteException {
 			L.dRoll(thiz, "onContactsChange");
+//			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
+//				
+//				@Override
+//				public void run() {
+//					long start = System.currentTimeMillis();
+//						
+//					getContactList();
+//					
+//					iView.updateBooks(mContacts);
+//					
+//					L.d(thiz, "onContactsChange cost : " + (System.currentTimeMillis() - start));
+//				}
+//			});
 		}
 		
 		@Override
@@ -691,23 +705,34 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 		
 		@Override
-		public void onCalllogChange(String type) throws RemoteException {
-			// TODO Auto-generated method stub
+		public void onCalllogChange(final String type) throws RemoteException {
 			L.dRoll(thiz, "onCalllogChange type = " + type);
-			
-//			List<com.hwatong.btphone.CallLog> calllogList = iService.getCalllogList(type);
-//			L.dRoll(thiz, "onCalllogChange calllogList : " + calllogList.size() + " " + calllogList.get(0));
-//			
-//			//来电
-//			if(com.hwatong.btphone.CallLog.TYPE_CALL_IN.equals(type)) {
+//			ThreadPoolUtil.THREAD_POOL_EXECUTOR.execute(new Runnable() {
 //				
-//			//漏接
-//			} else if(com.hwatong.btphone.CallLog.TYPE_CALL_MISS.equals(type)) {
-//				
-//			//去电
-//			} else if(com.hwatong.btphone.CallLog.TYPE_CALL_OUT.equals(type)) {
-//				
-//			}
+//				@Override
+//				public void run() {
+//					long start = System.currentTimeMillis();
+//					
+//					getAllLogsList();
+//					
+//					//来电
+//					if(com.hwatong.btphone.CallLog.TYPE_CALL_IN.equals(type)) {
+//						iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));	
+//						
+//						//漏接
+//					} else if(com.hwatong.btphone.CallLog.TYPE_CALL_MISS.equals(type)) {
+//						iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
+//						
+//						//去电
+//					} else if(com.hwatong.btphone.CallLog.TYPE_CALL_OUT.equals(type)) {
+//						iView.updateDialedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_OUT));
+//					}
+//					
+//					iView.updateAllLogs(mAllCallLogList);
+//					
+//					L.d(thiz, "onCalllogChange cost : " + (System.currentTimeMillis() - start));
+//				}
+//			});
 		}
 		
 		@Override
@@ -891,7 +916,7 @@ public class HwatongModel implements IBTPhoneModel {
 	}
 	
 	
-	private void getContactList() {
+	private synchronized void getContactList() {
 		try {
 			//得到列表
 			List<Contact> contacts = new ArrayList<Contact>(iService.getContactList());
@@ -916,7 +941,7 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 	}
 	
-	private void getAllLogsList() {
+	private synchronized void getAllLogsList() {
 		//更新通话记录
 		try {
 			

@@ -61,6 +61,8 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	private ImageView iv_talking;
 	private FrameLayout flComing;
 	
+	private TextView tvCalling, tvAccept, tvReject;
+	
 	
 	private BroadcastPresenter broadcastPresenter;
 	private ServicePresenter servicePresenter;
@@ -119,6 +121,11 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		iv_talking = (ImageView) comingWindow.findViewById(R.id.iv_talking);
 		flComing = (FrameLayout) comingWindow.findViewById(R.id.fl_coming);
 
+		tvCalling = (TextView) comingWindow.findViewById(R.id.tv_calling);
+		tvAccept = (TextView) comingWindow.findViewById(R.id.tv_accept);
+		tvReject = (TextView) comingWindow.findViewById(R.id.tv_reject);
+		
+		
 		OnClickListener clickListener = new OnClickListener() {
 
 			@Override
@@ -233,6 +240,10 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 
 		tvName.setText(currentCall.number + " " + currentCall.name);
 
+		tvCalling.setText(getString(R.string.coming_now));
+		tvAccept.setText(getString(R.string.accept));
+		tvReject.setText(getString(R.string.reject));
+		
 		params.gravity = Gravity.TOP | Gravity.CENTER_HORIZONTAL;
 		params.y = 130;
 
@@ -360,7 +371,8 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 
 	@Override
 	public void close() {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_CLOSE);
+		//BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_CLOSE);
+		BtPhoneApplication.getInstance().exit();
 	}
 	
 	@Override
@@ -374,6 +386,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 			BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_OPEN_MISSED_CALLS);
 		} else {
 			Utils.gotoCallLogActivityInService(this);
+			BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_OPEN_MISSED_CALLS);
 		}
 	}
 

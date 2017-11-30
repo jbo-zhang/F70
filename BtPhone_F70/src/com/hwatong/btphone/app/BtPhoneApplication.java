@@ -1,8 +1,10 @@
 package com.hwatong.btphone.app;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
@@ -64,6 +66,25 @@ public class BtPhoneApplication extends Application {
 //			}
 //		}
 //	}
+	
+	private List<Activity> activityList = Collections.synchronizedList(new ArrayList<Activity>());
+	
+	public void putActivity(Activity activity) {
+		activityList.add(activity);
+	}
+	
+	public void removeActivity(Activity activity) {
+		activityList.remove(activity);
+	}
+	
+	public void exit() {
+		L.d(thiz, "exit, activityList size : " + activityList.size());
+		for (Activity activity : activityList) {
+			activity.finish();
+		}
+	}
+	
+	
 	
 	public void registerHandler(Handler handler, int[] type) {
 		mHandler = handler;

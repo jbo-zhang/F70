@@ -30,6 +30,7 @@
             android:textSize="25px" />
 
         <TextView
+            android:id="@+id/tv_calling"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
@@ -54,6 +55,7 @@
                 android:src="@drawable/icon_call" />
 
             <TextView
+                android:id="@+id/tv_accept"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -80,6 +82,7 @@
                 android:src="@drawable/icon_hand_up" />
 
             <TextView
+                android:id="@+id/tv_reject"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"

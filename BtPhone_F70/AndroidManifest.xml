@@ -46,7 +46,8 @@
             android:name="com.hwatong.btphone.activity.DialActivity"
             android:launchMode="singleTop" >
         </activity>
-        <activity android:name="com.hwatong.btphone.activity.CallLogActivity" >
+        <activity android:name="com.hwatong.btphone.activity.CallLogActivity" 
+            android:launchMode="singleTop" >
         </activity>
         <activity android:name="com.hwatong.btphone.activity.ContactsListActivity" >
         </activity>

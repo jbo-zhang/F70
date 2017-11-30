@@ -228,6 +228,8 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 
 		bindService(new Intent(this, BtPhoneService.class), mConn, Context.BIND_AUTO_CREATE);
 		
+		BtPhoneApplication.getInstance().putActivity(this);
+		
 	}
 
 	@Override
@@ -271,6 +273,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 		mService = null;
 		iStatusBarInfo = null;
 		
+		BtPhoneApplication.getInstance().removeActivity(this);
 		super.onDestroy();
 	}
 

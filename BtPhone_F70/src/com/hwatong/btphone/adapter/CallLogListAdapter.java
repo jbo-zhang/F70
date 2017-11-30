@@ -92,19 +92,29 @@ public class CallLogListAdapter extends BaseAdapter {
 			return convertView;
 		}
 		Drawable drawableLeft = null;
-		switch (callLog.type) {
-		case CallLog.TYPE_CALL_IN:
+		
+		if(CallLog.TYPE_CALL_IN.equals(callLog.type)) {
 			drawableLeft = mContext.getResources().getDrawable(R.drawable.icon_log_in);
-			break;
-		case CallLog.TYPE_CALL_MISS:
+		} else if(CallLog.TYPE_CALL_MISS.equals(callLog.type)) {
 			drawableLeft = mContext.getResources().getDrawable(R.drawable.icon_log_miss);
-			break;
-		case CallLog.TYPE_CALL_OUT:
+		} else if(CallLog.TYPE_CALL_OUT.equals(callLog.type)) {
 			drawableLeft = mContext.getResources().getDrawable(R.drawable.icon_log_out);
-			break;
-		default:
-			break;
 		}
+		
+//		switch (callLog.type) {
+//		case CallLog.TYPE_CALL_IN:
+//			drawableLeft = mContext.getResources().getDrawable(R.drawable.icon_log_in);
+//			break;
+//		case CallLog.TYPE_CALL_MISS:
+//			drawableLeft = mContext.getResources().getDrawable(R.drawable.icon_log_miss);
+//			break;
+//		case CallLog.TYPE_CALL_OUT:
+//			drawableLeft = mContext.getResources().getDrawable(R.drawable.icon_log_out);
+//			break;
+//		default:
+//			break;
+//		}
+		
 		holder.mDtvName.setDrawables(drawableLeft, null, null, null);
 		holder.mDtvName.setText(callLog.name);
 		holder.mTvNumber.setText(callLog.number);
