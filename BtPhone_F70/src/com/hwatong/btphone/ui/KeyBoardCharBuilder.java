@@ -1,11 +1,10 @@
 package com.hwatong.btphone.ui;
 
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
-import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.util.DailDTMF;
 
 /**
@@ -21,7 +20,8 @@ public class KeyBoardCharBuilder {
 
 	private StringBuilder mSb;
 
-	private TextView mTv;
+//	private TextView mTv;
+	private EditText mTv;
 
 	private int maxLength = -1;
 
@@ -64,7 +64,7 @@ public class KeyBoardCharBuilder {
 		}
 	}
 
-	public void bindTextView(TextView textView) {
+	public void bindTextView(EditText textView) {
 		mTv = textView;
 	}
 
@@ -76,6 +76,7 @@ public class KeyBoardCharBuilder {
 		if (mTv != null) {
 			mTv.setVisibility(View.VISIBLE);
 			mTv.setText(mSb.toString());
+			mTv.setSelection(mSb.toString().length());
 		}
 	}
 

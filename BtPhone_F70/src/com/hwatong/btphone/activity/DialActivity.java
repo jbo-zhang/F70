@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -53,7 +55,8 @@ public class DialActivity extends BaseActivity {
 
 	private TextView mTvCallState;
 
-	private TextView mTvInputNumber;// 显示点击按键输入的号码
+//	private TextView mTvInputNumber;// 显示点击按键输入的号码
+	private EditText mTvInputNumber;// 显示点击按键输入的号码
 
 	private DrawableTextView mBtnCall;// 拨号按键
 
@@ -97,9 +100,9 @@ public class DialActivity extends BaseActivity {
 	// ----底部图标
 	private ImageView mIvReturn;
 
-	private View mBtnGotoContacts;
+	private View mBtnGotoContacts, mDtvGotoContacts;
 
-	private View mBtnGotoCallLog;
+	private View mBtnGotoCallLog, mDtvGotoCallLog;
 	// ----底部图标
 
 	private ListView mLvCallLog;
@@ -135,7 +138,8 @@ public class DialActivity extends BaseActivity {
 
 		mTvCallState = (TextView) findViewById(R.id.tv_call_state);
 
-		mTvInputNumber = (TextView) findViewById(R.id.tv_input_number);
+		mTvInputNumber = (EditText) findViewById(R.id.tv_input_number);
+		mTvInputNumber.setInputType(InputType.TYPE_NULL);
 
 		mBtnCall = (DrawableTextView) findViewById(R.id.dtv_call);
 		mBtnCall.setOnClickListener(this);
@@ -196,9 +200,11 @@ public class DialActivity extends BaseActivity {
 		mIvReturn.setOnClickListener(this);
 
 		mBtnGotoContacts = findViewById(R.id.btn_goto_contacts);
+		mDtvGotoContacts = findViewById(R.id.dtv_goto_contacts);
 		mBtnGotoContacts.setOnClickListener(this);
 
 		mBtnGotoCallLog = findViewById(R.id.btn_goto_call_log);
+		mDtvGotoCallLog = findViewById(R.id.dtv_goto_call_log);
 		mBtnGotoCallLog.setOnClickListener(this);
 
 		mLvCallLog = (ListView) findViewById(R.id.lv_call_log_list);
@@ -479,7 +485,7 @@ public class DialActivity extends BaseActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == Constant.RESULT_FINISH_ACTIVITY) {
-			finish();
+			//finish();
 		}
 	}
 
@@ -587,12 +593,18 @@ public class DialActivity extends BaseActivity {
 	public void showLogsLoading() {
 		mBtnGotoContacts.setEnabled(false);
 		mBtnGotoCallLog.setEnabled(false);
+		
+		mDtvGotoContacts.setEnabled(false);
+		mDtvGotoCallLog.setEnabled(false);
 	}
 	
 	@Override
 	public void syncLogsAlreadyLoad() {
 		mBtnGotoContacts.setEnabled(true);
 		mBtnGotoCallLog.setEnabled(true);
+		
+		mDtvGotoContacts.setEnabled(true);
+		mDtvGotoCallLog.setEnabled(true);
 	}
 	
 	@Override

@@ -217,17 +217,23 @@ public class CallLogActivity extends BaseActivity {
 	
 	@Override
 	public void showComing(UICallLog callLog) {
-		Utils.gotoDialActivity(this, callLog);
+		if(callLog.shouldJump == 1) {
+			Utils.gotoDialActivity(this, callLog);
+		}
 	}
 	
 	@Override
 	public void showCalling(UICallLog callLog) {
-		Utils.gotoDialActivity(this, callLog);
+		if(callLog.shouldJump == 1) {
+			Utils.gotoDialActivity(this, callLog);
+		}
 	}
 	
 	@Override
 	public void showTalking(UICallLog callLog) {
-		Utils.gotoDialActivity(this, callLog);
+		if(callLog.shouldJump == 1) {
+			Utils.gotoDialActivity(this, callLog);
+		}
 	}
 	
 	@Override

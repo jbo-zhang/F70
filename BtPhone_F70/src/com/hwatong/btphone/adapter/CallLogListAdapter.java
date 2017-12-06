@@ -5,6 +5,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.graphics.drawable.Drawable;
+import android.text.TextPaint;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +33,8 @@ public class CallLogListAdapter extends BaseAdapter {
 	
 	private ButtonOnClick mButtonOnClick;//响应拨号按钮被点击事件
 
+	private int width1 = 150, width2 = 170;
+	
 	public CallLogListAdapter(Activity context, int layoutResId, List<CallLog> list) {
 		super();
 		mDataList.addAll(list);
@@ -80,6 +84,11 @@ public class CallLogListAdapter extends BaseAdapter {
 			holder.mTvNumber = (TextView) convertView.findViewById(R.id.tv_phone_number);
 			if (mLayoutResId == R.layout.item_contacts_btn) {
 				holder.mBtnDial = (ImageButton) convertView.findViewById(R.id.btn_dial);
+				width1= 310;
+				width2= 260;
+			} else {
+				width1= 150;
+				width2= 170;
 			}
 
 			convertView.setTag(holder);
@@ -116,9 +125,9 @@ public class CallLogListAdapter extends BaseAdapter {
 //		}
 		
 		holder.mDtvName.setDrawables(drawableLeft, null, null, null);
-		holder.mDtvName.setText(callLog.name);
-		holder.mTvNumber.setText(callLog.number);
-
+		holder.mDtvName.setText(TextUtils.ellipsize(callLog.name, holder.mDtvName.getPaint(), width1, TextUtils.TruncateAt.END));
+		holder.mTvNumber.setText(TextUtils.ellipsize(callLog.number,holder.mTvNumber.getPaint(), width2, TextUtils.TruncateAt.END));
+		
 		if (holder.mBtnDial != null) {
 			holder.mBtnDial.setFocusable(false);
 			holder.mBtnDial.setOnClickListener(new OnClickListener() {
@@ -139,4 +148,31 @@ public class CallLogListAdapter extends BaseAdapter {
 		void clickButton(CallLog callLog);
 	}
 
+	
+	public static String dealDetailString(TextView v ,String content,float show_len){
+		TextPaint tpaint =v.getPaint();
+		//tpaint.setTextSize(21);
+		String temp="";
+		if(content!=null){
+			temp=content.replaceAll("\n", " ").replaceAll("\b", " ");
+		}
+		String str_content=(content==null?"":temp);
+		float len=0;
+		int s_len=0;
+		if(str_content != null && str_content != ""){
+			len = tpaint.measureText(str_content);
+			s_len=str_content.length();
+		}
+		int i=0;
+		for(; i < s_len && len > show_len; i++){
+			str_content=str_content.substring(0, str_content.length()-1);
+			len = tpaint.measureText(str_content);
+		}
+		if(i>0){
+			return str_content+"...";
+		}else{
+		   return content;
+		}
+	}
+	
 }

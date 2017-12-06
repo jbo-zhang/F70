@@ -8,7 +8,7 @@
 
     <com.hwatong.btphone.ui.DrawableTextView
         android:id="@+id/dtv_name"
-        android:layout_width="500px"
+        android:layout_width="wrap_content"
         android:layout_height="62px"
         android:layout_centerVertical="true"
         android:layout_marginLeft="30dp"

@@ -362,9 +362,13 @@ public class ContactsListActivity extends BaseActivity {
 					R.drawable.icon_people);
 
 			holder.mDtvName.setDrawables(drawableLeft, null, null, null);
-			holder.mDtvName.setText(contact.name);
-			holder.mTvNumber.setText(contact.number);
-
+//			holder.mDtvName.setText(contact.name);
+//			holder.mTvNumber.setText(contact.number);
+			holder.mDtvName.setText(TextUtils.ellipsize(contact.name, holder.mDtvName.getPaint(), 310, TextUtils.TruncateAt.END));
+			holder.mTvNumber.setText(TextUtils.ellipsize(contact.number,holder.mTvNumber.getPaint(), 260, TextUtils.TruncateAt.END));
+			
+			
+			
 			holder.mBtnDial.setFocusable(false);
 			holder.mBtnDial.setOnClickListener(new OnClickListener() {
 
@@ -420,17 +424,23 @@ public class ContactsListActivity extends BaseActivity {
 
 	@Override
 	public void showComing(UICallLog callLog) {
-		Utils.gotoDialActivity(this, callLog);
+		if(callLog.shouldJump == 1) {
+			Utils.gotoDialActivity(this, callLog);
+		}
 	}
 
 	@Override
 	public void showCalling(UICallLog callLog) {
-		Utils.gotoDialActivity(this, callLog);
+		if(callLog.shouldJump == 1) {
+			Utils.gotoDialActivity(this, callLog);
+		}
 	}
 	
 	@Override
 	public void showTalking(UICallLog callLog) {
-		Utils.gotoDialActivity(this, callLog);
+		if(callLog.shouldJump == 1) {
+			Utils.gotoDialActivity(this, callLog);
+		}
 	}
 
 	@Override

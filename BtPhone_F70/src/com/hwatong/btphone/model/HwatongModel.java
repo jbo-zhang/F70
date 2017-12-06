@@ -180,6 +180,10 @@ public class HwatongModel implements IBTPhoneModel {
 					iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
 					iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));
 					
+					if(currentCall != null) {
+						currentCall.shouldJump = 0;   //表示不用跳界面
+					}
+					
 					//同步通话状态
 					if(phoneState == PhoneState.TALKING) {
 						iView.showTalking(currentCall);
@@ -187,6 +191,8 @@ public class HwatongModel implements IBTPhoneModel {
 						iView.showComing(currentCall);
 					} else if(phoneState == PhoneState.OUTGOING) {
 						iView.showCalling(currentCall);
+					} else if(phoneState == PhoneState.INPUT){
+						iView.showDTMFInput(currentCall);
 					} else {
 						iView.showIdel();
 					}
@@ -796,6 +802,8 @@ public class HwatongModel implements IBTPhoneModel {
 				} else if (CallStatus.PHONE_CALLING.equals(callStatus.status)) {
 					currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_OUT, callStatus);
 					
+					currentCall.shouldJump = 1;  //表示需要跳转界面
+					
 					iView.showCalling(currentCall);
 					
 					phoneState = PhoneState.OUTGOING;
@@ -805,6 +813,8 @@ public class HwatongModel implements IBTPhoneModel {
 				} else if (CallStatus.PHONE_COMING.equals(callStatus.status)) {
 					currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_IN, callStatus);
 					
+					currentCall.shouldJump = 1;  //表示需要跳转界面
+					
 					iView.showComing(currentCall);
 					
 					phoneState = PhoneState.INCOMING;
@@ -813,6 +823,7 @@ public class HwatongModel implements IBTPhoneModel {
 				} else if (CallStatus.PHONE_TALKING.equals(callStatus.status)) {
 					if(currentCall == null) {
 						currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_OUT, callStatus);
+						currentCall.shouldJump = 1;  //表示需要跳转界面
 					}
 					if(currentCall != null) {
 						currentCall.duration = 0;
@@ -828,8 +839,10 @@ public class HwatongModel implements IBTPhoneModel {
 										if(currentCall != null) {
 											currentCall.duration += 1000;
 											if(phoneState == PhoneState.TALKING) {
+												currentCall.shouldJump = 0;  //表示不需要跳转界面
 												iView.showTalking(currentCall);
 											} else if(phoneState == phoneState.INPUT) {
+												currentCall.shouldJump = 0;  //表示不需要跳转界面
 												iView.showDTMFInput(currentCall);
 											}
 										}

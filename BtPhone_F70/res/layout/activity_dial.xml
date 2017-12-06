@@ -36,7 +36,7 @@
                 <com.hwatong.btphone.ui.DrawableTextView
                     android:id="@+id/dtv_goto_call_log"
                     style="@style/style_bottom_tab"
-                    android:drawableLeft="@drawable/icon_botton_call_log"
+                    android:drawableLeft="@drawable/icon_button_calllog_selector"
                     android:text="@string/tab_call_log"
                     hwatong:drawableHeight="@dimen/bottom_btn_drawableheight"
                     hwatong:drawableWidth="@dimen/bottom_btn_drawablewidth" />
@@ -53,7 +53,7 @@
                 <com.hwatong.btphone.ui.DrawableTextView
                     android:id="@+id/dtv_goto_contacts"
                     style="@style/style_bottom_tab"
-                    android:drawableLeft="@drawable/icon_botton_contacts"
+                    android:drawableLeft="@drawable/icon_button_contacts_selector"
                     android:text="@string/tab_contacts"
                     hwatong:drawableHeight="@dimen/bottom_btn_drawableheight"
                     hwatong:drawableWidth="@dimen/bottom_btn_drawablewidth" />

@@ -26,6 +26,8 @@ public class UICallLog implements Parcelable {
 //	public String firstLetters = "";
 	public long duration ;
 	public String dtmfStr = "";
+	
+	public byte shouldJump;
 
 	public UICallLog() {}
 
@@ -95,6 +97,7 @@ public class UICallLog implements Parcelable {
 //		firstLetters = in.readString();
 		duration = in.readLong();
 		dtmfStr = in.readString();
+		shouldJump = in.readByte();
 	}
 
 	@Override
@@ -107,6 +110,7 @@ public class UICallLog implements Parcelable {
 //		dest.writeString(firstLetters);
 		dest.writeLong(duration);
 		dest.writeString(dtmfStr);
+		dest.writeByte(shouldJump);
 	}
 	
 	

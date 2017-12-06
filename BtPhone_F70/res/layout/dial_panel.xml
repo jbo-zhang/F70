@@ -40,6 +40,12 @@
                 android:id="@+id/tv_talking_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:marqueeRepeatLimit="marquee_forever"
+				android:ellipsize="marquee" 
+				android:scrollHorizontally="true"
+				android:focusableInTouchMode="true"
+				android:focusable="true"
                 android:layout_marginTop="@dimen/dial_panel_margin"
                 android:textSize="@dimen/dial_panel_textsize" />
 			<!-- 事件或者状态 -->
@@ -52,11 +58,14 @@
         </LinearLayout>
 			
         <!-- 拨号时输入的号码 -->
-        <TextView
+        <EditText
             android:id="@+id/tv_input_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@null"
             android:singleLine="true"
+            android:textColor="@color/white"
+            android:cursorVisible="false"
             android:textSize="@dimen/tv_number_textsize" />
     </LinearLayout>
 
