@@ -33,7 +33,7 @@ import android.widget.TextView;
 
 import com.hwatong.statusbarinfo.aidl.IStatusBarInfo;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener, IVoiceView {
 
 	private static final String TAG = "kongtiao";
 	protected static final boolean DBG = false;
@@ -223,6 +223,8 @@ public class MainActivity extends Activity implements OnClickListener {
 						Log.d(TAG, "fromUser = " + fromUser);
 					}
 				});
+		
+		voicePresenter = new VoicePresenter(this, this);
 
 	}
 
@@ -689,7 +691,6 @@ public class MainActivity extends Activity implements OnClickListener {
 		if(loop == 0x00) {
 			//外循环
 			setLoopView(R.drawable.icon_loop_out, R.string.text_loop_out);
-			mTvLoop.setSelected(false);
 		} else if(loop == 0x01) {
 			//内循环
 			setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
@@ -753,6 +754,8 @@ public class MainActivity extends Activity implements OnClickListener {
 		sendCloseBroadcast();
 		Log.d(TAG, "onDestroy sendBroadcast!");
 		
+		voicePresenter.unregisterBroadcast(this);
+		
 		super.onDestroy();
 	}
 	
@@ -769,6 +772,7 @@ public class MainActivity extends Activity implements OnClickListener {
 	
 	
 	private int acc = 0;
+	private VoicePresenter voicePresenter;
 	/**
 	 * acc提示
 	 */
@@ -794,8 +798,10 @@ public class MainActivity extends Activity implements OnClickListener {
 		intent.putExtra("run", "true");
 		startService(intent);
 	}
-	
-	
-	
+
+	@Override
+	public void close() {
+		finish();
+	}
 	
 }
