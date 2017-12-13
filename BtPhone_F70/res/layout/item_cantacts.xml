@@ -3,7 +3,7 @@
     xmlns:hwatong="http://schemas.android.com/apk/res/com.hwatong.btphone.ui"
     android:layout_width="match_parent"
     android:layout_height="61px"
-    android:paddingRight="50dp" >
+    android:paddingRight="5dp" >
 
     <com.hwatong.btphone.ui.DrawableTextView
         android:id="@+id/dtv_name"

@@ -142,7 +142,7 @@ public class PopItemButtonListView extends ListView {
 			return;
 		holder.mBtnDial.setVisibility(View.VISIBLE);
 		float orignalX = holder.mTvNumber.getX();
-		float endX = orignalX - holder.mBtnDial.getMeasuredWidth() - 5;
+		float endX = orignalX - holder.mBtnDial.getMeasuredWidth() + 10;
 		ObjectAnimator ofFloatX = ObjectAnimator.ofFloat(holder.mTvNumber, "X",
 				orignalX, endX);
 		ofFloatX.setDuration(mDuration);
@@ -172,8 +172,8 @@ public class PopItemButtonListView extends ListView {
 		// ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
 		// "Alpha", 0.0f, 1.0f);
 		ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
-				"X", orignalX + holder.mTvNumber.getWidth() + 5, endX
-						+ holder.mTvNumber.getWidth() + 5);
+				"X", orignalX + holder.mTvNumber.getWidth() + 30, endX
+						+ holder.mTvNumber.getWidth() + 10);
 		ofFloatAlpha.setDuration(mDuration);
 		ofFloatAlpha.start();
 		ofFloatX.start();
@@ -184,15 +184,15 @@ public class PopItemButtonListView extends ListView {
 				|| holder.mBtnDial == null)
 			return;
 		float orignalX = holder.mTvNumber.getX();
-		float endX = orignalX + holder.mBtnDial.getMeasuredWidth() + 5;
+		float endX = orignalX + holder.mBtnDial.getMeasuredWidth() - 10;
 
 		ObjectAnimator ofFloatX = ObjectAnimator.ofFloat(holder.mTvNumber, "X",
 				orignalX, endX);
 		// ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
 		// "Alpha", 1.0f, 0.0f);
 		ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
-				"X", orignalX + holder.mTvNumber.getWidth() + 5, endX
-						+ holder.mTvNumber.getWidth() + 5);
+				"X", orignalX + holder.mTvNumber.getWidth() + 30, endX
+						+ holder.mTvNumber.getWidth() + 30);
 		ofFloatX.setDuration(mDuration);
 		ofFloatAlpha.setDuration(mDuration);
 

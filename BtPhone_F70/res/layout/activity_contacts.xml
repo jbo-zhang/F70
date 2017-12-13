@@ -73,7 +73,7 @@
                 android:cacheColorHint="@android:color/transparent"
                 android:divider="#33333333"
                 android:dividerHeight="1px"
-                android:fastScrollEnabled="true"
+                android:scrollbars="none"
                 android:listSelector="@android:color/transparent"
                 android:paddingRight="50dp" >
             </com.hwatong.btphone.ui.IndexableListView>

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.TimerTask;
-import java.util.TreeSet;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -16,6 +14,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.text.TextUtils;
 import android.util.SparseArray;
 
 import com.hwatong.btphone.CallLog;
@@ -29,6 +28,7 @@ import com.hwatong.btphone.constants.BtPhoneDef;
 import com.hwatong.btphone.constants.PhoneState;
 import com.hwatong.btphone.imodel.IBTPhoneModel;
 import com.hwatong.btphone.iview.IUIView;
+import com.hwatong.btphone.presenter.PhoneBookPresenter;
 import com.hwatong.btphone.util.L;
 import com.hwatong.btphone.util.ThreadPoolUtil;
 import com.hwatong.btphone.util.TimerTaskUtil;
@@ -139,7 +139,7 @@ public class HwatongModel implements IBTPhoneModel {
 	@Override
 	public void link(Context context) {
 		context.bindService(new Intent(ACTION_BT_SERVICE), mBtSdkConn, Context.BIND_AUTO_CREATE);
-//		phoneBookPresenter = new PhoneBookPresenter(context);
+		//phoneBookPresenter = new PhoneBookPresenter(context);
 	}
 
 	@Override
@@ -783,7 +783,7 @@ public class HwatongModel implements IBTPhoneModel {
 				L.d(thiz, "onHfpCallChanged onCallStatusChanged 333 before getCallStatus");
 				CallStatus callStatus = iService.getCallStatus();
 				L.d(thiz, "onHfpCallChanged onCallStatusChanged 444 status : " + callStatus.status);
-				
+				L.d(thiz, "onHfpCallChanged onCallStatusChanged 555 status :" + callStatus);
 				//闲置状态
 				if (CallStatus.PHONE_CALL_NONE.equals(callStatus.status)) {
 					if(phoneState == PhoneState.TALKING || phoneState == PhoneState.OUTGOING || phoneState == PhoneState.INPUT) {
@@ -822,6 +822,8 @@ public class HwatongModel implements IBTPhoneModel {
 				//通话状态
 				} else if (CallStatus.PHONE_TALKING.equals(callStatus.status)) {
 					if(currentCall == null) {
+						if(!TextUtils.isEmpty(callStatus.number)) {
+						}
 						currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_OUT, callStatus);
 						currentCall.shouldJump = 1;  //表示需要跳转界面
 					}
@@ -912,7 +914,10 @@ public class HwatongModel implements IBTPhoneModel {
 		
 		clearAll();
 		
+		currentCall = null;
+		
 		phoneState = PhoneState.IDEL;
+		
 	}
 
 	@Override

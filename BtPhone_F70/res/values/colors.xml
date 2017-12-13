@@ -8,7 +8,7 @@
     <color name="log_txt_red">#e60311</color>
     <color name="call_txt_hl">#01fffc</color>
     
-    <color name="activity_tab_textcolor_gray">#333333</color>
+    <color name="activity_tab_textcolor_gray">#808080</color>
     <color name="activity_tab_textcolor">#FFFFFF</color>
     
     <color name="dark_gray_alpha50">#7D696969</color>

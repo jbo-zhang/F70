@@ -35,7 +35,7 @@
     <dimen name="bottom_btn_drawableheight">26px</dimen>
     <dimen name="bottom_btn_height">52dp</dimen>
    
-    <dimen name="dialog_text_size">34sp</dimen>
+    <dimen name="dialog_text_size">26px</dimen>
     
     <dimen name="keyboard_btn_margin">6dp</dimen>
     <dimen name="keyboard_height">280dp</dimen>

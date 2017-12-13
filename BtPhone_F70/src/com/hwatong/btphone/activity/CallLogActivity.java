@@ -243,7 +243,7 @@ public class CallLogActivity extends BaseActivity {
 	
 	@Override
 	public void showLogsLoadStart() {
-		showProgressDialog(R.string.dialog_update_callog);
+		showTextDialog(R.string.dialog_update_callog);
 	}
 	
 	@Override

@@ -96,6 +96,8 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1" >
+        
+            <!-- android:fastScrollEnabled="true" -->
 
         <ListView
             android:id="@+id/lv_call_log_list"
@@ -104,9 +106,10 @@
             android:cacheColorHint="@android:color/transparent"
             android:divider="#33333333"
             android:dividerHeight="1px"
-            android:fastScrollEnabled="true"
             android:listSelector="@drawable/item_click_selector"
-            android:scrollbarThumbVertical="@drawable/listview_scrollbar"
+            android:scrollbarTrackVertical="@drawable/listview_thumb_frame"
+            android:scrollbarThumbVertical="@drawable/listview_thumb"
+            android:scrollbarSize="8px"
             android:scrollbars="vertical" />
 
         <TextView

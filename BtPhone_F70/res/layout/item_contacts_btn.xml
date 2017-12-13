@@ -25,9 +25,10 @@
         android:layout_width="wrap_content"
         android:layout_height="62px"
         android:layout_alignParentRight="true"
+        android:layout_marginRight="30dp"
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
-         android:textColor="@color/item_text_color"
+        android:textColor="@color/white"
         android:textSize="@dimen/item_contacts_textsize" />
 
     <ImageButton
@@ -36,6 +37,7 @@
         android:layout_height="62px"
         android:layout_alignRight="@id/tv_phone_number"
         android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
         android:background="@drawable/btn_contact_call_selector"
         android:gravity="@drawable/icon_call"
         android:src="@drawable/icon_call"

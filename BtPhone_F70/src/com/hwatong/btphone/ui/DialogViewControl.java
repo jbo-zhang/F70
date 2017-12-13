@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ProgressBar;
@@ -81,14 +82,16 @@ public class DialogViewControl {
 		L.d(thiz, "before if show Dialog() !");
 		if (!isShow) {
 			L.d(thiz, "show Dialog() !");
-			mDialog.show();
 			isShow = true;
+			mDialog.show();
 			// 一定得在show完dialog后来set属性
 			WindowManager.LayoutParams lp = mDialog.getWindow().getAttributes();
-			lp.width = (int) (800 * mContext.getResources().getDisplayMetrics().density);
-			// lp.height = (int) (300 *
-			// mContext.getResources().getDisplayMetrics().density);
-			lp.x = lp.x - 200;
+//			lp.width = (int) (800 * mContext.getResources().getDisplayMetrics().density);
+			lp.width = 740;
+			lp.height = 120;
+			// lp.height = (int) (300 * mContext.getResources().getDisplayMetrics().density);
+			lp.gravity = Gravity.CENTER_VERTICAL | Gravity.LEFT;
+			lp.x = 55;
 			mDialog.getWindow().setAttributes(lp);
 		}
 	}
