@@ -407,6 +407,7 @@ public class RadioPresenter {
 			List<Channel> list = mService.getChannelList(0);
 			// 判断是否已收藏
 			for (int i = 0; i < list.size(); i++) {
+				L.d(thiz,i + " " + list.get(i).frequence);
 				Frequence v = new Frequence();
 				v.frequence = list.get(i).frequence;
 				v.isCollected = false;
