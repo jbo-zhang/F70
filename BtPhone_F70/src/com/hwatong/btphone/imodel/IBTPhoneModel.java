@@ -103,4 +103,7 @@ public interface IBTPhoneModel {
 	
 	List<CallLog> getDialedLogs();
 	
+	void syncLogsStatus(int type);
+	
+	
 }

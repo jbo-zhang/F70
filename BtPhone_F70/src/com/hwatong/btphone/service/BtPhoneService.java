@@ -366,6 +366,13 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		public List<CallLog> getReceivedLogs() {
 			return servicePresenter.getReceivedLogs();
 		}
+
+		/**
+		 * 切换不同类型通话记录时用到
+		 */
+		public void syncLogsStatus(int type) {
+			servicePresenter.syncLogsStatus(type);
+		}
 		
 	}
 
@@ -423,6 +430,5 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 		}
 		return false;
 	}
-	
 
 }

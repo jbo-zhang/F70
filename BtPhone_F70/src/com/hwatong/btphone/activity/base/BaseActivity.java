@@ -159,20 +159,18 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				break;
 				
 			case Constant.MSG_SHOW_LOGS_LOAD_START:		//显示通话记录开始更新
-				L.d(thiz, "Constant.MSG_SHOW_LOGS_LOAD_START");
-				showLogsLoadStart();
+				L.d(thiz, "Constant.MSG_SHOW_LOGS_LOAD_START type: " + msg.arg1);
+				showLogsLoadStart(msg.arg1);
 				break;
 				
 			case Constant.MSG_SHOW_LOGS_LOADING:		//显示通话记录更新中
-				L.d(thiz, "Constant.MSG_SHOW_LOGS_LOADING");
-				showLogsLoading();
+				L.d(thiz, "Constant.MSG_SHOW_LOGS_LOADING type: " + msg.arg1);
+				showLogsLoading(msg.arg1);
 				break;
 				
 			case Constant.MSG_SHOW_LOGS_LOADED:			//显示通话记录更新完成
-				L.d(thiz, "Constant.MSG_SHOW_LOGS_LOADED");
-				boolean succeed = (msg.arg1 == 1);
-				int reason = msg.arg2;
-				showLogsLoaded(succeed, reason);
+				L.d(thiz, "Constant.MSG_SHOW_LOGS_LOADED type: " + msg.arg1 + " result: " + msg.arg2);
+				showLogsLoaded(msg.arg1, msg.arg2);
 				break;
 				
 			case Constant.MSG_SHOW_MIC_MUTE:			//麦克风静音状态
@@ -193,8 +191,8 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 				break;
 				
 			case Constant.MSG_SYNC_LOGS_ALREADY_LOAD:
-				L.d(thiz, "Constant.MSG_SYNC_LOGS_ALREADY_LOAD");
-				syncLogsAlreadyLoad();
+				L.d(thiz, "Constant.MSG_SYNC_LOGS_ALREADY_LOAD type: " + msg.arg1);
+				syncLogsAlreadyLoad(msg.arg1);
 				break;
 				
 			case Constant.MSG_CLOSE:
@@ -457,25 +455,25 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	public void showLogsLoadStart() {
+	public void showLogsLoadStart(int type) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void showLogsLoading() {
+	public void showLogsLoading(int type) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void showLogsLoaded(boolean succeed, int reason) {
+	public void showLogsLoaded(int type, int result) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void syncLogsAlreadyLoad() {
+	public void syncLogsAlreadyLoad(int type) {
 		// TODO Auto-generated method stub
 		
 	}

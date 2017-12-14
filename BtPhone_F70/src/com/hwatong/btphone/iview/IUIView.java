@@ -109,24 +109,24 @@ public interface IUIView {
 	/**
 	 * 通话记录开始加载
 	 */
-	void showLogsLoadStart();
+	void showLogsLoadStart(int type);
 	
 	/**
 	 * 通话记录加载中
 	 */
-	void showLogsLoading();
+	void showLogsLoading(int type);
 	
 	/**
 	 * 通话记录加载结束
 	 * @param succeed
 	 * @param reason
 	 */
-	void showLogsLoaded(boolean succeed, int reason);
+	void showLogsLoaded(int type, int result);
 	
 	/**
 	 * 同步通话记录已经加载完成
 	 */
-	void syncLogsAlreadyLoad();	
+	void syncLogsAlreadyLoad(int type);	
 	
 	/**
 	 * 麦克风静音

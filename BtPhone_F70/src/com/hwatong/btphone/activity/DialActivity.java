@@ -590,7 +590,7 @@ public class DialActivity extends BaseActivity {
 
 
 	@Override
-	public void showLogsLoading() {
+	public void showLogsLoading(int type) {
 		mBtnGotoContacts.setEnabled(false);
 		mBtnGotoCallLog.setEnabled(false);
 		
@@ -599,7 +599,7 @@ public class DialActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void syncLogsAlreadyLoad() {
+	public void syncLogsAlreadyLoad(int type) {
 		mBtnGotoContacts.setEnabled(true);
 		mBtnGotoCallLog.setEnabled(true);
 		

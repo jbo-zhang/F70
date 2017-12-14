@@ -14,6 +14,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.os.SystemClock;
+import android.provider.Contacts.Intents.UI;
 import android.text.TextUtils;
 import android.util.SparseArray;
 
@@ -82,7 +83,7 @@ public class HwatongModel implements IBTPhoneModel {
 	/**
 	 * 通话记录加载中
 	 */
-	private boolean logsLoading = false;
+	private boolean logsLoading = false, logsInLoading = false, logsOutLoading = false, logsMissLoading = false;
 	
 	/**
 	 * 锁对象
@@ -167,11 +168,8 @@ public class HwatongModel implements IBTPhoneModel {
 					}
 					
 					//同步通话记录下载状态
-					if(logsLoading) {
-						iView.showLogsLoading();
-					} else {
-						iView.syncLogsAlreadyLoad();
-					}
+					syncLogsStatus();
+					
 					//同步通讯录
 					iView.updateBooks(mContacts);
 					//同步通话记录
@@ -216,6 +214,27 @@ public class HwatongModel implements IBTPhoneModel {
 		} else {
 			L.d(thiz, "sync iService null");
 			iView.showDisconnected();
+		}
+	}
+	
+	private void syncLogsStatus() {
+		//同步通话记录下载状态
+		if(logsInLoading) {
+			iView.showLogsLoading(UICallLog.TYPE_CALL_IN);
+		} else {
+			iView.syncLogsAlreadyLoad(UICallLog.TYPE_CALL_IN);
+		}
+		
+		if(logsOutLoading) {
+			iView.showLogsLoading(UICallLog.TYPE_CALL_OUT);
+		} else {
+			iView.syncLogsAlreadyLoad(UICallLog.TYPE_CALL_OUT);
+		}
+		
+		if(logsMissLoading) {
+			iView.showLogsLoading(UICallLog.TYPE_CALL_MISS);
+		} else {
+			iView.syncLogsAlreadyLoad(UICallLog.TYPE_CALL_MISS);
 		}
 	}
 	
@@ -325,7 +344,7 @@ public class HwatongModel implements IBTPhoneModel {
 				boolean result = iService.phoneBookStartUpdate();
 				if(result) {
 					booksLoading = true;
-					logsLoading = true;
+					logsLoading = logsInLoading = logsOutLoading = logsMissLoading = true;
 					//clearAll();
 					
 					showBooksLoadStartAndStarted();
@@ -334,7 +353,7 @@ public class HwatongModel implements IBTPhoneModel {
 					
 				} else {
 					booksLoading = false;
-					logsLoading = false;
+					logsLoading = logsInLoading = logsOutLoading = logsMissLoading = false;
 					showBooksLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
 				}
 			} catch (RemoteException e) {
@@ -367,26 +386,26 @@ public class HwatongModel implements IBTPhoneModel {
 		}).start();
 	}
 	
-	private void showLogsLoadStartAndStarted() {
-		iView.showLogsLoadStart();
+	private void showLogsLoadStartAndStarted(final int type) {
+		iView.showLogsLoadStart(type);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				SystemClock.sleep(1000);
-				if(logsLoading) {
-					iView.showLogsLoading();
+				if(logsIsLoading(type)) {
+					iView.showLogsLoading(type);
 				}
 			}
 		}).start();
 	}
 	
-	private void showLogsLoadedAndSync(boolean succeed, int reason) {
-		iView.showLogsLoaded(succeed, reason);
+	private void showLogsLoadedAndSync(final int type, final int result) {
+		iView.showLogsLoaded(type, result);
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
 				SystemClock.sleep(1000);
-				iView.syncLogsAlreadyLoad();
+				iView.syncLogsAlreadyLoad(type);
 			}
 		}).start();
 	}
@@ -426,13 +445,18 @@ public class HwatongModel implements IBTPhoneModel {
 				result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_OUT) || result;
 				result = iService.callLogStartUpdate(com.hwatong.btphone.CallLog.TYPE_CALL_IN) || result;
 				if(result){
-					logsLoading = true;
+					logsLoading = logsInLoading = logsOutLoading = logsMissLoading = true;
 					
-					showLogsLoadStartAndStarted();
+					showLogsLoadStartAndStarted(UICallLog.TYPE_CALL_IN);
+					showLogsLoadStartAndStarted(UICallLog.TYPE_CALL_OUT);
+					showLogsLoadStartAndStarted(UICallLog.TYPE_CALL_MISS);
 					
 				} else {
-					logsLoading = false;
-					showLogsLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
+					logsLoading = logsInLoading = logsOutLoading = logsMissLoading = false;
+					
+					showLogsLoadedAndSync(UICallLog.TYPE_CALL_IN, BtPhoneDef.PBAP_DOWNLOAD_CALL_REJECT);
+					showLogsLoadedAndSync(UICallLog.TYPE_CALL_OUT, BtPhoneDef.PBAP_DOWNLOAD_CALL_REJECT);
+					showLogsLoadedAndSync(UICallLog.TYPE_CALL_MISS, BtPhoneDef.PBAP_DOWNLOAD_CALL_REJECT);
 				}
 			
 			} catch (RemoteException e) {
@@ -457,25 +481,68 @@ public class HwatongModel implements IBTPhoneModel {
 	}
 	
 	private void loadLogsByType(String type, int typeInt) {
-		if(logsLoading) {
+		if(logsIsLoading(typeInt)) {
 			return;
 		}
+		
 		if(iService != null) {
 			try {
 				L.d(thiz, "loadLogsByType() type = " + type + " typeInt = " + typeInt);
 				boolean result = iService.callLogStartUpdate(type);
 				if(result) {
-					logsLoading = true;
+					setLogsLoading(typeInt, true);
+					
 					clearLogsByType(typeInt);
 					
-					showLogsLoadStartAndStarted();
+					showLogsLoadStartAndStarted(typeInt);
 				} else {
-					logsLoading = false;
-					showLogsLoadedAndSync(false, BtPhoneDef.PBAP_DOWNLOAD_REJECT);
+					
+					setLogsLoading(typeInt, false);
+					
+					showLogsLoadedAndSync(typeInt, BtPhoneDef.PBAP_DOWNLOAD_CALL_REJECT);
 				}
 			} catch (RemoteException e) {
 				e.printStackTrace();
 			}
+		}
+	}
+	
+	/**
+	 * 该类型的通话记录是否正在下载
+	 * @param typeInt
+	 * @return
+	 */
+	private boolean logsIsLoading(int typeInt) {
+		switch (typeInt) {
+		case UICallLog.TYPE_CALL_IN:
+			return logsInLoading;
+			
+		case UICallLog.TYPE_CALL_OUT:
+			return logsOutLoading;
+			
+		case UICallLog.TYPE_CALL_MISS:
+			return logsMissLoading;
+			
+		default:
+			return false;
+		}
+	}
+	
+	/**
+	 * 置为正在下载
+	 * @param typeInt
+	 */
+	private void setLogsLoading(int typeInt, boolean isLoading) {
+		switch (typeInt) {
+		case UICallLog.TYPE_CALL_IN:
+			logsInLoading = isLoading;
+			break;
+		case UICallLog.TYPE_CALL_OUT:
+			logsOutLoading = isLoading;
+			break;
+		case UICallLog.TYPE_CALL_MISS:
+			logsMissLoading = isLoading;
+			break;
 		}
 	}
 	
@@ -674,35 +741,25 @@ public class HwatongModel implements IBTPhoneModel {
 				public void run() {
 					long start = System.currentTimeMillis();
 					
-					switch(error) {
-					case BtPhoneDef.PBAP_DOWNLOAD_SUCCESS: //成功
-						//更新通话记录
-						
-						getAllLogsList();
-						
-						iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
-						iView.updateDialedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_OUT));
+					getAllLogsList();
+					
+					if(CallLog.TYPE_CALL_IN.equals(type)) {
 						iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));	
-						iView.updateAllLogs(mAllCallLogList);
+						showLogsLoadedAndSync(UICallLog.TYPE_CALL_IN, error);
+						logsInLoading = false;
 						
-						showLogsLoadedAndSync(true, 0);
-
-						break;
-					case BtPhoneDef.PBAP_DOWNLOAD_FAILED:	//下载失败
-					case BtPhoneDef.PBAP_DOWNLOAD_TIMEOUT:	//超时
-					case BtPhoneDef.PBAP_DOWNLOAD_REJECT:	//拒绝
-						
-						getAllLogsList();
-						
-						iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
+					} else if(CallLog.TYPE_CALL_OUT.equals(type)) {
+						showLogsLoadedAndSync(UICallLog.TYPE_CALL_OUT, error);
 						iView.updateDialedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_OUT));
-						iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));	
-						iView.updateAllLogs(mAllCallLogList);
+						logsOutLoading = false;
 						
-						showLogsLoadedAndSync(false, error);
-						break;
+					} else if(CallLog.TYPE_CALL_MISS.equals(type)) {
+						showLogsLoadedAndSync(UICallLog.TYPE_CALL_MISS, error);
+						iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
+						logsMissLoading = false;
 					}
 					
+					iView.updateAllLogs(mAllCallLogList);
 					logsLoading = false;
 					
 					L.d(thiz, "onCalllogDone cost : " + (System.currentTimeMillis() - start));
@@ -866,7 +923,7 @@ public class HwatongModel implements IBTPhoneModel {
 		public void onAllDownloadDone(int error) throws RemoteException {
 			L.d(thiz, "onAllDownloadDone");
 			booksLoading = false;
-			logsLoading = false;
+			logsLoading = logsInLoading = logsOutLoading = logsMissLoading = false;
 		}
 	};
 
@@ -982,7 +1039,35 @@ public class HwatongModel implements IBTPhoneModel {
 		}
 		
 	}
-	
-	
+
+	@Override
+	public void syncLogsStatus(int type) {
+		//同步通话记录下载状态
+		switch (type) {
+		case UICallLog.TYPE_CALL_IN:
+			if(logsInLoading) {
+				iView.showLogsLoading(UICallLog.TYPE_CALL_IN);
+			} else {
+				iView.syncLogsAlreadyLoad(UICallLog.TYPE_CALL_IN);
+			}
+			break;
+			
+		case UICallLog.TYPE_CALL_OUT:
+			if(logsOutLoading) {
+				iView.showLogsLoading(UICallLog.TYPE_CALL_OUT);
+			} else {
+				iView.syncLogsAlreadyLoad(UICallLog.TYPE_CALL_OUT);
+			}
+			break;
+			
+		case UICallLog.TYPE_CALL_MISS:
+			if(logsMissLoading) {
+				iView.showLogsLoading(UICallLog.TYPE_CALL_MISS);
+			} else {
+				iView.syncLogsAlreadyLoad(UICallLog.TYPE_CALL_MISS);
+			}
+			break;
+		}
+	}
 	
 }

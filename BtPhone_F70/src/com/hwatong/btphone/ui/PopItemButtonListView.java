@@ -1,8 +1,5 @@
 package com.hwatong.btphone.ui;
 
-import android.animation.Animator;
-import android.animation.Animator.AnimatorListener;
-import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -13,6 +10,7 @@ import android.widget.ListView;
 
 import com.hwatong.btphone.CallLog;
 import com.hwatong.btphone.Contact;
+import com.hwatong.btphone.util.L;
 
 /**
  * 特用于本应用需要点击listVew item弹出拨号按钮 注意:不要在外部调用 setOnItemClickListener
@@ -23,10 +21,10 @@ import com.hwatong.btphone.Contact;
  */
 public class PopItemButtonListView extends ListView {
 
+	private static final String thiz = PopItemButtonListView.class.getSimpleName();
+	
 	protected View mItemView;// 被点击的ItemView
 	protected boolean mItemClickEnable = true;// 设置Item view点击是否有效
-
-	private boolean animationStop = true;
 
 	public PopItemButtonListView(Context context, AttributeSet attrs,
 			int defStyle) {
@@ -69,15 +67,14 @@ public class PopItemButtonListView extends ListView {
 				return;
 			}
 
-			if (mItemView == null && animationStop) {
-				showButton(holder);
-				mItemView = view;
-			} else if (mItemView == view && animationStop) {
+			if (mItemView == null) {
+				showButton(holder, view);
+			} else if (mItemView == view) {
 				hideButton(holder);
 			} else {
+				//这个就是不等于null也不等于当前View，表明打开的时候点击到另一个Item
 				//hideCurrentItemBtn();
-				showButton(holder);
-				mItemView = view;
+				showButton(holder, view);
 			}
 
 		}
@@ -87,15 +84,12 @@ public class PopItemButtonListView extends ListView {
 	public boolean onTouchEvent(MotionEvent ev) {
 		switch (ev.getAction()) {
 		case MotionEvent.ACTION_DOWN:
-			if (mItemView != null && animationStop) {
-				if (ev.getY() > mItemView.getY()
-						&& ev.getY() < (mItemView.getY() + mItemView
-								.getHeight())) {
+			if (mItemView != null) {
+				if (ev.getY() > mItemView.getY() && ev.getY() < (mItemView.getY() + mItemView.getHeight())) {
 					// 表示触摸在当前View内, 让onClick收起
 					return true;
 				} else {
 					hideCurrentItemBtn();
-					mItemView = null;
 					return true;
 				}
 			}
@@ -126,102 +120,34 @@ public class PopItemButtonListView extends ListView {
 			hideButton((ViewHolder) mItemView.getTag());
 		}
 	}
-	
-	//private long mDuration = 100;
-	private long mDuration = 0;
-	
-	public void setAnimationDuration(long duration) {
-//		this.mDuration = duration;
-		//外部接口无效化，目的是去掉动画效果。
-		this.mDuration = 0;
-	}
 
-	protected synchronized void showButton(ViewHolder holder) {
-		if (holder == null || holder.mTvNumber == null
-				|| holder.mBtnDial == null)
+	protected synchronized void showButton(ViewHolder holder, View view) {
+		L.d(thiz, "show! holder: " + holder.hashCode() + " view: " + view.hashCode());
+		if (holder == null || holder.mTvNumber == null 
+				|| holder.mBtnDial == null || mItemView != null)
 			return;
 		holder.mBtnDial.setVisibility(View.VISIBLE);
 		float orignalX = holder.mTvNumber.getX();
 		float endX = orignalX - holder.mBtnDial.getMeasuredWidth() + 10;
-		ObjectAnimator ofFloatX = ObjectAnimator.ofFloat(holder.mTvNumber, "X",
-				orignalX, endX);
-		ofFloatX.setDuration(mDuration);
-		ofFloatX.addListener(new AnimatorListener() {
-
-			@Override
-			public void onAnimationStart(Animator arg0) {
-				animationStop = false;
-			}
-
-			@Override
-			public void onAnimationRepeat(Animator arg0) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onAnimationEnd(Animator arg0) {
-				animationStop = true;
-			}
-
-			@Override
-			public void onAnimationCancel(Animator arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
-
-		// ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
-		// "Alpha", 0.0f, 1.0f);
-		ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
-				"X", orignalX + holder.mTvNumber.getWidth() + 30, endX
-						+ holder.mTvNumber.getWidth() + 10);
-		ofFloatAlpha.setDuration(mDuration);
-		ofFloatAlpha.start();
-		ofFloatX.start();
+		
+		holder.mTvNumber.setX(endX);
+		
+		holder.mBtnDial.setX(endX + holder.mTvNumber.getWidth() + 10);
+		
+		mItemView = view;
 	}
 
 	protected synchronized void hideButton(ViewHolder holder) {
-		if (holder == null || holder.mTvNumber == null
-				|| holder.mBtnDial == null)
+		L.d(thiz, "hide! holder: " + holder.hashCode());
+		if (holder == null || holder.mTvNumber == null 
+				|| holder.mBtnDial == null || mItemView == null)
 			return;
 		float orignalX = holder.mTvNumber.getX();
 		float endX = orignalX + holder.mBtnDial.getMeasuredWidth() - 10;
-
-		ObjectAnimator ofFloatX = ObjectAnimator.ofFloat(holder.mTvNumber, "X",
-				orignalX, endX);
-		// ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
-		// "Alpha", 1.0f, 0.0f);
-		ObjectAnimator ofFloatAlpha = ObjectAnimator.ofFloat(holder.mBtnDial,
-				"X", orignalX + holder.mTvNumber.getWidth() + 30, endX
-						+ holder.mTvNumber.getWidth() + 30);
-		ofFloatX.setDuration(mDuration);
-		ofFloatAlpha.setDuration(mDuration);
-
-		ofFloatX.addListener(new AnimatorListener() {
-
-			@Override
-			public void onAnimationStart(Animator arg0) {
-				animationStop = false;
-			}
-
-			@Override
-			public void onAnimationRepeat(Animator arg0) {
-				// TODO Auto-generated method stub
-			}
-
-			@Override
-			public void onAnimationEnd(Animator arg0) {
-				//mItemView = null;
-				animationStop = true;
-			}
-
-			@Override
-			public void onAnimationCancel(Animator arg0) {
-				// TODO Auto-generated method stub
-			}
-		});
-
-		ofFloatX.start();
-		ofFloatAlpha.start();
+		
+		holder.mTvNumber.setX(endX);
+		
+		holder.mBtnDial.setX(endX + holder.mTvNumber.getWidth() + 30);
 		
 		mItemView = null;
 	}

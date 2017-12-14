@@ -5,17 +5,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
-import com.hwatong.btphone.iview.ITBoxUpdateView;
-
-import android.content.Context;
-import android.os.Build;
-import android.os.StatFs;
-import android.util.Log;
-import android.widget.Toast;
 
 public class FileUtil {
 	
@@ -62,7 +51,7 @@ public class FileUtil {
 
 	private static final String thiz = FileUtil.class.getSimpleName();
 	
-	public static boolean copyFile(String src, String dest, ITBoxUpdateView iView) {
+	public static boolean copyFile(String src, String dest) {
 		L.d(thiz, "copyFile src: " + src + " dest: " + dest);
 		boolean result = true;
 
@@ -89,12 +78,10 @@ public class FileUtil {
 				if((i++) == 10) {
 					i=0;
 					long percent = (destFile.length() * 100)/srcFile.length();
-					iView.showCopyProgress(percent);
 				}
 				fo.write(buffer, 0, read);
 			}
 			L.d(thiz, "after while");
-			iView.copyEnd();
 			
 		} catch (FileNotFoundException e) {
 			result = false;

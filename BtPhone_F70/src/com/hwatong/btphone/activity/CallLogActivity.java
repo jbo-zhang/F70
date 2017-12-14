@@ -113,6 +113,7 @@ public class CallLogActivity extends BaseActivity {
 		if (mCurCallLogType == callType) {
 			return;
 		}
+		mService.syncLogsStatus(callType);
 		mCurCallLogType = callType;
 		mTvCallMiss.setSelected(UICallLog.TYPE_CALL_MISS == mCurCallLogType);
 		mTvCallIn.setSelected(UICallLog.TYPE_CALL_IN == mCurCallLogType);
@@ -242,24 +243,32 @@ public class CallLogActivity extends BaseActivity {
 	}
 	
 	@Override
-	public void showLogsLoadStart() {
-		showTextDialog(R.string.dialog_update_callog);
+	public void showLogsLoadStart(int type) {
+		if(type == mCurCallLogType) {
+			showTextDialog(R.string.dialog_update_callog);
+		}
 	}
 	
 	@Override
-	public void showLogsLoading() {
-		showProgressDialog(R.string.dialog_updating);
+	public void showLogsLoading(int type) {
+		if(type == mCurCallLogType) {
+			showProgressDialog(R.string.dialog_updating);
+		}
 	}
 	
 	@Override
-	public void showLogsLoaded(boolean succeed, int reason) {
-		L.d(thiz, "showLogLoaded succeed= " + succeed + " reason= " + reason);
-		showTextDialog(R.string.dialog_updated);
+	public void showLogsLoaded(int type, int result) {
+		L.d(thiz, "showLogLoaded type= " + type + " result= " + result);
+		if(type == mCurCallLogType) {
+			showTextDialog(R.string.dialog_updated);
+		}
 	}
 	
 	@Override
-	public void syncLogsAlreadyLoad() {
-		dismissDialog();
+	public void syncLogsAlreadyLoad(int type) {
+		if(type == mCurCallLogType) {
+			dismissDialog();
+		}
 	}
 	
 	@Override

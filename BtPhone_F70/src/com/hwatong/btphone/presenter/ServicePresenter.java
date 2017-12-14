@@ -27,6 +27,9 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 		this.iServiceView = iServiceView;
 	}
 	
+	//---------------------------------华丽的分割线----------------------------------------
+	
+	//---------------------------------IUIView----------------------------------------
 	@Override
 	public void showConnected() {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_CONNECTED);
@@ -159,26 +162,26 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 
 
 	@Override
-	public void showLogsLoadStart() {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOAD_START);
+	public void showLogsLoadStart(int type) {
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOAD_START, type);
 	}
 
 
 	@Override
-	public void showLogsLoading() {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOADING);		
+	public void showLogsLoading(int type) {
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOADING, type);		
 	}
 
 
 	@Override
-	public void showLogsLoaded(boolean succeed, int reason) {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOADED, succeed ? 1 : 0 , reason);		
+	public void showLogsLoaded(int type, int result) {
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_LOGS_LOADED, type , result);		
 	}
 
 
 	@Override
-	public void syncLogsAlreadyLoad() {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SYNC_LOGS_ALREADY_LOAD);		
+	public void syncLogsAlreadyLoad(int type) {
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SYNC_LOGS_ALREADY_LOAD, type);		
 	}
 
 
@@ -197,10 +200,21 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 	public void showIdel() {
 		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_IDEL);
 	}
+	
+	@Override
+	public void showDTMFInput(UICallLog callLog) {
+		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_DTMF_INPUT, callLog);
+	}
+	
+	@Override
+	public void toMissedCalls() {
+		//在BTPhoneService中处理了
+	}
 
 	
-//---------------------------------华丽的分割线----------------------------------------
+	//---------------------------------华丽的分割线----------------------------------------
 
+	//---------------------------------IModel----------------------------------------
 	
 	@Override
 	public void link(Context context) {
@@ -288,19 +302,6 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 		iModel.loadReceivedLogs();
 	}
 	
-	protected boolean isDialForground() {
-		ActivityManager am = (ActivityManager) BtPhoneApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
-		List<RunningTaskInfo> cn = am.getRunningTasks(1);
-		RunningTaskInfo taskInfo = cn.get(0);
-		ComponentName name = taskInfo.topActivity;
-		if ("com.hwatong.btphone.activity.DialActivity".equals(name.getClassName())
-				|| "com.hwatong.btphone.activity.CallLogActivity".equals(name.getClassName())
-				|| "com.hwatong.btphone.activity.ContactsListActivity".equals(name.getClassName())
-				|| "com.hwatong.btphone.activity.PhoneActivity".equals(name.getClassName())) {
-			return true;
-		}
-		return false;
-	}
 
 	@Override
 	public List<Contact> getBooks() {
@@ -327,21 +328,35 @@ public class ServicePresenter implements IUIView, IBTPhoneModel{
 		return iModel.getDialedLogs();
 	}
 
-	@Override
-	public void showDTMFInput(UICallLog callLog) {
-		BtPhoneApplication.getInstance().notifyMsg(Constant.MSG_SHOW_DTMF_INPUT, callLog);
-	}
+	
 
 	@Override
 	public boolean isBtConnected() {
 		return iModel.isBtConnected();
 	}
-
+	
 	@Override
-	public void toMissedCalls() {
-		// TODO Auto-generated method stub
-		
+	public void syncLogsStatus(int type) {
+		iModel.syncLogsStatus(type);
 	}
 	
+	//---------------------------------华丽的分割线----------------------------------------
+	
+	//---------------------------------方法----------------------------------------
+	
+	protected boolean isDialForground() {
+		ActivityManager am = (ActivityManager) BtPhoneApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
+		List<RunningTaskInfo> cn = am.getRunningTasks(1);
+		RunningTaskInfo taskInfo = cn.get(0);
+		ComponentName name = taskInfo.topActivity;
+		if ("com.hwatong.btphone.activity.DialActivity".equals(name.getClassName())
+				|| "com.hwatong.btphone.activity.CallLogActivity".equals(name.getClassName())
+				|| "com.hwatong.btphone.activity.ContactsListActivity".equals(name.getClassName())
+				|| "com.hwatong.btphone.activity.PhoneActivity".equals(name.getClassName())) {
+			return true;
+		}
+		return false;
+	}
+
 	
 }

@@ -69,7 +69,6 @@ public class IndexableListView extends PopItemButtonListView {
 			if (mItemView != null && mScroller != null && mScroller.contains(ev.getX(), ev.getY())) {
 				ViewHolder holder = (ViewHolder) mItemView.getTag();
 				hideButton(holder);
-				mItemView = null;
 				return true;
 			}
 
