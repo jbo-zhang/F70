@@ -527,6 +527,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 				//空调开
 				} else {
 					setSwitch(true);
+					setSeekBarEnabled(true);
 				}
 
 				// 温度
@@ -583,6 +584,9 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		Log.d(TAG, "turn off Views !");
 		setSwitch(false);
 		setTemperature(32);
+		
+		setSeekBarEnabled(false);
+		
 		setBlowerUp(false);
 		setBlowerMiddle(false);
 		setBlowerDown(false);
@@ -592,6 +596,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		setAC(false);
 		setLoop(-1);
 		setRear(false);
+		
 	}
 	
 	/**
@@ -602,6 +607,9 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		mTvWindSwitch.setSelected(!isOn);
 	}
 	
+	private void setSeekBarEnabled(boolean enabled) {
+		mLeftTempSeekBar.setEnabled(enabled);
+	}
 	
 	/**
 	 * 设置温度
