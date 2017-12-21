@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -27,6 +26,8 @@ import com.hwatong.projectmode.R;
 import com.hwatong.projectmode.fragment.base.BaseFragment;
 import com.hwatong.projectmode.iview.ITboxUpdateView;
 import com.hwatong.projectmode.presenter.TBoxPresenter;
+import com.hwatong.projectmode.ui.ConfirmDialog;
+import com.hwatong.projectmode.ui.ConfirmDialog.OnYesOnclickListener;
 import com.hwatong.projectmode.ui.UpdateDialog;
 import com.hwatong.projectmode.utils.FileUtil;
 import com.hwatong.projectmode.utils.L;
@@ -50,7 +51,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 
 	private File currentFile;
 	
-	ProgressDialog copyDialog; // updateDialog;
+	UpdateDialog copyDialog; // updateDialog;
 	
 	private UpdateDialog updateDialog;
 
@@ -166,11 +167,11 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 				view.setTextSize(20);
 				view.setTextColor(Color.rgb(255, 255, 255));
 				if (file.isDirectory()) {
-					setDrawable(view, folderIcon);
+					//setDrawable(view, folderIcon);
 				} else {
-					setDrawable(view, fileIcon);
+					//setDrawable(view, fileIcon);
 					if (selectedIndex == position)
-						view.setBackgroundColor(getContext().getResources().getColor(android.R.color.holo_blue_dark));
+						view.setBackgroundColor(Color.parseColor("#55625e5e"));
 					else
 						view.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
 				}
@@ -220,47 +221,28 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	}
 
 	private void showTboxUpdateDialog(File file) {
-		final AlertDialog.Builder normalDialog = new AlertDialog.Builder(getActivity());
-		normalDialog.setTitle("TBOX升级");
+		
 		String fileSize = FileUtil.convertStorage(file.length());
-		normalDialog.setMessage(file.getName() + "\n文件大小: " + fileSize + "\n确定升级TBOX吗?");
-		normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+		ConfirmDialog confirmDialog = new ConfirmDialog(getActivity());
+		
+		confirmDialog.setYesOnclickListener(new OnYesOnclickListener() {
+			
 			@Override
-			public void onClick(DialogInterface dialog, int which) {
+			public void onYesClick() {
 				tBoxPresenter.confirmUpdate();
-				
-				//for test
-//				TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
-//					
-//					@Override
-//					public void run() {
-//						showCopyProgress(i++);
-//						if(i >= 100) {
-//							TimerTaskUtil.cancelTimer("update_progress");
-//							copyEnd();
-//							i = 0;
-//						}
-//					}
-//				});
-			}
-		});
-		normalDialog.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// ...To-do
 			}
 		});
 		
-		AlertDialog create = normalDialog.create();
-		
-		Window window = create.getWindow();
-		window.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+		Window window = confirmDialog.getWindow();
+		window.setGravity(Gravity.LEFT | Gravity.TOP);
 		LayoutParams attributes = window.getAttributes();
-		attributes.x = 1280/3 - 170;
+		attributes.x = 1280/3 - 190;
+		attributes.y = 80;
 		window.setAttributes(attributes);
 		
-		// 显示
-		create.show();
+		confirmDialog.show();
+		
+		confirmDialog.setMessage(file.getName(), "文件大小: " + fileSize, "确定升级TBOX吗?");
 	}
 	
 
@@ -277,15 +259,14 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			public void run() {
 				synchronized (lockObject) {
 					if (copyDialog == null) {
-						copyDialog = new ProgressDialog(getActivity());
+						copyDialog = new UpdateDialog(getActivity(), UpdateDialog.STYLE_COPY);
 						Window window = copyDialog.getWindow();
-						window.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+						window.setGravity(Gravity.LEFT|Gravity.TOP);
+						window.setLayout(571, 250);
 						LayoutParams attributes = window.getAttributes();
-						attributes.x = 1280/3 - 200;
+						attributes.x = 145;
+						attributes.y = 60;
 						window.setAttributes(attributes);
-						copyDialog.setTitle("正在复制文件...");
-						copyDialog.setCanceledOnTouchOutside(true);
-						copyDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 						copyDialog.show();
 					} else {
 						if (!copyDialog.isShowing()) {
@@ -293,6 +274,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 						}
 						copyDialog.setProgress((int) percent);
 					}
+					
 				}
 			}
 		});
@@ -349,7 +331,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast makeText = Toast.makeText(getActivity(), "没有找到tbox升级文件", Toast.LENGTH_SHORT);
+				Toast makeText = Toast.makeText(getActivity(), "没有找到TBOX升级文件", Toast.LENGTH_SHORT);
 				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
 				makeText.show();
 			}
@@ -362,6 +344,21 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	@Override
 	public void showUpdateStart() {
 		L.d(thiz, "showUpdateStart 开始升级！");
+	}
+	
+	/**
+	 * 沒有連接設備
+	 */
+	@Override
+	public void showNoDevices() {
+		getActivity().runOnUiThread(new Runnable() {
+			@Override
+			public void run() {
+				Toast makeText = Toast.makeText(getActivity(), "TBOX设备未连接", Toast.LENGTH_SHORT);
+				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
+				makeText.show();
+			}
+		});
 	}
 
 
@@ -378,13 +375,13 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 			public void run() {
 				synchronized (lockObject2) {
 					if (updateDialog == null) {
-						updateDialog = new UpdateDialog(getActivity());
+						updateDialog = new UpdateDialog(getActivity(), UpdateDialog.STYLE_UPDATE);
 						Window window = updateDialog.getWindow();
 						window.setGravity(Gravity.LEFT|Gravity.TOP);
 						window.setLayout(571, 250);
 						LayoutParams attributes = window.getAttributes();
 						attributes.x = 145;
-						attributes.y = 80;
+						attributes.y = 60;
 						window.setAttributes(attributes);
 						updateDialog.show();
 					} else {

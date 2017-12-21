@@ -70,6 +70,8 @@
     <string name="on">开</string>
     <string name="off">关</string>
     
+    <string name="copying">正在复制文件…</string>
+    
     
     
 </resources>

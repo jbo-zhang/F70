@@ -2,7 +2,6 @@ package com.hwatong.projectmode.ui;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -11,21 +10,15 @@ import android.widget.TextView;
 
 import com.hwatong.projectmode.R;
 
-public class UpdateDialog extends Dialog {  
+public class ConfirmDialog extends Dialog {  
   
     private OnNoOnclickListener noOnclickListener;//取消按钮被点击了的监听器  
     private OnYesOnclickListener yesOnclickListener;//确定按钮被点击了的监听器  
     
 	private ProgressBar pbUpdate;
-	private Button btUpdate;
-	private TextView tvTitle;
+	private Button btYes, btNo;
+	private TextView tvMessage1, tvMessage2, tvMessage3;
 	
-	public static final int STYLE_COPY = 1;
-	
-	public static final int STYLE_UPDATE = 2;
-  
-	
-	private int mStyle = STYLE_UPDATE;
     /** 
      * 设置取消按钮的显示内容和监听 
      * 
@@ -46,18 +39,14 @@ public class UpdateDialog extends Dialog {
         this.yesOnclickListener = onYesOnclickListener;  
     }  
   
-    public UpdateDialog(Context context, int style) {  
+    public ConfirmDialog(Context context) {  
         super(context, R.style.my_dialog);  
-        
-        mStyle = style;
     }  
-    
-    
   
     @Override  
     protected void onCreate(Bundle savedInstanceState) {  
         super.onCreate(savedInstanceState);  
-        setContentView(R.layout.dialog_tbox_update);  
+        setContentView(R.layout.dialog_confirm);  
         //按空白处不能取消动画  
         setCanceledOnTouchOutside(false);  
   
@@ -74,52 +63,46 @@ public class UpdateDialog extends Dialog {
      */  
     private void initEvent() {  
         //设置确定按钮被点击后，向外界提供监听  
-        btUpdate.setOnClickListener(new View.OnClickListener() {  
+    	btYes.setOnClickListener(new View.OnClickListener() {  
             @Override  
             public void onClick(View v) {  
                 if (yesOnclickListener != null) {  
                     yesOnclickListener.onYesClick();  
                 }  
+                dismiss();
             }  
         });  
         
-//        //设置取消按钮被点击后，向外界提供监听  
-//        no.setOnClickListener(new View.OnClickListener() {  
-//            @Override  
-//            public void onClick(View v) {  
-//                if (noOnclickListener != null) {  
-//                    noOnclickListener.onNoClick();  
-//                }  
-//            }  
-//        });  
+        //设置取消按钮被点击后，向外界提供监听  
+    	btNo.setOnClickListener(new View.OnClickListener() {  
+            @Override  
+            public void onClick(View v) {  
+                if (noOnclickListener != null) {  
+                    noOnclickListener.onNoClick();  
+                }
+                dismiss();
+            }  
+        });  
     }  
   
     /** 
      * 初始化界面控件 
      */  
     private void initView() {  
-    	tvTitle = (TextView) findViewById(R.id.tv_dialog_title);
-    	pbUpdate = (ProgressBar) findViewById(R.id.pb_update_progress);
-    	btUpdate = (Button) findViewById(R.id.bt_update);
-    	
-    	switch (mStyle) {
-		case STYLE_COPY:
-			tvTitle.setText(R.string.copying);
-			btUpdate.setVisibility(View.INVISIBLE);
-			break;
-		case STYLE_UPDATE:
-			tvTitle.setText(R.string.version_no);
-			btUpdate.setVisibility(View.VISIBLE);
-			break;
-    	}
-    	
+    	tvMessage1 = (TextView) findViewById(R.id.tv_message_1);
+    	tvMessage2 = (TextView) findViewById(R.id.tv_message_2);
+    	tvMessage3 = (TextView) findViewById(R.id.tv_message_3);
+    	btYes = (Button) findViewById(R.id.bt_confirm);
+    	btNo = (Button) findViewById(R.id.bt_cancel);
     }  
     
-    
-    public void setProgress(int progress) {
-    	pbUpdate.setProgress(progress);
+    public ConfirmDialog setMessage(String msg1, String msg2, String msg3) {
+    	tvMessage1.setText(msg1);
+    	tvMessage2.setText(msg2);
+    	tvMessage3.setText(msg3);
+    	return this;
     }
-  
+    
   
     /** 
      * 设置确定按钮和取消被点击的接口 

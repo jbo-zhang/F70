@@ -159,6 +159,11 @@ public class TBoxPresenter {
 		L.d(thiz, "start update filename : " + updateName);
 		if(mTboxService != null) {
 			try {
+				
+				if(mTboxService.getTboxStatus() == 0) {
+					tboxView.showNoDevices();
+				}
+				
 				mTboxService.update(updateName);
 				
 				if(tboxView != null) {
@@ -189,25 +194,6 @@ public class TBoxPresenter {
 				e.printStackTrace();
 			}
 		}
-		
-		//for test
-//		TimerTaskUtil.startTimer("update_progress", 0, 100, new TimerTask() {
-//			
-//			@Override
-//			public void run() {
-//				if(tboxView != null) {
-//					tboxView.showUpdateProgress(i++);
-//				}
-//				if(i >= 88) {
-//					TimerTaskUtil.cancelTimer("update_progress");
-//					if(tboxView != null) {
-//						tboxView.showUpdateResult(0, "升级成功！");
-//					}
-//					i = 0;
-//				}
-//			}
-//		});
-		
 	}
 
 	private ServiceConnection tboxConnection = new ServiceConnection() {
