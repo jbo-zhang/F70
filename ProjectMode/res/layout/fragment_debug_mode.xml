@@ -64,17 +64,16 @@
             style="@style/debug_mode_tv_item"
             android:text="@string/tbox_logs" />
 
-        <com.hwatong.projectmode.ui.SwitchButton
+        <Button
                 android:id="@+id/switch_tbox_logs"
                 style="@style/SwitchButtonStyle"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="56dp"
-                app:kswBackDrawable="@drawable/track"
-                app:kswTextOff="@string/off"
-                app:kswTextOn="@string/on"
+                android:layout_marginLeft="25dp"
                 android:textSize="22px"
-                app:kswThumbDrawable="@drawable/setting_switch_thumb" />
+                android:background="@drawable/button_selector"
+                android:text="@string/save" />
     </LinearLayout>
 
     <View

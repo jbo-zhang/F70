@@ -24,6 +24,4 @@ public interface ITboxUpdateView {
 	void ftpCreatFailed();
 	
 	void showNoDevices();
-	
-	
 }

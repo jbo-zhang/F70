@@ -20,9 +20,10 @@ include $(CLEAR_VARS)
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_SRC_FILES := $(call all-java-files-under, src) $(call all-renderscript-files-under, src)
-
 LOCAL_STATIC_JAVA_LIBRARIES := android-support-v4 \
-	com.tbox.service
+	com.tbox.service \
+        com.hwatong.bt \
+        commons-net-3.3
 
 LOCAL_PACKAGE_NAME := ProjectMode
 
