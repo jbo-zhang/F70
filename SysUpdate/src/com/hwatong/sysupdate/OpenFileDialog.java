@@ -15,11 +15,12 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
+import android.os.SystemClock;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
@@ -30,7 +31,6 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.hwatong.sysupdate.R;
 /**
  * 升级包列表对话框
  * */
@@ -104,96 +104,12 @@ public class OpenFileDialog extends AlertDialog.Builder {
     private Button mPositiveButton;
     private Button mNegativeButton;
     private AlertDialog mDialog;
+    
     @Override
     public AlertDialog show() {
-    	List<File> usbFiles1 = getFiles(USB_PATH);
-    	if (usbFiles1!=null)
-    		files.addAll(usbFiles1);
-    	List<File> usbFiles2 = getFiles(USB_PATH2);
-    	if (usbFiles2!=null)
-    		files.addAll(usbFiles2);
-    	List<File> tfcardFiles = getFiles(TFCARD_PATH);
-    	if (tfcardFiles!=null)
-    		files.addAll(tfcardFiles);
-    	if (files==null || files.size()==0) {
-			Toast.makeText(getContext(), R.string.notfound, Toast.LENGTH_LONG).show();
-    	}
-    	
-    	/**
-    	 * 只有一个升级包直接选择
-    	 * */
-    		
-    	if (files.size()==1) {
-            listener.OnSelectedFile(files.get(0).getPath());
-    		return null;
-    	}
-    		
-        mDialog = super.show();
-        Window win = mDialog.getWindow();
-        
-        win.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
-        win.setContentView(R.layout.dialog_openfile);
-        mView = win.getDecorView();
-       
-        mPositiveButton = (Button)mView.findViewById(R.id.button1);
-        mNegativeButton = (Button)mView.findViewById(R.id.button2);
-        mPositiveButton.setText(android.R.string.ok);
-        mPositiveButton.setVisibility(View.VISIBLE);
-        mNegativeButton.setText(android.R.string.cancel);
-        mNegativeButton.setVisibility(View.VISIBLE);
-        //确定按钮
-        mPositiveButton.setOnClickListener(new View.OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-                if (selectedIndex > -1 && listener != null) {
-                	
-                	ok_clicj_flag = true;
-                    listener.OnSelectedFile(listView.getItemAtPosition(selectedIndex).toString());
-                    mDialog.dismiss();
-                }
-				
-			}
-        });
-        
-        //取消按钮
-        mNegativeButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				
-				ok_clicj_flag = false;
-            	listener.OnCancel();
-                mDialog.dismiss();
-			}
-        });
-        
-        listView = (ListView)mView.findViewById(R.id.list);
-        listView.setMinimumHeight(getLinearLayoutMinHeight(getContext())); 
-        
-        //listview item的点击事件
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
-                final ArrayAdapter<File> adapter = (FileAdapter) adapterView.getAdapter();
-                File file = adapter.getItem(index);
-                if (file.isDirectory()) {
-                    currentPath = file.getPath();
-                    RebuildFiles(adapter);
-                } else {
-                    if (index != selectedIndex)
-                        selectedIndex = index;
-                    else
-                        selectedIndex = -1;
-                    adapter.notifyDataSetChanged();
-                    changeSelectedFile();
-                }
-            }
-        });
-        listView.setAdapter(new FileAdapter(getContext(), files));
-        title = (TextView)mView.findViewById(R.id.title);
-        changeTitle();
-        changeSelectedFile();
+    	new ScanTask().execute();
+    	//如果扫描文件非常快，加上100ms延时可以防止加载中闪动
+    	SystemClock.sleep(100);
         return mDialog;
     }
     /**
@@ -211,8 +127,9 @@ public class OpenFileDialog extends AlertDialog.Builder {
         filenameFilter = new FilenameFilter() {
 
             @Override
-            public boolean accept(File file, String fileName) {
-                File tempFile = new File(String.format("%s/%s", file.getPath(), fileName));
+            public boolean accept(File dir, String fileName) {
+                File tempFile = new File(dir.getPath(), fileName);
+            	Log.d("9095", "tempFile: " + tempFile.getAbsolutePath());
                 if (tempFile.isFile())
                     return tempFile.getName().matches(filter);
                 return true;
@@ -357,6 +274,118 @@ public class OpenFileDialog extends AlertDialog.Builder {
             Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
         }
     }
+    
+    /**
+     * 异步加载，解决加载文件可能ANR问题
+     * @author zjb time:2017年12月25日
+     *
+     */
+    private class ScanTask extends AsyncTask<Void, Void, Void> {
 
+		@Override
+		protected Void doInBackground(Void... params) {
+			Log.d("9095", "doInBackground");
+			List<File> usbFiles1 = getFiles(USB_PATH);
+	    	if (usbFiles1!=null)
+	    		files.addAll(usbFiles1);
+	    	List<File> usbFiles2 = getFiles(USB_PATH2);
+	    	if (usbFiles2!=null)
+	    		files.addAll(usbFiles2);
+	    	List<File> tfcardFiles = getFiles(TFCARD_PATH);
+	    	if (tfcardFiles!=null)
+	    		files.addAll(tfcardFiles);
+	    	return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void result) {
+			Log.d("9095", "onPostExecute");
+			
+			if (files==null || files.size()==0) {
+				Toast.makeText(getContext(), R.string.notfound, Toast.LENGTH_LONG).show();
+	    	}	
+			
+			/**
+			 * 只有一个升级包直接选择
+			 * */
+	    	if (files.size()==1) {
+	            listener.OnSelectedFile(files.get(0).getPath());
+	    		return ;
+	    	}
+	    		
+	        mDialog = OpenFileDialog.super.show();
+	        Window win = mDialog.getWindow();
+	        
+	        win.clearFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM);
+	        win.setContentView(R.layout.dialog_openfile);
+	        mView = win.getDecorView();
+	       
+	        mPositiveButton = (Button)mView.findViewById(R.id.button1);
+	        mNegativeButton = (Button)mView.findViewById(R.id.button2);
+	        mPositiveButton.setText(android.R.string.ok);
+	        mPositiveButton.setVisibility(View.VISIBLE);
+	        mNegativeButton.setText(android.R.string.cancel);
+	        mNegativeButton.setVisibility(View.VISIBLE);
+	        //确定按钮
+	        mPositiveButton.setOnClickListener(new View.OnClickListener() {
+
+				@Override
+				public void onClick(View v) {
+	                if (selectedIndex > -1 && listener != null) {
+	                	
+	                	ok_clicj_flag = true;
+	                    listener.OnSelectedFile(listView.getItemAtPosition(selectedIndex).toString());
+	                    mDialog.dismiss();
+	                }
+					
+				}
+	        });
+	        
+	        //取消按钮
+	        mNegativeButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					
+					ok_clicj_flag = false;
+	            	listener.OnCancel();
+	                mDialog.dismiss();
+				}
+	        });
+	        
+	        listView = (ListView)mView.findViewById(R.id.list);
+	        listView.setMinimumHeight(getLinearLayoutMinHeight(getContext())); 
+	        
+	        //listview item的点击事件
+	        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+	            @Override
+	            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+	                final ArrayAdapter<File> adapter = (FileAdapter) adapterView.getAdapter();
+	                File file = adapter.getItem(index);
+	                if (file.isDirectory()) {
+	                    currentPath = file.getPath();
+	                    RebuildFiles(adapter);
+	                } else {
+	                    if (index != selectedIndex)
+	                        selectedIndex = index;
+	                    else
+	                        selectedIndex = -1;
+	                    adapter.notifyDataSetChanged();
+	                    changeSelectedFile();
+	                }
+	            }
+	        });
+	        listView.setAdapter(new FileAdapter(getContext(), files));
+	        title = (TextView)mView.findViewById(R.id.title);
+	        changeTitle();
+	        changeSelectedFile();
+			
+		}
+    	
+    }
+
+    
+    
+    
 
 }

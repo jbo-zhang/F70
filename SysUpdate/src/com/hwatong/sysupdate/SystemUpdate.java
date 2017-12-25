@@ -80,8 +80,8 @@ public class SystemUpdate extends Fragment implements UpdateService.OTAUIStateCh
 		
 		mMessageTextView = (TextView) view.findViewById(R.id.message_text_view);
 		mVersionTextView = ((TextView) view.findViewById(R.id.version_text_view));
+		
 		mSpinner = (ImageView) view.findViewById(R.id.spinner);
-
 		mSpinner.startAnimation(AnimationUtils.loadAnimation(getActivity(), R.anim.rotate));
 
 		mDownloadProgress = (ProgressBar) view.findViewById(R.id.download_progress_bar);
