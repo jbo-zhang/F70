@@ -131,7 +131,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
                 File tempFile = new File(dir.getPath(), fileName);
             	Log.d("9095", "tempFile: " + tempFile.getAbsolutePath());
                 if (tempFile.isFile())
-                    return tempFile.getName().matches(filter);
+                	return tempFile.getName().endsWith(".img");
                 return true;
             }
         };
@@ -232,27 +232,33 @@ public class OpenFileDialog extends AlertDialog.Builder {
     	List<File> fileList= new ArrayList<File>();
     	try {
             File directory = new File(directoryPath);
-            List<File> fileList1 = Arrays.asList(directory.listFiles(filenameFilter));
-            for(File f:fileList1) {
-            	if (f.isFile() && Util.checkUpdateFile(f)) {
-            		fileList.add(f);
-            	}
-            }
-            Collections.sort(fileList, new Comparator<File>() {
-                @Override
-                public int compare(File file, File file2) {
-                    if (file.isDirectory() && file2.isFile())
-                        return -1;
-                    else if (file.isFile() && file2.isDirectory())
-                        return 1;
-                    else
-                        return file.getPath().compareTo(file2.getPath());
+            
+            File[] listFiles = directory.listFiles(filenameFilter);
+            
+            if(listFiles != null && listFiles.length > 0) {
+            	 List<File> fileList1 = Arrays.asList(listFiles);
+            	
+            	for(File f:fileList1) {
+                	if (f.isFile() && Util.checkUpdateFile(f)) {
+                		fileList.add(f);
+                	}
                 }
-            });
-    		
+                Collections.sort(fileList, new Comparator<File>() {
+                    @Override
+                    public int compare(File file, File file2) {
+                        if (file.isDirectory() && file2.isFile())
+                            return -1;
+                        else if (file.isFile() && file2.isDirectory())
+                            return 1;
+                        else
+                            return file.getPath().compareTo(file2.getPath());
+                    }
+                });
+            }
     	}catch (Exception e) {
     		e.printStackTrace();
     	}
+    	
         return fileList;
     }
     
@@ -299,7 +305,7 @@ public class OpenFileDialog extends AlertDialog.Builder {
 		
 		@Override
 		protected void onPostExecute(Void result) {
-			Log.d("9095", "onPostExecute");
+			Log.d("9095", "onPostExecute files size: " + files.size());
 			
 			if (files==null || files.size()==0) {
 				Toast.makeText(getContext(), R.string.notfound, Toast.LENGTH_LONG).show();

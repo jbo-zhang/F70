@@ -94,7 +94,10 @@ public class SystemUpdate extends Fragment implements UpdateService.OTAUIStateCh
 		mContext = getActivity();
 		openFileDlg = new OpenFileDialog(mContext);
 		OpenFileDialog.ok_clicj_flag = false;
+		
+		
 		openFileDlg.setFilter("^.*\\.img$");
+		
 		openFileDlg.setOpenDialogListener(this);
 
 		// hlw 点击返回键直接退出
