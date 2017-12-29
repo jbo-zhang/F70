@@ -12,8 +12,8 @@
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
         android:text="@string/max_temp"
-        android:textColor="#878787"
-        android:textSize="@dimen/temp_text_size" />
+        android:textColor="#FFFFFF"
+        android:textSize="28px" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:text="@string/min_temp"
-        android:textColor="#878787"
-        android:textSize="@dimen/temp_text_size" />
+        android:textColor="#FFFFFF"
+        android:textSize="28px" />
 
 </LinearLayout>
