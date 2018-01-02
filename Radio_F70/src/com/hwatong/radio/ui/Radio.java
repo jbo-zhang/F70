@@ -137,7 +137,7 @@ public class Radio extends Activity implements OnClickListener,
 
 	private Toast mCollectToast;
 	private CustomDialog dialog;
-
+	
 	private int[] stringIds = new int[] { R.string.collection1,
 			R.string.collection2, R.string.collection3, R.string.collection4,
 			R.string.collection5, R.string.collection6, R.string.collection7,
@@ -599,6 +599,8 @@ public class Radio extends Activity implements OnClickListener,
 			}
 		}
 		mRadioAdapter.notifyDataSetChanged();
+		L.d(thiz, "in refreshChannelListStatus");
+		refreshListPosition(mRadioAdapter.getPlayingPosition());
 
 	}
 
@@ -628,6 +630,10 @@ public class Radio extends Activity implements OnClickListener,
 
 		public void setPlayingChannel(int selectedIndex) {
 			this.mSelectId = selectedIndex;
+		}
+		
+		public int getPlayingPosition() {
+			return this.mSelectId;
 		}
 
 		@Override
@@ -697,6 +703,21 @@ public class Radio extends Activity implements OnClickListener,
 		}
 	}
 
+	
+	private void refreshListPosition(int position) {
+		L.d(thiz, "refreshListPosition position : " + position);
+		
+		L.d(thiz, "first : " + mLvChannelList.getFirstVisiblePosition() + " last : " + mLvChannelList.getLastVisiblePosition());
+		
+		if(position < mLvChannelList.getFirstVisiblePosition() || position > mLvChannelList.getLastVisiblePosition()) {
+			if(position > 3) {
+				mLvChannelList.setSelection(position - 3);
+			} else if(position >= 0) {
+				mLvChannelList.setSelection(0);
+			}
+		}
+	}
+	
 	@Override
 	public void refreshView(final int band, final int freq,
 			ArrayList<Frequence> list) {
@@ -719,6 +740,34 @@ public class Radio extends Activity implements OnClickListener,
 		refreshChannelList(freq, list);
 
 	}
+	
+	/**
+	 * 增加这个方法，让搜台的时候搜到相对的频率不会收藏电台与列表对应频率不会闪动
+	 */
+	@Override
+	public void refreshView(final int band, final int freq) {
+		if (radioPresenter.isFm()) { // FM
+			// 更新Channel
+			refreshChannel(Utils.getBandText(band), "MHz",
+					Utils.numberToString(freq));
+			// 更新Channel
+			refreshSeekbar(true, freq);
+		} else { // AM
+			// 更新Channel
+			refreshChannel(Utils.getBandText(band), "KHz", String.valueOf(freq));
+			// 更新Channel
+			refreshSeekbar(false, freq);
+		}
+		
+		// 收藏按钮数据更新
+		refreshFavorList(band, -1);
+		// 更新频道列表
+		refreshChannelList(-1, null);
+	}
+	
+	
+	
+	
 
 	private void refreshChannel(String band, String unit, String freq) {
 		// 更新频道
@@ -828,6 +877,9 @@ public class Radio extends Activity implements OnClickListener,
 			mRadioAdapter.setPlayingChannel(-1);
 		}
 		mRadioAdapter.notifyDataSetChanged();
+		
+		L.d(thiz, "in refreshChannelList");
+		refreshListPosition(mRadioAdapter.getPlayingPosition());
 	}
 
 	@Override

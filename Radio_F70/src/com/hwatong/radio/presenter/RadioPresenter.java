@@ -67,7 +67,7 @@ public class RadioPresenter {
 			switch (msg.what) {
 			case MSG_DISPLAY_CHANGED:
 				L.d(thiz, "MSG_DISPLAY_CHANGED : " + msg.arg1 + " " + msg.arg2);
-				iRadioView.refreshView(msg.arg1, msg.arg2, null);
+				iRadioView.refreshView(msg.arg1, msg.arg2);
 				break;
 			case MSG_CHANNEL_CHANGED:
 				iRadioView.refreshView(mBand, mFreq, null);
@@ -110,7 +110,7 @@ public class RadioPresenter {
 				}
 
 				if (status[0] == -1) {
-					
+					L.d(thiz, "-1状态！");
 				} else if (status[0] == 0) {
 					// OP_IDLE
 					L.d(thiz, "空闲状态！");
@@ -119,7 +119,7 @@ public class RadioPresenter {
 						mHandler.sendEmptyMessageDelayed(MSG_PREVIEW_CHANNEL,
 								10000);
 					} else {
-						
+						iRadioView.hideLoading();
 					}
 				} else if (status[0] == 1) {
 					// OP_SCAN
@@ -238,6 +238,9 @@ public class RadioPresenter {
 				} else {
 					iRadioView.refreshView(mBand, mFreq, mList);
 				}
+				
+				mHandler.removeMessages(MSG_STATUS_CHANGED);
+				mHandler.sendEmptyMessageDelayed(MSG_STATUS_CHANGED, 150);
 
 				
 			} catch (RemoteException e) {
@@ -351,6 +354,8 @@ public class RadioPresenter {
 					mFreq = mFmFreq = mService.getCurrentChannel(0);
 					mHandler.removeMessages(MSG_CHANNEL_CHANGED);
 					mHandler.sendEmptyMessage(MSG_CHANNEL_CHANGED);
+					
+					//切换频段是不会回调onChannelListChanged,所以需要在这里更新列表。
 					mHandler.removeMessages(MSG_CHANNELLIST_CHANGED);
 					mHandler.sendMessage(Message.obtain(mHandler,
 							MSG_CHANNELLIST_CHANGED, 0, 0));
@@ -362,6 +367,7 @@ public class RadioPresenter {
 					mFreq = mAmFreq = mService.getCurrentChannel(1);
 					mHandler.removeMessages(MSG_CHANNEL_CHANGED);
 					mHandler.sendEmptyMessage(MSG_CHANNEL_CHANGED);
+					
 					mHandler.removeMessages(MSG_CHANNELLIST_CHANGED);
 					mHandler.sendMessage(Message.obtain(mHandler,
 							MSG_CHANNELLIST_CHANGED, 1, 0));
