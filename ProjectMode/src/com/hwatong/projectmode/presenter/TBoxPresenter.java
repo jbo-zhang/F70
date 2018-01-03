@@ -66,6 +66,10 @@ public class TBoxPresenter {
 	 */
 	private String updateName;
 	
+	/**
+	 * 
+	 */
+	private String fileName;
 	
 	/**
 	 * 初始化TBOX服务
@@ -126,6 +130,10 @@ public class TBoxPresenter {
 		des = path + file.getName();
 		updateName = "/" + file.getName();
 		
+		fileName = file.getName();
+		
+		fileName = fileName.substring(0, fileName.lastIndexOf("."));
+		
 		File ftpDirectory = new File(ftpPath);
 		if (!ftpDirectory.exists()) {
 			if(!ftpDirectory.mkdirs() && tboxView != null) {
@@ -178,7 +186,7 @@ public class TBoxPresenter {
 //					@Override
 //					public void run() {
 //						if(tboxView != null) {
-//							tboxView.showUpdateProgress(i++);
+//							tboxView.showUpdateProgress(fileName, i++);
 //						}
 //						if(i >= 88) {
 //							TimerTaskUtil.cancelTimer("update_progress");
@@ -335,7 +343,7 @@ public class TBoxPresenter {
 				@Override
 				public void run() {
 					if(tboxView != null) {
-						tboxView.showUpdateProgress(i++);
+						tboxView.showUpdateProgress(fileName, i++);
 					}
 					if(i >= 100) {
 						TimerTaskUtil.cancelTimer("update_progress");

@@ -4,11 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,29 +34,18 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	private final static String thiz = TboxUpdateFragment.class.getSimpleName();
 
 	private TBoxPresenter tBoxPresenter;
-	private TextView tvTitle;
 	private ListView lvList;
-	private Button btLeft;
-	private Button btMiddle;
-	private Button btRight;
 
-	private Drawable folderIcon, fileIcon;
 	private List<File> files;
-	private FileAdapter fileAdapter;
+	private FileAdapter2 fileAdapter2;
 
-	private String currentPath = "/mnt";// Environment.getExternalStorageDirectory().getPath();
-
-	private File currentFile;
-	
-	UpdateDialog copyDialog; // updateDialog;
+	UpdateDialog copyDialog;
 	
 	private UpdateDialog updateDialog;
 
 	private Object lockObject = new Object();
 	
 	private Object lockObject2 = new Object();
-	
-	private int i;
 	
 	@Override
 	protected int getLayoutId() {
@@ -69,15 +55,12 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	@Override
 	protected void initViews(View view) {
 		lvList = (ListView) view.findViewById(R.id.lv_list);
-
-		btLeft = (Button) view.findViewById(R.id.bt_left);
-		btMiddle = (Button) view.findViewById(R.id.bt_middle);
-		btRight = (Button) view.findViewById(R.id.bt_right);
-
+		
 		files = new ArrayList<File>();
-		fileAdapter = new FileAdapter(getActivity(), files);
-		lvList.setAdapter(fileAdapter);
-		changeSelectedFile();
+		
+		fileAdapter2 = new FileAdapter2(getActivity(), files);
+		
+		lvList.setAdapter(fileAdapter2);
 		
 		setupClickEvent();
 		
@@ -98,87 +81,93 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	
 
 	private void setupClickEvent() {
-		btLeft.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				iActivity.toUpdate();
-			}
-		});
-
-		btRight.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				tBoxPresenter.updateTbox(currentFile);
-			}
-		});
 
 		lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
-				final ArrayAdapter<File> adapter = (FileAdapter) adapterView.getAdapter();
+				final FileAdapter2 adapter = (FileAdapter2) adapterView.getAdapter();
 				File file = adapter.getItem(index);
-				if (file.isDirectory()) {
-					currentPath = file.getPath();
-				} else {
-					if (index != fileAdapter.getSelectedIndex()) {
-						fileAdapter.setSelectedIndex(index);
-						currentFile = file;
+				if (file.isFile()) {
+					if (index != fileAdapter2.getSelectedIndex()) {
+						fileAdapter2.setSelectedIndex(index);
 					} else {
-						fileAdapter.setSelectedIndex(-1);
-						currentFile = null;
+						fileAdapter2.setSelectedIndex(-1);
 					}
-					adapter.notifyDataSetChanged();
-					changeSelectedFile();
+					fileAdapter2.notifyDataSetChanged();
 				}
 			}
 		});
 
 	}
-
-	/**
-	 * 更改选中文件，设置确定按钮是否可用
-	 * */
-	private void changeSelectedFile() {
-		if (btRight != null) {
-			btRight.setEnabled(fileAdapter.getSelectedIndex() >= 0);
-		}
-	}
-
+	
 	/**
 	 * 升级包列表适配器，给列表设置属性
 	 * */
-	private class FileAdapter extends ArrayAdapter<File> {
+	private class FileAdapter2 extends BaseAdapter{
 
 		private int selectedIndex = -1;
 
-		public FileAdapter(Context context, List<File> files) {
-			super(context, android.R.layout.simple_list_item_1, files);
+		private List<File> list;
+		private Context context;
+		
+		public FileAdapter2(Context context, List<File> files) {
+			this.context = context;
+			this.list = files;
+		}
+		
+		@Override
+		public int getCount() {
+			return list.size();
 		}
 
 		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			TextView view = (TextView) super.getView(position, convertView, parent);
-			File file = getItem(position);
-			if (view != null) {
-				view.setText(file.getName());
-				view.setTextSize(20);
-				view.setTextColor(Color.rgb(255, 255, 255));
-				if (file.isDirectory()) {
-					//setDrawable(view, folderIcon);
-				} else {
-					//setDrawable(view, fileIcon);
-					if (selectedIndex == position)
-						view.setBackgroundColor(Color.parseColor("#55625e5e"));
-					else
-						view.setBackgroundColor(getContext().getResources().getColor(android.R.color.transparent));
-				}
-			}
-			return view;
+		public File getItem(int position) {
+			return list.get(position);
 		}
 
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
+
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent) {
+			ViewHolder holder = null;
+			if(convertView == null) {
+				convertView = View.inflate(context, R.layout.lv_item_file, null);
+				holder = new ViewHolder();
+				holder.tvName = (TextView) convertView.findViewById(R.id.tv_item_name);
+				holder.btUpdate = (Button) convertView.findViewById(R.id.bt_item_update);
+				convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
+			
+			holder.tvName.setText(getItem(position).getName());
+			
+			if (selectedIndex == position) {
+				holder.btUpdate.setVisibility(View.VISIBLE);
+				convertView.setBackgroundColor(Color.parseColor("#22625e5e"));
+			} else {
+				holder.btUpdate.setVisibility(View.INVISIBLE);
+				convertView.setBackgroundColor(Color.TRANSPARENT);
+			}
+			
+			holder.btUpdate.setFocusable(false);
+			
+			holder.btUpdate.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					tBoxPresenter.updateTbox(getItem(position));
+				}
+			});
+			
+			return convertView;
+		}
+		
+		
 		public void setSelectedIndex(int index) {
 			selectedIndex = index;
 		}
@@ -186,16 +175,11 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		public int getSelectedIndex() {
 			return selectedIndex;
 		}
-
-		private void setDrawable(TextView view, Drawable drawable) {
-			if (view != null) {
-				if (drawable != null) {
-					drawable.setBounds(0, 0, 60, 60);
-					view.setCompoundDrawables(drawable, null, null, null);
-				} else {
-					view.setCompoundDrawables(null, null, null, null);
-				}
-			}
+		
+		
+		class ViewHolder {
+			public TextView tvName;
+			public Button btUpdate;
 		}
 	}
 	
@@ -208,7 +192,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		this.files.clear();
 		this.files.addAll(files);
 
-		fileAdapter.notifyDataSetChanged();
+		fileAdapter2.notifyDataSetChanged();
 	}
 	
 
@@ -221,7 +205,6 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	}
 
 	private void showTboxUpdateDialog(File file) {
-		
 		String fileSize = FileUtil.convertStorage(file.length());
 		ConfirmDialog confirmDialog = new ConfirmDialog(getActivity());
 		
@@ -245,8 +228,6 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		confirmDialog.setMessage(file.getName(), "文件大小: " + fileSize, "确定升级TBOX吗?");
 	}
 	
-
-
 	/**
 	 * 显示复制进度
 	 */
@@ -367,7 +348,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	 * 显示升级进度
 	 */
 	@Override
-	public void showUpdateProgress(final int step) {
+	public void showUpdateProgress(final String fileName, final int step) {
 		L.d(thiz, "showUpdateProgress step: " + step);
 		getActivity().runOnUiThread(new Runnable() {
 
@@ -384,9 +365,11 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 						attributes.y = 60;
 						window.setAttributes(attributes);
 						updateDialog.show();
+						updateDialog.setTitle(fileName);
 					} else {
 						if (!updateDialog.isShowing()) {
 							updateDialog.show();
+							updateDialog.setTitle(fileName);
 						}
 						updateDialog.setProgress((int) step);
 					}

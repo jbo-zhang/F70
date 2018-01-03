@@ -110,10 +110,15 @@ public class UpdateDialog extends Dialog {
 		case STYLE_UPDATE:
 			tvTitle.setText(R.string.version_no);
 			btUpdate.setVisibility(View.VISIBLE);
+			btUpdate.setText("升级中");
 			break;
     	}
     	
     }  
+    
+    public void setTitle(String versionCode) {
+    	tvTitle.setText(versionCode);
+    }
     
     
     public void setProgress(int progress) {

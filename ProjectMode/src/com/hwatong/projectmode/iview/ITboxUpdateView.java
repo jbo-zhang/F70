@@ -19,7 +19,7 @@ public interface ITboxUpdateView {
 	
 	void showUpdateStart();
 	
-	void showUpdateProgress(int step);
+	void showUpdateProgress(String fileName, int step);
 	
 	void ftpCreatFailed();
 	

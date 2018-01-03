@@ -38,6 +38,8 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 	
 	int curPress = -1;
 
+	private Fragment currentFragment;
+	
 	private SystemUpdateFragment systemUpdateFragment;
 	
 	@Override
@@ -171,6 +173,8 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
     
 	
 	private void toFragment(Fragment fragment) {
+		currentFragment = fragment;
+		
 		if(fragment.isAdded()) {
 			return;
 		}
@@ -203,7 +207,11 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.setting_main_back:
-			finish();
+			if(currentFragment == tboxUpdateFragment) {
+				 toUpdate();
+			} else {
+				finish();
+			}
 			break;
 		}		
 	}
