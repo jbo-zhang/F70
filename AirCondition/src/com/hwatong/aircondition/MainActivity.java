@@ -712,9 +712,15 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		} else if(loop == 0x01) {
 			//内循环
 			setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
-		} else if(loop == 0x02 && getSoftwareVersion().contains(H_V_STR)) {
+		} else if(loop == 0x02) {
 			//自动循环
-			setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
+			
+			if(getSoftwareVersion().contains(H_V_STR)) {
+				setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
+			} else {
+				mTvLoop.setSelected(false);
+			}
+			
 		} else if(loop == -1){
 			mTvLoop.setSelected(false);
 		}
@@ -826,7 +832,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	 * 获取软件版本内容
 	 */
     private String getSoftwareVersion() {
-//    	return "F70_L_Vxxxx";
+    	//return "F70_L_Vxxxx";
 		return android.os.Build.ID;
 	}
 	
