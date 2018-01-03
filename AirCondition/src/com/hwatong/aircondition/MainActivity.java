@@ -86,6 +86,9 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 
 	private IStatusBarInfo mStatusBarInfo; // 状态栏左上角信息
 	
+	private String H_V_STR = "F70_H_V";
+	private String L_V_STR = "F70_L_V";
+	
 	private int[] drawableIds = new int[] { R.drawable.wind_level_1,
 			R.drawable.wind_level_2, R.drawable.wind_level_3,
 			R.drawable.wind_level_4, R.drawable.wind_level_5,
@@ -284,6 +287,13 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 
 		mTvRearSwitch = (TextView) findViewById(R.id.btn_rear);
 		mTvRearSwitch.setOnClickListener(this);
+		
+		if(getSoftwareVersion().contains(H_V_STR)) {
+			mTvRearSwitch.setVisibility(View.VISIBLE);
+		} else if(getSoftwareVersion().contains(L_V_STR)) {
+			mTvRearSwitch.setVisibility(View.GONE);
+		}
+		
 	}
 
 	boolean mStoped = false;
@@ -702,7 +712,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		} else if(loop == 0x01) {
 			//内循环
 			setLoopView(R.drawable.icon_loop_in, R.string.text_loop_in);
-		} else if(loop == 0x02) {
+		} else if(loop == 0x02 && getSoftwareVersion().contains(H_V_STR)) {
 			//自动循环
 			setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
 		} else if(loop == -1){
@@ -811,5 +821,14 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	public void close() {
 		finish();
 	}
+	
+	/**
+	 * 获取软件版本内容
+	 */
+    private String getSoftwareVersion() {
+//    	return "F70_L_Vxxxx";
+		return android.os.Build.ID;
+	}
+	
 	
 }
