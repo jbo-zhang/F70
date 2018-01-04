@@ -20,6 +20,8 @@ public class UpdateDialog extends Dialog {
 	private Button btUpdate;
 	private TextView tvTitle;
 	
+	private TextView tvProgressLeft, tvProgressRight;
+	
 	public static final int STYLE_COPY = 1;
 	
 	public static final int STYLE_UPDATE = 2;
@@ -101,16 +103,24 @@ public class UpdateDialog extends Dialog {
     	tvTitle = (TextView) findViewById(R.id.tv_dialog_title);
     	pbUpdate = (ProgressBar) findViewById(R.id.pb_update_progress);
     	btUpdate = (Button) findViewById(R.id.bt_update);
+    	tvProgressLeft = (TextView) findViewById(R.id.tv_progress_left);
+    	tvProgressRight = (TextView) findViewById(R.id.tv_progress_right);
     	
     	switch (mStyle) {
 		case STYLE_COPY:
 			tvTitle.setText(R.string.copying);
 			btUpdate.setVisibility(View.INVISIBLE);
+			tvProgressLeft.setVisibility(View.INVISIBLE);
+			tvProgressRight.setVisibility(View.INVISIBLE);
+			
 			break;
 		case STYLE_UPDATE:
 			tvTitle.setText(R.string.version_no);
-			btUpdate.setVisibility(View.VISIBLE);
-			btUpdate.setText("升级中");
+			btUpdate.setVisibility(View.INVISIBLE);
+			btUpdate.setText("正在升级");
+			tvProgressLeft.setVisibility(View.VISIBLE);
+			tvProgressRight.setVisibility(View.VISIBLE);
+			tvProgressRight.setText("升级中…");
 			break;
     	}
     	
@@ -123,7 +133,9 @@ public class UpdateDialog extends Dialog {
     
     public void setProgress(int progress) {
     	pbUpdate.setProgress(progress);
+    	tvProgressLeft.setText(progress + "%");
     }
+    
   
   
     /** 

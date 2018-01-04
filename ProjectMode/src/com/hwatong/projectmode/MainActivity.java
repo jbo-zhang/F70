@@ -146,14 +146,14 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 
 	@Override
 	public void toSystemUpdate() {
-//		toFragment(systemUpdateFragment);
-		Intent intent = new Intent();
-		intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
-		if (intent.resolveActivity(getPackageManager()) != null) {
-			startActivity(intent);
-		} else {
-			Toast.makeText(this, "没有升级应用", Toast.LENGTH_SHORT).show();
-		}
+		toFragment(systemUpdateFragment);
+//		Intent intent = new Intent();
+//		intent.setAction("android.intent.action.SYSTEM_UPDATE_SETTINGS");
+//		if (intent.resolveActivity(getPackageManager()) != null) {
+//			startActivity(intent);
+//		} else {
+//			Toast.makeText(this, "没有升级应用", Toast.LENGTH_SHORT).show();
+//		}
 	}
 
 	@Override

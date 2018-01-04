@@ -266,18 +266,21 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	 */
 	@Override
 	public void showUpdateResult(int result, final String info) {
-		synchronized (lockObject2) {
-			if (updateDialog != null) {
-				updateDialog.setProgress(100);
-				if (updateDialog.isShowing()) {
-					updateDialog.dismiss();
-				}
-			}
-		}
 		
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
+				
+				synchronized (lockObject2) {
+					if (updateDialog != null) {
+						updateDialog.setProgress(100);
+						if (updateDialog.isShowing()) {
+							updateDialog.dismiss();
+						}
+					}
+				}
+				
+				
 				Toast makeText = Toast.makeText(getActivity(), info, Toast.LENGTH_SHORT);
 				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
 				makeText.show();
