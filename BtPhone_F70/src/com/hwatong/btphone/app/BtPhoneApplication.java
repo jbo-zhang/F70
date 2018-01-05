@@ -86,12 +86,12 @@ public class BtPhoneApplication extends Application {
 	
 	
 	
-	public void registerHandler(Handler handler, int[] type) {
+	public synchronized void registerHandler(Handler handler, int[] type) {
 		mHandler = handler;
 	}
 
-	public void unRegisterHandler(Handler handler, int[] type) {
-		
+	public synchronized void unRegisterHandler(Handler handler, int[] type) {
+		mHandler = null;
 	}
 
 //	public synchronized void notifyMsg(int what) {

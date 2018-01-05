@@ -232,6 +232,7 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 
 	@Override
 	protected void onResume() {
+		L.d(thiz, "onResume");
 		super.onResume();
 		
 		BtPhoneApplication.getInstance().registerHandler(mHandler, types);
@@ -257,8 +258,15 @@ public abstract class BaseActivity extends Activity implements OnClickListener,
 	}
 
 	@Override
-	protected void onStop() {
+	protected void onPause() {
+		L.d(thiz, "onPause");
 		BtPhoneApplication.getInstance().unRegisterHandler(mHandler, types);
+		super.onPause();
+	}
+	
+	
+	@Override
+	protected void onStop() {
 		super.onStop();
 	}
 

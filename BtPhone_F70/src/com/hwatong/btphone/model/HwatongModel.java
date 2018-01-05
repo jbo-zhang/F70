@@ -855,6 +855,14 @@ public class HwatongModel implements IBTPhoneModel {
 					
 					phoneState = PhoneState.IDEL;
 					
+					
+					//及时更新通话记录，但有一个问题，全部通话记录中新插入的通话记录时间不对，无法显示在最上面。
+//					getAllLogsList();
+//					iView.updateMissedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_MISS));
+//					iView.updateDialedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_OUT));
+//					iView.updateReceivedLogs(mCallLogMap.get(UICallLog.TYPE_CALL_IN));	
+//					iView.updateAllLogs(mAllCallLogList);
+					
 				//拨打状态
 				} else if (CallStatus.PHONE_CALLING.equals(callStatus.status)) {
 					currentCall = getCallLogFromCallStatus(UICallLog.TYPE_CALL_OUT, callStatus);
@@ -914,6 +922,12 @@ public class HwatongModel implements IBTPhoneModel {
 					phoneState = PhoneState.TALKING;
 				}
 			}
+			
+			//同步麦克风
+			isMute = iService.isMicMute();
+			iView.showMicMute(isMute);
+			
+			L.d(thiz, "onHfpCallChanged onCallStatusChanged isMute : " + isMute);
 			
 			L.d(thiz, "onHfpCallChanged onCallStatusChanged cost : " + (System.currentTimeMillis() - start));
 		}

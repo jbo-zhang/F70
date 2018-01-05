@@ -1,9 +1,11 @@
 package com.hwatong.btphone.ui;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.os.SystemClock;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -80,7 +82,7 @@ public class DialogViewControl {
 
 	private void showDialog() {
 		L.d(thiz, "before if show Dialog() !");
-		if (!isShow) {
+		if (!isShow && !((Activity) mContext).isFinishing()) {
 			L.d(thiz, "show Dialog() !");
 			isShow = true;
 			mDialog.show();

@@ -234,6 +234,8 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 	 * @param number
 	 */
 	private synchronized void showPhoneComingWindow() {
+		L.d(thiz, "showPhoneComingWindow");
+		long start = System.currentTimeMillis();
 		if (viewAdded) {
 			return;
 		}
@@ -249,6 +251,9 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 
 		wmManager.addView(comingWindow, params);
 		viewAdded = true;
+		
+		L.d(thiz, "showPhoneComingWindow cost: " + (System.currentTimeMillis() - start));
+		
 	}
 
 	private synchronized void hidePhoneComingWindow() {
@@ -399,6 +404,7 @@ public class BtPhoneService extends Service implements IReceiverView, IServiceVi
 
 	@Override
 	public void showWindow(UICallLog callLog) {
+		L.d(thiz, "showWindow");
 		currentCall = callLog;
 		windowHandler.sendEmptyMessage(1);
 	}
