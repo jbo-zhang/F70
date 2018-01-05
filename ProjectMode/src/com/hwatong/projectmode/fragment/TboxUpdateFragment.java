@@ -39,13 +39,16 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	private List<File> files;
 	private FileAdapter2 fileAdapter2;
 
-	UpdateDialog copyDialog;
+	private UpdateDialog copyDialog;
 	
 	private UpdateDialog updateDialog;
 
 	private Object lockObject = new Object();
 	
 	private Object lockObject2 = new Object();
+	
+	private TextView tvNoFile;
+
 	
 	@Override
 	protected int getLayoutId() {
@@ -55,6 +58,9 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	@Override
 	protected void initViews(View view) {
 		lvList = (ListView) view.findViewById(R.id.lv_list);
+		
+		tvNoFile = (TextView) view.findViewById(R.id.tv_no_file);
+		tvNoFile.setText("没有找到TBOX升级文件");
 		
 		files = new ArrayList<File>();
 		
@@ -189,6 +195,10 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	 */
 	@Override
 	public void showFiles(List<File> files) {
+		
+		tvNoFile.setVisibility(View.INVISIBLE);
+		lvList.setVisibility(View.VISIBLE);
+		
 		this.files.clear();
 		this.files.addAll(files);
 
@@ -280,7 +290,6 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 					}
 				}
 				
-				
 				Toast makeText = Toast.makeText(getActivity(), info, Toast.LENGTH_SHORT);
 				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
 				makeText.show();
@@ -315,9 +324,12 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast makeText = Toast.makeText(getActivity(), "没有找到TBOX升级文件", Toast.LENGTH_SHORT);
-				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
-				makeText.show();
+//				Toast makeText = Toast.makeText(getActivity(), "没有找到TBOX升级文件", Toast.LENGTH_SHORT);
+//				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
+//				makeText.show();
+				
+				tvNoFile.setVisibility(View.VISIBLE);
+				lvList.setVisibility(View.INVISIBLE);
 			}
 		});
 	}

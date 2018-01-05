@@ -1,10 +1,12 @@
 package com.hwatong.projectmode.service;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -32,11 +34,11 @@ import android.util.Log;
 
 import com.hwatong.projectmode.R;
 import com.hwatong.projectmode.helper.OTAServerManager;
+import com.hwatong.projectmode.utils.L;
 import com.hwatong.projectmode.utils.Util;
 
 public class UpdateService extends Service {
-    private static final String TAG = "UpdateService";
-    private static final boolean DBG = true;
+    private static final String thiz = UpdateService.class.getSimpleName();
 
     public class ServiceBinder extends Binder {
         public UpdateService getService() {
@@ -51,6 +53,9 @@ public class UpdateService extends Service {
 
 	private final String mUpdatePackageLocation = "/cache/update.zip";
 
+    private static final String MMC_PATH = "/sys/devices/platform/sdhci-esdhc-imx.3/mmc_host/mmc0/mmc0:0001/name"; 
+
+	
 	private JSONObject parser = null;
 
 	private int mState = 0x01;
@@ -62,7 +67,7 @@ public class UpdateService extends Service {
 
     @Override
     public void onCreate() {
-        Log.d(TAG, "onCreate");
+        L.d(thiz, "onCreate");
 
         try {
 			mOTAManager = new OTAServerManager(this);
@@ -73,12 +78,12 @@ public class UpdateService extends Service {
 
 		PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
 		mWakelock = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "OTA Wakelock");
-		startCheckingVersion();
+		//startCheckingVersion();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(TAG, "onStartCommand");
+        L.d(thiz, "onStartCommand");
 
         if (intent != null) {
         }
@@ -88,12 +93,12 @@ public class UpdateService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.d(TAG, "onDestroy");
+        L.d(thiz, "onDestroy");
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(TAG, "onBind");
+        L.d(thiz, "onBind");
         return mBinder;
     }
 
@@ -119,12 +124,13 @@ public class UpdateService extends Service {
 	public void setUpdateFile(String fileName) {
 		synchronized(this) {
 			mSrcUpdateFile = fileName;
+			checkingVersion();
 		}
 	}
 	
 	/**开始检查版本*/
 	public void startCheckingVersion() {
-		Log.d(TAG, "startCheckingVersion");
+		L.d(thiz, "startCheckingVersion");
     	new Thread(new Runnable() {
     		public void run() {
     			for (;;) {
@@ -198,22 +204,49 @@ public class UpdateService extends Service {
 	/**检查版本号*/
 	private boolean checkingVersion() {
 		
-		//Log.d(TAG, "checkingVersion检查版本号");
+		L.d(thiz, "checkingVersion检查版本号");
 
 		if (mSrcUpdateFile!=null) {
 			UpdateFileInfo info = getUpdateFileInfo(mSrcUpdateFile);
 			if (info==null) {
 				reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.ERROR_IMAGE_FILE_ERROR, null);
 			}else {
-				reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.NO_ERROR, info);
+				
+				//adb by zjb ++ 
+				//升级包MMC大小
+				String updateImgMMCSize = "";
+				String systemMMCSize = getMMCSize();
+				
+				String[] split = info.version.split("\\.");
+				if(split.length >= 2) {
+					updateImgMMCSize = split[1];
+				}
+				
+				L.d(thiz, "updateImgMMCSize: " + updateImgMMCSize + " systemMMCSize: " + systemMMCSize);
+				
+				if(updateImgMMCSize.equals("16") || updateImgMMCSize.equals("32")) {
+					if(!updateImgMMCSize.equals(systemMMCSize)) {
+						L.d(thiz, "mmc size not match!!!");
+						reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.ERROR_MMC_SIZE_NOT_MATCH, info);
+						
+					} else {
+						L.d(thiz, "mmc size match!!!");
+						reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.NO_ERROR, info);
+					}
+				} else {
+					L.d(thiz, "update package mmc is not 16 or 32!");
+					reportStateChanged(OTAUIStateChangeListener.STATE_IN_CHECKED, OTAUIStateChangeListener.NO_ERROR, info);
+				}
+				//adb by zjb -- 
 			}
 			return true;
 		}
 		return false;
 	}
+	
 	/**开始加载更新包*/
 	public void startDownloadUpgradePackage() {
-		Log.d(TAG, "startDownloadUpgradePackage()开始加载更新包");
+		L.d(thiz, "startDownloadUpgradePackage()开始加载更新包");
 		new Thread(new Runnable() {
 			public void run() {
 				downloadUpgradePackage();
@@ -223,7 +256,7 @@ public class UpdateService extends Service {
 	
 	/**复制更新包*/
 	public void startCopyUpgradePackage() {
-		Log.d(TAG, "startCopyUpgradePackage()复制更新包");
+		L.d(thiz, "startCopyUpgradePackage()复制更新包");
 		new Thread(new Runnable() {
 			public void run() {
 				copyUpgradePackage();
@@ -234,7 +267,7 @@ public class UpdateService extends Service {
 	/**加载更新包*/
 	private void downloadUpgradePackage() {
 		
-		Log.d(TAG, "downloadUpgradePackage()加载更新包");
+		L.d(thiz, "downloadUpgradePackage()加载更新包");
 
 		reportStateChanged(OTAUIStateChangeListener.STATE_IN_DOWNLOADING, 0, null);
 
@@ -277,7 +310,7 @@ public class UpdateService extends Service {
 			mWakelock.acquire();
 			
 //			URL url = mConfig.getPackageURL();
-			Log.d(TAG, "start downoading package:" + url.toString());
+			L.d(thiz, "start downoading package:" + url.toString());
 			URLConnection conexion = url.openConnection();
 			conexion.setReadTimeout(10000);
 			// this will be useful so that you can show a topical 0-100% progress bar
@@ -288,7 +321,7 @@ public class UpdateService extends Service {
 			InputStream input = new BufferedInputStream(url.openStream());
 			OutputStream output = new FileOutputStream(targetFile);
 			
-			Log.d(TAG, "file size:" + lengthOfFile);
+			L.d(thiz, "file size:" + lengthOfFile);
 			byte data[] = new byte[100 * 1024];
 			long total = 0, count;
 			while ((count = input.read(data)) >= 0) {
@@ -365,7 +398,7 @@ public class UpdateService extends Service {
 	/**复制更新包*/
 	private void copyUpgradePackage() {
 		
-		Log.d(TAG, "copyUpgradePackage()复制更新包");
+		L.d(thiz, "copyUpgradePackage()复制更新包");
 
 		try{
 			mWakelock.acquire();
@@ -407,12 +440,12 @@ public class UpdateService extends Service {
 		}
 
 		if (total < 1024) {
-			Log.d(TAG, "Invalid image, total = " + total);
+			L.d(thiz, "Invalid image, total = " + total);
 			return false;
 		}
 
 		if (b[0] != '[') {
-			Log.d(TAG, "Invalid image, b[0] = " + b[0]);
+			L.d(thiz, "Invalid image, b[0] = " + b[0]);
 			return false;
 		}
 
@@ -423,26 +456,26 @@ public class UpdateService extends Service {
 			end++;
 		}
 		if (end == total) {
-			Log.d(TAG, "Invalid image, end = " + end);
+			L.d(thiz, "Invalid image, end = " + end);
 			return false;
 		}
 
 		String buildNumber = new String(b, 1, end-1);
-		Log.d(TAG, "BUILD_NUMBER=" + Build.VERSION.INCREMENTAL);//当前的版本
-		Log.d(TAG, "Received BUILD_NUMBER=" + buildNumber);//升级到的版本
+		L.d(thiz, "BUILD_NUMBER=" + Build.VERSION.INCREMENTAL);//当前的版本
+		L.d(thiz, "Received BUILD_NUMBER=" + buildNumber);//升级到的版本
 
-		Log.d(TAG,"111");
+		L.d(thiz,"111");
 		
-		if (buildNumber.equals(Build.VERSION.INCREMENTAL)) {
-			Log.d(TAG, "Current is up to date");
-			return true;
-		}
+//		if (buildNumber.equals(Build.VERSION.INCREMENTAL)) {
+//			L.d(thiz, "Current is up to date");
+//			return true;
+//		}
 
-		Log.d(TAG,"222");
+		L.d(thiz,"222");
 		File pkg = new File(mUpdatePackageLocation);//("/cache/t.zip");
 
 		if (pkg.exists()) {
-			Log.d(TAG,"333");
+			L.d(thiz,"333");
 			pkg.delete();
 		}
 		int size = is.available();
@@ -469,21 +502,22 @@ public class UpdateService extends Service {
             		e.printStackTrace();
 				}
 				os.close();
+				is.close();
 			}
 			
-			Log.d(TAG,"444");
+			L.d(thiz,"444");
 			
 			FileUtils.setPermissions(pkg.getPath(), FileUtils.S_IRUSR|FileUtils.S_IWUSR|FileUtils.S_IRGRP|FileUtils.S_IWGRP|FileUtils.S_IROTH, -1, -1);
 			
-			Log.d(TAG,"555");
+			L.d(thiz,"555");
 			
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            Log.d(TAG,"666" + e.toString());
+            L.d(thiz,"666" + e.toString());
 			return false;
 		}
 
-		Log.d(TAG, total + " bytes download completed");//现在完成的更新包的大小
+		L.d(thiz, total + " bytes download completed");//现在完成的更新包的大小
 		return true;
     }
 
@@ -529,7 +563,7 @@ public class UpdateService extends Service {
 
 	RecoverySystem.ProgressListener recoveryVerifyListener = new RecoverySystem.ProgressListener() {
 		public void onProgress(int progress) {
-			Log.d(TAG, "verify progress" + progress);
+			L.d(thiz, "verify progress" + progress);
 			reportStateChanged(OTAUIStateChangeListener.MESSAGE_VERIFY_PROGRESS, 0, new Long(progress));
 		}
 	};
@@ -589,11 +623,54 @@ public class UpdateService extends Service {
 		final int ERROR_PACKAGE_VERIFY_FAILED = 7;//错误包验证失败
 		final int ERROR_IMAGE_FILE_ERROR = 8;// 错误图像文件错误
 		
+		final int ERROR_MMC_SIZE_NOT_MATCH = 9; //MMC大小不符合
+		
+		
 		// results
 		final int RESULTS_ALREADY_LATEST = 1;//最新结果已经
 
 		public void onUIStateChanged(int state, int error, Object info);
 		
 	}
+	
+	
+	
+	private String getMMCSize() {
+		
+		String mmcVersion = getMMCVersion();
+		
+		if(mmcVersion.length() >= 6 && mmcVersion.substring(0, 6).equals("R1J57L")) {
+			return "32";
+		} else {
+			return "16";
+		}
+	}
+	
+	
+	/**
+	 * 获取MCU版本内容
+	 * @return
+	 */
+	public static String getMMCVersion() {
+        try {
+            FileReader fr = new FileReader(MMC_PATH);
+            BufferedReader br = new BufferedReader(fr);
+            String tmp = br.readLine();
+            Log.d("9095", "mmc: " + tmp);
+            br.close();
+            fr.close();
+            return tmp;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Log.i("TAG", "file not found");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		return "";
+	}
+	
+	
+	
+	
 
 }

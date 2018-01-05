@@ -17,8 +17,13 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" /> 
     <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE" /> 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> 
 
+    
+    <uses-permission android:name="android.permission.REBOOT" />
+    <uses-permission android:name="android.permission.DELETE_CACHE_FILES" />
+    <uses-permission android:name="android.permission.ACCESS_CACHE_FILESYSTEM" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    
     <uses-sdk
         android:minSdkVersion="17"
         android:targetSdkVersion="17" />

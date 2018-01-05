@@ -57,4 +57,15 @@
         android:divider="@drawable/line"
         android:dividerHeight="1px" />
 
+    <TextView 
+        android:id="@+id/tv_no_file"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:textSize="20px"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:visibility="invisible"
+        />
+    
+    
 </RelativeLayout>

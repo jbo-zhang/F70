@@ -207,7 +207,7 @@ public class MainActivity extends FragmentActivity implements IActivity, OnClick
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.setting_main_back:
-			if(currentFragment == tboxUpdateFragment) {
+			if(currentFragment == tboxUpdateFragment || currentFragment == systemUpdateFragment) {
 				 toUpdate();
 			} else {
 				finish();

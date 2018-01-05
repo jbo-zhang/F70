@@ -15,9 +15,8 @@ public class ConfirmDialog extends Dialog {
     private OnNoOnclickListener noOnclickListener;//取消按钮被点击了的监听器  
     private OnYesOnclickListener yesOnclickListener;//确定按钮被点击了的监听器  
     
-	private ProgressBar pbUpdate;
 	private Button btYes, btNo;
-	private TextView tvMessage1, tvMessage2, tvMessage3;
+	private TextView tvMessage1, tvMessage2, tvMessage3, tvTitle;
 	
     /** 
      * 设置取消按钮的显示内容和监听 
@@ -89,12 +88,20 @@ public class ConfirmDialog extends Dialog {
      * 初始化界面控件 
      */  
     private void initView() {  
+    	tvTitle = (TextView) findViewById(R.id.tv_title);
     	tvMessage1 = (TextView) findViewById(R.id.tv_message_1);
     	tvMessage2 = (TextView) findViewById(R.id.tv_message_2);
     	tvMessage3 = (TextView) findViewById(R.id.tv_message_3);
     	btYes = (Button) findViewById(R.id.bt_confirm);
     	btNo = (Button) findViewById(R.id.bt_cancel);
     }  
+    
+    
+    public ConfirmDialog setTitle(String title) {
+    	tvTitle.setText(title);
+    	return this;
+    }
+    
     
     public ConfirmDialog setMessage(String msg1, String msg2, String msg3) {
     	tvMessage1.setText(msg1);

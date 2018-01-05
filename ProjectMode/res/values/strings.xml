@@ -74,5 +74,9 @@
     
     <string name="copying">正在复制文件…</string>
     
+    <string name="error_mmc_size_not_match">Error: MMC 大小不匹配！</string>
+    
+    
+    
     
 </resources>
