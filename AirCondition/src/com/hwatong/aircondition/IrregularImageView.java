@@ -155,14 +155,14 @@ public class IrregularImageView extends ImageView {
 	
 	private boolean isPressed = false;
 	private synchronized void pressed() {
-		if(getVisibility() != View.VISIBLE && !isPressed) {
+		if(getVisibility() != View.VISIBLE && !isPressed && isEnabled()) {
 			setVisibility(View.VISIBLE);
 			isPressed = true;
 		}
 	}
 	
 	private synchronized void unPressed() {
-		if(isPressed) {
+		if(isPressed && isEnabled()) {
 			setVisibility(View.INVISIBLE);
 			isPressed = false;
 		}

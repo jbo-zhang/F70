@@ -536,8 +536,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 					return;
 				//空调开
 				} else {
-					setSwitch(true);
-					setSeekBarEnabled(true);
+					turnOnViews();
 				}
 
 				// 温度
@@ -592,11 +591,11 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	 */
 	private void turnOffViews() {
 		Log.d(TAG, "turn off Views !");
+		
 		setSwitch(false);
+		
+		//置灰
 		setTemperature(32);
-		
-		setSeekBarEnabled(false);
-		
 		setBlowerUp(false);
 		setBlowerMiddle(false);
 		setBlowerDown(false);
@@ -607,7 +606,36 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		setLoop(-1);
 		setRear(false);
 		
+		//使能
+		setSeekBarEnabled(false);
+		setBlowerUpEnabled(false);
+		setBlowerMiddleEnabled(false);
+		setBlowerDownEnabled(false);
+		setWindLevelEnabled(false);
+		setFrontDefrostEnabled(false);
+		setACEnabled(false);
+		setLoopEnabled(false);
 	}
+	
+	/**
+	 * 空调开启，使能各个按钮
+	 */
+	private void turnOnViews() {
+		setSwitch(true);
+		
+		setSeekBarEnabled(true);
+		setSeekBarEnabled(true);
+		setBlowerUpEnabled(true);
+		setBlowerMiddleEnabled(true);
+		setBlowerDownEnabled(true);
+		setWindLevelEnabled(true);
+		setFrontDefrostEnabled(true);
+		setACEnabled(true);
+		setLoopEnabled(true);
+		
+	}
+	
+	
 	
 	/**
 	 * 空调开关
@@ -617,9 +645,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		mTvWindSwitch.setSelected(!isOn);
 	}
 	
-	private void setSeekBarEnabled(boolean enabled) {
-		mLeftTempSeekBar.setEnabled(enabled);
-	}
+	
 	
 	/**
 	 * 设置温度
@@ -634,12 +660,21 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		Log.e("temp", "" + temp);
 	}
 	
+	private void setSeekBarEnabled(boolean enabled) {
+		mLeftTempSeekBar.setEnabled(enabled);
+	}
+	
+	
 	/**
 	 * 吹头
 	 * @param isOn
 	 */
 	private void setBlowerUp(boolean isOn) {
 		mIvBlowerUp.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+	}
+	
+	private void setBlowerUpEnabled(boolean enabled) {
+		mIvBlowerUp.setEnabled(enabled);
 	}
 	
 	/**
@@ -650,12 +685,21 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		mIvBlowerFront.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
 	}
 	
+	private void setBlowerMiddleEnabled(boolean enabled) {
+		mIvBlowerFront.setEnabled(enabled);
+	}
+	
+	
 	/**
 	 * 吹脚
 	 * @param isOn
 	 */
 	private void setBlowerDown(boolean isOn) {
 		mIvBlowerDown.setVisibility(isOn ? View.VISIBLE : View.INVISIBLE);
+	}
+	
+	private void setBlowerDownEnabled(boolean enabled) {
+		mIvBlowerDown.setEnabled(enabled);
 	}
 	
 	
@@ -675,6 +719,13 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		}
 	}
 	
+	private void setWindLevelEnabled(boolean enabled) {
+		for(int i = 0; i < mWindLevels.length; i++) {
+			mWindLevels[i].setEnabled(enabled);
+		}
+	}
+	
+	
 	
 	/**
 	 * 前除霜
@@ -683,6 +734,11 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	private void setFrontDefrost(boolean isOn) {
 		mTvFrontDefrost.setSelected(isOn);
 	}
+	
+	private void setFrontDefrostEnabled(boolean enabled) {
+		mTvFrontDefrost.setEnabled(enabled);
+	}
+	
 	
 	/**
 	 * 后除霜
@@ -699,6 +755,12 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	private void setAC(boolean isOn) {
 		mTvAc.setSelected(isOn);
 	}
+	
+	private void setACEnabled(boolean enabled) {
+		mTvAc.setEnabled(enabled);;
+	}
+	
+	
 
 	/**
 	 * 循环模式
@@ -724,7 +786,10 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		} else if(loop == -1){
 			mTvLoop.setSelected(false);
 		}
-		
+	}
+	
+	private void setLoopEnabled(boolean enabled) {
+		mTvLoop.setEnabled(enabled);
 	}
 	
 	/**
@@ -739,6 +804,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		mTvLoop.setText(textId);
 		mTvLoop.setSelected(true);
 	}
+	
 
 	/**
 	 * 后空调
