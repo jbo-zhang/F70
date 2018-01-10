@@ -391,13 +391,13 @@ public class SystemUpdateFragment extends BaseFragment implements UpdateService.
 		L.d(thiz, "progress : " + progress);
 		
 		if (message == MESSAGE_DOWNLOAD_PROGRESS) {
-			showProgress(progress, getText(R.string.download_upgrade_package) + "…");
+			showProgress(progress, getText(R.string.copying).toString());
 			
 		} else if (message == MESSAGE_VERIFY_PROGRESS) {
 			showProgress(progress, getText(R.string.verify_package) + "…");
 			
 		} else if (message == MESSAGE_COPY_PROGRESS) {
-			showProgress(progress, getText(R.string.copy_upgrade_package) + "…");
+			showProgress(progress, getText(R.string.copying).toString());
 		}
 	}
 	
@@ -461,7 +461,7 @@ public class SystemUpdateFragment extends BaseFragment implements UpdateService.
 	
 	
 	private void showErrorDialog(String msg1, String msg2, String msg3) {
-		if(copyDialog.isShowing()) {
+		if(copyDialog != null && copyDialog.isShowing()) {
 			copyDialog.dismiss();
 		}
 		

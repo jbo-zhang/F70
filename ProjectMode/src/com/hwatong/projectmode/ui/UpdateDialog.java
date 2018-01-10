@@ -117,7 +117,6 @@ public class UpdateDialog extends Dialog {
 		case STYLE_UPDATE:
 			tvTitle.setText(R.string.version_no);
 			btUpdate.setVisibility(View.INVISIBLE);
-			btUpdate.setText("正在升级");
 			tvProgressLeft.setVisibility(View.VISIBLE);
 			tvProgressRight.setVisibility(View.VISIBLE);
 			tvProgressRight.setText("升级中…");

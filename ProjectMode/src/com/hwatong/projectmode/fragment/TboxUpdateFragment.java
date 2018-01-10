@@ -194,15 +194,20 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 	 * 显示文件列表
 	 */
 	@Override
-	public void showFiles(List<File> files) {
-		
-		tvNoFile.setVisibility(View.INVISIBLE);
-		lvList.setVisibility(View.VISIBLE);
-		
-		this.files.clear();
-		this.files.addAll(files);
+	public void showFiles(final List<File> files) {
+		getActivity().runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				tvNoFile.setVisibility(View.INVISIBLE);
+				lvList.setVisibility(View.VISIBLE);
+				
+				TboxUpdateFragment.this.files.clear();
+				TboxUpdateFragment.this.files.addAll(files);
 
-		fileAdapter2.notifyDataSetChanged();
+				fileAdapter2.notifyDataSetChanged();
+			}
+		});
 	}
 	
 

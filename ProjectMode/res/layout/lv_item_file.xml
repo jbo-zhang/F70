@@ -18,7 +18,7 @@
                 android:layout_marginLeft="25dp"
                 android:textSize="22px"
                 android:background="@drawable/button_selector"
-                android:text="@string/update" />
+                android:text="@string/choose" />
     </LinearLayout>
     
     

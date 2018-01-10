@@ -98,22 +98,30 @@ public class TBoxPresenter {
 	 * 加载可选文件
 	 */
 	public void loadFiles() {
-		List<File> files = getFiles(USB_PATH);
-		if(files == null || files.size() == 0) {
-			files = getFiles(USB_PATH2);
-		} 
-		
-		L.d(thiz, "" + files);
-		
-		if(files != null && files.size() > 0) {
-			if(tboxView != null) {
-				tboxView.showFiles(files);
+		new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				List<File> files = getFiles(USB_PATH);
+				if(files == null || files.size() == 0) {
+					files = getFiles(USB_PATH2);
+				} 
+				
+				L.d(thiz, "" + files);
+				
+				if(files != null && files.size() > 0) {
+					if(tboxView != null) {
+						tboxView.showFiles(files);
+					}
+				} else {
+					if(tboxView != null) {
+						tboxView.showNoFiles();
+					}
+				}
 			}
-		} else {
-			if(tboxView != null) {
-				tboxView.showNoFiles();
-			}
-		}
+		}).start();
+		
 		
 	}
 	
