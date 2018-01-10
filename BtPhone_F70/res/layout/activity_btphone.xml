@@ -40,15 +40,16 @@
                 android:drawableTop="@drawable/icon_calllog"
                 android:text="@string/tab_call_log" />
         </LinearLayout>
-
+        
         <ImageButton
             android:id="@+id/btn_return"
-            style="@style/style_botton_return"
-            android:layout_width="94dp"
-            android:layout_height="@dimen/bottom_btn_height"
-            android:background="@drawable/btn_return_bg_selector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignParentLeft="true" />
+            android:layout_alignParentLeft="true"
+            android:background="@drawable/btn_back_selector"
+            android:src="@drawable/btn_return" />
+        
     </RelativeLayout>
 
     <View
