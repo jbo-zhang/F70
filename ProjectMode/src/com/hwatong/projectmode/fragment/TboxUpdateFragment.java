@@ -60,7 +60,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		lvList = (ListView) view.findViewById(R.id.lv_list);
 		
 		tvNoFile = (TextView) view.findViewById(R.id.tv_no_file);
-		tvNoFile.setText("没有找到TBOX升级文件");
+		tvNoFile.setText(getText(R.string.no_tbox_files));
 		
 		files = new ArrayList<File>();
 		
@@ -355,7 +355,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 		getActivity().runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				Toast makeText = Toast.makeText(getActivity(), "TBOX设备未连接", Toast.LENGTH_SHORT);
+				Toast makeText = Toast.makeText(getActivity(), getText(R.string.tbox_dev_not_connected), Toast.LENGTH_SHORT);
 				makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
 				makeText.show();
 			}
@@ -400,7 +400,7 @@ public class TboxUpdateFragment extends BaseFragment implements ITboxUpdateView 
 
 	@Override
 	public void ftpCreatFailed() {
-		Toast makeText = Toast.makeText(getActivity(), "ftp目录创建失败！", Toast.LENGTH_SHORT);
+		Toast makeText = Toast.makeText(getActivity(), getText(R.string.ftp_dir_create_failed), Toast.LENGTH_SHORT);
 		makeText.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP, -220, 250);
 		makeText.show();
 	}

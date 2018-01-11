@@ -86,7 +86,7 @@ public class SystemUpdateFragment extends BaseFragment implements UpdateService.
 		lvList = (ListView) view.findViewById(R.id.lv_list);
 		
 		tvNoFile = (TextView) view.findViewById(R.id.tv_no_file);
-		tvNoFile.setText("没有找到系统升级文件");
+		tvNoFile.setText(getText(R.string.no_img_files));
 		
 		files = new ArrayList<File>();
 		

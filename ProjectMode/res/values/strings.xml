@@ -77,6 +77,10 @@
     <string name="error_mmc_size_not_match">Error: MMC 大小不匹配！</string>
     
     <string name="choose">选择</string>
+    <string name="no_img_files">没有找到系统升级文件</string>
+    <string name="no_tbox_files">没有找到TBOX升级文件</string>
+    <string name="tbox_dev_not_connected">TBOX设备未连接！</string>
+    <string name="ftp_dir_create_failed">ftp目录创建失败！</string>
     
     
     
