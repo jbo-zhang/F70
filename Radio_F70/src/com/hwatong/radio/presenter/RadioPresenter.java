@@ -239,8 +239,8 @@ public class RadioPresenter {
 					iRadioView.refreshView(mBand, mFreq, mList);
 				}
 				
-				mHandler.removeMessages(MSG_STATUS_CHANGED);
-				mHandler.sendEmptyMessageDelayed(MSG_STATUS_CHANGED, 150);
+//				mHandler.removeMessages(MSG_STATUS_CHANGED);
+//				mHandler.sendEmptyMessageDelayed(MSG_STATUS_CHANGED, 150);
 
 				
 			} catch (RemoteException e) {
