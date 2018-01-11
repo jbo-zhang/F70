@@ -45,6 +45,13 @@
         </activity>
         
         <service android:name="com.hwatong.projectmode.service.UpdateService"></service>
+        
+        <receiver android:name="com.hwatong.projectmode.receiver.DebugReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>            
+        </receiver>
+        
     </application>
 
 </manifest>

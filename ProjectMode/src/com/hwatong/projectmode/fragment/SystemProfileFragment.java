@@ -52,14 +52,14 @@ public class SystemProfileFragment extends BaseFragment{
 	        super.handleMessage(msg);
 	        switch (msg.what) {
             case BT_ADDRESS:
-//                if(btService!=null){
-//                    try {
-//                        setFormatText(tvBluetoothAddress, btService.getLocalAddress());
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
+                if(btService!=null){
+                    try {
+                        setFormatText(tvBluetoothAddress, btService.getLocalAddress());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
             case TBOX_ICCID:
                 if(tboxService!=null){
                     
@@ -101,19 +101,19 @@ public class SystemProfileFragment extends BaseFragment{
 	/**
 	 * 蓝牙参数
 	 */
-//    private com.hwatong.bt.IService btService = null ; 
-//	private ServiceConnection btConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceDisconnected(ComponentName componentName) {
-//            btService = null ;
-//        }
-//        
-//        @Override
-//        public void onServiceConnected(ComponentName componentName, IBinder binder) {
-//            btService = com.hwatong.bt.IService.Stub.asInterface(binder);
-//            handler.sendEmptyMessage(BT_ADDRESS);
-//        }
-//    };
+    private com.hwatong.bt.IService btService = null ; 
+	private ServiceConnection btConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            btService = null ;
+        }
+        
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            btService = com.hwatong.bt.IService.Stub.asInterface(binder);
+            handler.sendEmptyMessage(BT_ADDRESS);
+        }
+    };
     
     /**
      * TBox参数
@@ -211,7 +211,7 @@ public class SystemProfileFragment extends BaseFragment{
 	@Override
 	protected void initViews(View view) {
 	    mContext = getActivity() ;
-//	    mContext.bindService(new Intent("com.hwatong.bt.service"), btConnection, Context.BIND_AUTO_CREATE);
+	    mContext.bindService(new Intent("com.hwatong.bt.service"), btConnection, Context.BIND_AUTO_CREATE);
 	    mContext.bindService(new Intent("com.tbox.service.TboxService"), tboxConnection, Context.BIND_AUTO_CREATE);
 		tvCpuTemerature = (TextView) view.findViewById(R.id.tv_cpu_temperature);
 		tvRam = (TextView) view.findViewById(R.id.tv_ram);
@@ -228,7 +228,7 @@ public class SystemProfileFragment extends BaseFragment{
 	public void onDestroy() {
 	    super.onDestroy();
 	    handler.removeCallbacks(runnable);
-//	    mContext.unbindService(btConnection);
+	    mContext.unbindService(btConnection);
 	    mContext.unbindService(tboxConnection);
 	}
 

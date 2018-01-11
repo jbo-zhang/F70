@@ -7,7 +7,9 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.provider.Settings;
@@ -17,10 +19,13 @@ import android.widget.Button;
 import android.util.Log;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+
 import java.util.Arrays;
+
 import com.hwatong.projectmode.R;
 import com.hwatong.projectmode.fragment.base.BaseFragment;
 import com.hwatong.projectmode.fragment.base.FTPManager;
+import com.hwatong.projectmode.fragment.base.FTPManager.FTPListener;
 import com.hwatong.projectmode.ui.SwitchButton;
 import com.hwatong.projectmode.utils.L;
 import com.tbox.service.FlowInfo;
@@ -47,6 +52,9 @@ public class DebugModeFragment extends BaseFragment{
 	private SwitchButton sbGpsLogs;
 	
 	private static final String ADB_DEBUG_FILE = "/sys/devices/platform/imx-i2c.1/i2c-1/1-0019/usb_switch" ;
+	
+	private static final int DEBUG_ENABLE = 2;
+	
 	private boolean writeAdbFile(int i){
 	    FileOutputStream os = null ;
 	    try {
@@ -66,7 +74,23 @@ public class DebugModeFragment extends BaseFragment{
         }
 	    return true ;
 	}
-	
+    private Handler handler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+            case FTPListener.DOWNLOAD:
+                sbTboxLogs.setText(R.string.saving);
+                break;
+            case FTPListener.FINISH:
+                sbTboxLogs.setText(R.string.save);
+                break;
+            case DEBUG_ENABLE:
+                sbAdbDebug.setEnabled(true);
+                break;
+            }
+        }
+    };
 	private com.tbox.service.ITboxService tboxService;
     private ServiceConnection tboxConnection = new ServiceConnection() {
         @Override
@@ -124,15 +148,23 @@ public class DebugModeFragment extends BaseFragment{
                                 @Override
                                 public void run() {
                                     
-//                                    FTPManager ftpManager = FTPManager.getInstance();
-//                                    try {
-//                                        if(ftpManager.connect()){
-//                                            ftpManager.downLoad(logPath);
-//                                        }
-//                                    } catch (Exception e) {
-//                                        e.printStackTrace();
-//                                        Log.d("ftpManager",e.getMessage()+";"+e.toString());
-//                                    }
+                                    FTPManager ftpManager = FTPManager.getInstance();
+                                    ftpManager.setListener(new FTPListener(){
+
+                                        @Override
+                                        public void onProcess(int status) {
+                                            handler.sendEmptyMessage(status);
+                                        }
+                                        
+                                    });
+                                    try {
+                                        if(ftpManager.connect()){
+                                            ftpManager.downLoad(logPath);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                        Log.d("ftpManager",e.getMessage()+";"+e.toString());
+                                    }
                                 }
                                 
                             }).start();
@@ -176,7 +208,7 @@ public class DebugModeFragment extends BaseFragment{
         sbGpsLogs = (SwitchButton) view.findViewById(R.id.switch_gps_logs);
         
         sbAdbDebug.setChecked(Settings.Global.getInt(mContext.getContentResolver(), Settings.Global.ADB_ENABLED, 0)==1 ? true:false);
-        sbAdbDebug.setEnabled(false);
+        //sbAdbDebug.setEnabled(false);
         sbSystemLogs.setChecked(SystemProperties.getInt("persist.sys.log.config", 0)==1? true:false);
         
         sbGpsLogs.setChecked(SystemProperties.getInt("persist.sys.gps.log", 0)==1? true:false );
@@ -187,11 +219,33 @@ public class DebugModeFragment extends BaseFragment{
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if(isChecked){
-                    //writeAdbFile(1);
+                    
+                    
                     Settings.Global.putInt(mContext.getContentResolver(), Settings.Global.ADB_ENABLED, 1);
+
+                    Log.d(TAG , "ADB SET TRUE");
+                    sbAdbDebug.setEnabled(false);
+                    handler.postDelayed(new Runnable(){
+
+                        @Override
+                        public void run() {
+                            writeAdbFile(1);
+                            Log.d(TAG , " SET 1");
+                        }
+                        
+                    }, 5000);
                 } else {
-                    //writeAdbFile(0);
-                    Settings.Secure.putInt(mContext.getContentResolver(), Settings.Global.ADB_ENABLED, 0);
+                    /**
+                    writeAdbFile(0);
+                    sbAdbDebug.setEnabled(false);
+                    handler.postDelayed(new Runnable(){
+
+                        @Override
+                        public void run() {
+                            handler.sendEmptyMessage(DEBUG_ENABLE);
+                        }
+                        
+                    }, 5000);*/
                 }
             }
         });
@@ -232,9 +286,5 @@ public class DebugModeFragment extends BaseFragment{
 	public void onDestroy() {
             super.onDestroy() ;
 	    mContext.unbindService(tboxConnection);
-	}
-	
-	
-	
-	
+	}	
 }

@@ -28,5 +28,16 @@
         android:background="@drawable/line"
         />
     
+    <TextView
+        android:id="@+id/mx_update"
+        style="@style/update_item"
+        android:text="@string/mx_update"
+        />
+    
+    <View 
+        android:layout_height="1px"
+        android:layout_width="807px"
+        android:background="@drawable/line"
+        />   
 
 </LinearLayout>

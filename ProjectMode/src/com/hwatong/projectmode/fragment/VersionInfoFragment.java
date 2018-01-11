@@ -8,6 +8,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -32,36 +33,36 @@ public class VersionInfoFragment extends BaseFragment{
 	
 	private Context mContext ;
 
-//    private com.hwatong.bt.IService btService = null ; 
-//    private ServiceConnection btConnection = new ServiceConnection() {
-//        @Override
-//        public void onServiceDisconnected(ComponentName componentName) {
-//            btService = null ;
-//        }
-//        
-//        @Override
-//        public void onServiceConnected(ComponentName componentName, IBinder binder) {
-//            btService = com.hwatong.bt.IService.Stub.asInterface(binder);
-//            handler.sendEmptyMessage(BT_VERSION);
-//        }
-//    };
-//    
-//    private static final int BT_VERSION = 1 ;
-//    private Handler handler = new Handler(){
-//        public void handleMessage(android.os.Message msg) {
-//            switch (msg.what) {
-//            case BT_VERSION:
-//                if(btService!=null){
-//                    try {
-//                        setFormatText(tvBluetoothVersion,  btService.getVersion());
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                break;
-//            }
-//        };
-//    } ;
+    private com.hwatong.bt.IService btService = null ; 
+    private ServiceConnection btConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            btService = null ;
+        }
+        
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder binder) {
+            btService = com.hwatong.bt.IService.Stub.asInterface(binder);
+            handler.sendEmptyMessage(BT_VERSION);
+        }
+    };
+    
+    private static final int BT_VERSION = 1 ;
+    private Handler handler = new Handler(){
+        public void handleMessage(android.os.Message msg) {
+            switch (msg.what) {
+            case BT_VERSION:
+                if(btService!=null){
+                    try {
+                        setFormatText(tvBluetoothVersion,  btService.getVersion());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+                break;
+            }
+        };
+    } ;
     
     
 	@Override
@@ -72,7 +73,7 @@ public class VersionInfoFragment extends BaseFragment{
 	@Override
 	protected void initViews(View view) {
 	    mContext = getActivity() ;
-//	    mContext.bindService(new Intent("com.hwatong.bt.service"), btConnection, Context.BIND_AUTO_CREATE);
+	    mContext.bindService(new Intent("com.hwatong.bt.service"), btConnection, Context.BIND_AUTO_CREATE);
 		tvProductModel = (TextView) view.findViewById(R.id.tv_product_model);
 		tvAndroidVersion = (TextView) view.findViewById(R.id.tv_android_version);
 		tvMcuVersion = (TextView) view.findViewById(R.id.tv_mcu_version);
@@ -83,13 +84,17 @@ public class VersionInfoFragment extends BaseFragment{
 		
 		setViewsData();
 		
+		if(Build.ID.contains("F70_L")){
+		    tvMapVersion.setVisibility(View.GONE);
+		    tvSoundVersion.setVisibility(View.GONE);
+		}
 	}
 	
-//	@Override
-//	public void onDestroy() {
-//            super.onDestroy();
-//	    mContext.unbindService(btConnection);
-//	}
+	@Override
+	public void onDestroy() {
+            super.onDestroy();
+	    mContext.unbindService(btConnection);
+	}
 
 	private void setViewsData() {
 		setProductModel();
