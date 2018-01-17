@@ -611,8 +611,8 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		setBlowerUpEnabled(false);
 		setBlowerMiddleEnabled(false);
 		setBlowerDownEnabled(false);
-		setWindLevelEnabled(false);
-		setFrontDefrostEnabled(false);
+		//setWindLevelEnabled(false);
+		//setFrontDefrostEnabled(false);
 		setACEnabled(false);
 		setLoopEnabled(false);
 	}
@@ -628,8 +628,8 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		setBlowerUpEnabled(true);
 		setBlowerMiddleEnabled(true);
 		setBlowerDownEnabled(true);
-		setWindLevelEnabled(true);
-		setFrontDefrostEnabled(true);
+		//setWindLevelEnabled(true);
+		//setFrontDefrostEnabled(true);
 		setACEnabled(true);
 		setLoopEnabled(true);
 		
