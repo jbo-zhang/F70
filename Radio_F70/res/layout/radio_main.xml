@@ -27,7 +27,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/fm1"
                 android:textColor="@color/white"
                 android:textSize="39px" />
 
@@ -37,7 +36,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/text_fmam"
                 android:layout_centerHorizontal="true"
-                android:text="@string/initfreq"
                 android:textColor="@color/white"
                 android:textSize="65px" />
 
@@ -50,7 +48,6 @@
                 android:layout_marginLeft="21px"
                 android:layout_marginBottom="12px"
                 android:layout_centerHorizontal="true"
-                android:text="@string/fmsign"
                 android:textColor="@color/white"
                 android:textSize="29px" />
         </RelativeLayout>

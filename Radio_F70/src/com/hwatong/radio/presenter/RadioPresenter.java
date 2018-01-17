@@ -207,7 +207,19 @@ public class RadioPresenter {
 				L.d(thiz, "mService.registerCallback(mRadioCallback)");
 				mService.registerCallback(mRadioCallback);
 				L.d(thiz, "mService.play()");
-				mService.play();
+				new Thread(new Runnable() {
+					
+					@Override
+					public void run() {
+						try {
+							L.d(thiz, "before mService.play()");
+							mService.play();
+							L.d(thiz, "after mService.play()");
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}
+				}).start();
 
 				checkBand();
 
