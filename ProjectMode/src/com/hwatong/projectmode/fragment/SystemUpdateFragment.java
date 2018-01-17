@@ -311,7 +311,7 @@ public class SystemUpdateFragment extends BaseFragment implements UpdateService.
 
 				String length = (String) getText(R.string.length_unknown);
 				if (bytes > 0)
-					length = byteCountToDisplaySize(bytes, false);
+					length = byteCountToDisplaySize(bytes, true);
 
 				L.d(thiz, getText(R.string.version) + ":" + version + "\n" + getText(R.string.size) + ":" + length);
 
