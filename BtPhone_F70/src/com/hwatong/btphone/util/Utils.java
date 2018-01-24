@@ -49,10 +49,10 @@ public class Utils {
 		context.startActivity(intent);
 	}
 	
-	public static void gotoCallLogActivityInService(Context context) {
+	public static void gotoCallLogActivityInService(Context context, int type) {
 		Intent intent = new Intent(context, CallLogActivity.class);
 		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		intent.putExtra("type", 0);
+		intent.putExtra("type", type);
 		context.startActivity(intent);
 	}
 	

@@ -50,6 +50,17 @@ public class CallLogActivity extends BaseActivity {
 
 	private DialogViewControl mDialogControl;
 
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		int intExtra = intent.getIntExtra("type", -1);
+		L.d(thiz, "onNewIntent intExtra : " + intExtra);
+		if(intExtra == 0) {
+			toMissedCalls();
+		}
+	}
+	
 	@Override
 	protected void initView() {
 		mLvCallLog = (PopItemButtonListView) findViewById(R.id.lv_call_log);

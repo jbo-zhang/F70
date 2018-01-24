@@ -229,6 +229,7 @@ public class DialActivity extends BaseActivity {
 	
 	@Override
 	protected void onNewIntent(Intent intent) {
+		L.d(thiz, "onNewIntent!");
 		checkIntent(intent);
 	}
 	
