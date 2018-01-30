@@ -14,6 +14,7 @@ import com.hwatong.btphone.CallLog;
 import com.hwatong.btphone.activity.base.BaseActivity;
 import com.hwatong.btphone.adapter.CallLogListAdapter;
 import com.hwatong.btphone.adapter.CallLogListAdapter.ButtonOnClick;
+import com.hwatong.btphone.app.BtPhoneApplication;
 import com.hwatong.btphone.bean.UICallLog;
 import com.hwatong.btphone.constants.Constant;
 import com.hwatong.btphone.ui.DialogViewControl;
@@ -46,7 +47,8 @@ public class CallLogActivity extends BaseActivity {
 
 	private CallLogListAdapter mAdapter;
 	private SparseArray<List<CallLog>> mCallLogMap = new SparseArray<List<CallLog>>(3);
-	private int mCurCallLogType = UICallLog.TYPE_CALL_MISS;
+	
+	public static int mCurCallLogType = UICallLog.TYPE_CALL_MISS;
 
 	private DialogViewControl mDialogControl;
 
@@ -83,8 +85,13 @@ public class CallLogActivity extends BaseActivity {
 		mTvNoData = (TextView) findViewById(R.id.tv_nodata);
 
 		// 默认显示未接来电
-		mTvCallMiss.setSelected(true);
-
+//		mTvCallMiss.setSelected(true);
+		
+		//取消默认显示未接来电，改为显示上次记忆内容
+		mTvCallMiss.setSelected(UICallLog.TYPE_CALL_MISS == mCurCallLogType);
+		mTvCallIn.setSelected(UICallLog.TYPE_CALL_IN == mCurCallLogType);
+		mTvCallOut.setSelected(UICallLog.TYPE_CALL_OUT == mCurCallLogType);
+		
 		initListView();
 	}
 
@@ -114,7 +121,8 @@ public class CallLogActivity extends BaseActivity {
 	private void onHangUp() {
 		mLvCallLog.setItemClickEnable(true);
 		setResult(Constant.RESULT_FINISH_ACTIVITY);
-		finish();
+		//电话在这个界面挂断，不结束
+		//finish();
 	}
 
 	/**
@@ -230,21 +238,34 @@ public class CallLogActivity extends BaseActivity {
 	@Override
 	public void showComing(UICallLog callLog) {
 		if(callLog.shouldJump == 1) {
-			Utils.gotoDialActivity(this, callLog);
+			if(((BtPhoneApplication) getApplication()).getActivitySize() == 3) {
+				Utils.gotoDialActivity(this, callLog, 1);
+			} else {
+				Utils.gotoDialActivity(this, callLog);
+			}
+			
 		}
 	}
 	
 	@Override
 	public void showCalling(UICallLog callLog) {
 		if(callLog.shouldJump == 1) {
-			Utils.gotoDialActivity(this, callLog);
+			if(((BtPhoneApplication) getApplication()).getActivitySize() == 3) {
+				Utils.gotoDialActivity(this, callLog, 1);
+			} else {
+				Utils.gotoDialActivity(this, callLog);
+			}
 		}
 	}
 	
 	@Override
 	public void showTalking(UICallLog callLog) {
 		if(callLog.shouldJump == 1) {
-			Utils.gotoDialActivity(this, callLog);
+			if(((BtPhoneApplication) getApplication()).getActivitySize() == 3) {
+				Utils.gotoDialActivity(this, callLog, 1);
+			} else {
+				Utils.gotoDialActivity(this, callLog);
+			}
 		}
 	}
 	
