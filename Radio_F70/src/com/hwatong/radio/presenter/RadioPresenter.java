@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
+import android.os.SystemClock;
 import android.widget.TextView;
 
 import com.hwatong.radio.Channel;
@@ -250,6 +251,13 @@ public class RadioPresenter {
 				} else {
 					iRadioView.refreshView(mBand, mFreq, mList);
 				}
+				
+				//只调用一次没有效果，不知道原因
+				iRadioView.showSeekbarThumb();
+				SystemClock.sleep(50);
+				iRadioView.showSeekbarThumb();
+				SystemClock.sleep(50);
+				iRadioView.showSeekbarThumb();
 				
 //				mHandler.removeMessages(MSG_STATUS_CHANGED);
 //				mHandler.sendEmptyMessageDelayed(MSG_STATUS_CHANGED, 150);

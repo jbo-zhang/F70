@@ -391,6 +391,23 @@ public class Radio extends Activity implements OnClickListener,
 		seekBarFm.setOnSeekBarChangeListener(onSeekBarChangeListener);
 
 		seekBarAm.setOnSeekBarChangeListener(onSeekBarChangeListener);
+		
+		seekBarFm.setThumb(null);
+		seekBarAm.setThumb(null);
+		
+		
+	}
+	
+	@Override
+	public void showSeekbarThumb() {
+		L.d(thiz, "showSeekbarThumb!");
+		
+		seekBarFm.setThumb(getResources().getDrawable(R.drawable.thumb_radio));
+		seekBarAm.setThumb(getResources().getDrawable(R.drawable.thumb_radio));
+		seekBarFm.setThumbOffset(0);
+		seekBarAm.setThumbOffset(0);
+	
+		
 	}
 
 	/**
