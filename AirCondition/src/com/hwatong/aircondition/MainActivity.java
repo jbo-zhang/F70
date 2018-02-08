@@ -161,6 +161,7 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		
 		mCanbusService = ICanbusService.Stub.asInterface(ServiceManager.getService("canbus"));
 		
+		
 //		getAccStatus();
 //		
 //		if(acc != 2) {
@@ -288,11 +289,21 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		mTvRearSwitch = (TextView) findViewById(R.id.btn_rear);
 		mTvRearSwitch.setOnClickListener(this);
 		
-		if(getSoftwareVersion().contains(H_V_STR)) {
-			mTvRearSwitch.setVisibility(View.VISIBLE);
-		} else if(getSoftwareVersion().contains(L_V_STR)) {
-			mTvRearSwitch.setVisibility(View.GONE);
-		}
+	
+		
+		//去掉之前根据版本号判断高低配的操作
+//		if(getSoftwareVersion().contains(H_V_STR)) {
+//			mTvRearSwitch.setVisibility(View.VISIBLE);
+//		} else if(getSoftwareVersion().contains(L_V_STR)) {
+//			mTvRearSwitch.setVisibility(View.GONE);
+//		}
+		
+		//中配豪华和高配旗舰有后空调，其他没有
+//		if(getCarType() == 3 || getCarType() == 4) {	
+//			mTvRearSwitch.setVisibility(View.VISIBLE);
+//		} else if(getCarType() == 1 || getCarType() == 2){
+//			mTvRearSwitch.setVisibility(View.GONE);
+//		}
 		
 	}
 
@@ -326,6 +337,15 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 				mConn2, BIND_AUTO_CREATE);
 		
 		syncStatusBar();
+		
+		//中配豪华和高配旗舰有后空调，其他没有
+		if(getCarType() == 3 || getCarType() == 4) {	
+			mTvRearSwitch.setVisibility(View.VISIBLE);
+		} else if(getCarType() == 1 || getCarType() == 2){
+			mTvRearSwitch.setVisibility(View.GONE);
+		} else {
+			mTvRearSwitch.setVisibility(View.GONE);
+		}
 		
 		
 		if(mCanbusService != null) {
@@ -475,7 +495,9 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	private void sendACKeyEvent(int code, int status) {
 		try {
 			Log.d(TAG, "before write code = " + code + " status = " + status);
-			mCanbusService.writeACControl(code, status);
+			if(mCanbusService != null) {
+				mCanbusService.writeACControl(code, status);
+			}
 			Log.d(TAG, "after write code = " + code + " status = " + status);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -495,7 +517,6 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		}
 	};
 	
-	
 	private ACStatus mACStatus;
 
 	/**
@@ -505,7 +526,9 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 
 		ACStatus status = null;
 		try {
-			status = mCanbusService.getLastACStatus(getPackageName());
+			if(mCanbusService != null) {
+				status = mCanbusService.getLastACStatus(getPackageName());
+			}
 			Log.e(TAG, "status : " + status);
 		} catch (RemoteException e) {
 			e.printStackTrace();
@@ -777,11 +800,20 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 		} else if(loop == 0x02) {
 			//自动循环
 			
-			if(getSoftwareVersion().contains(H_V_STR)) {
+			if(getCarType() == 4) {	
 				setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
+			} else if(getCarType() == 1 || getCarType() == 2 || getCarType() == 3){
+				mTvLoop.setSelected(false);
 			} else {
 				mTvLoop.setSelected(false);
 			}
+			
+			//去掉之前根据版本号判断高低配
+//			if(getSoftwareVersion().contains(H_V_STR)) {
+//				setLoopView(R.drawable.icon_loop_auto, R.string.text_loop_auto);
+//			} else {
+//				mTvLoop.setSelected(false);
+//			}
 			
 		} else if(loop == -1){
 			mTvLoop.setSelected(false);
@@ -833,7 +865,9 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 	@Override
 	protected void onDestroy() {
 		try {
-			mCanbusService.removeACStatusListener(mACStatusListener);
+			if(mCanbusService != null) {
+				mCanbusService.removeACStatusListener(mACStatusListener);
+			}
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
@@ -901,6 +935,33 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
     	//return "F70_L_Vxxxx";
 		return android.os.Build.ID;
 	}
+    
+    /**
+     * 返回值int：  1，表示低配；
+				2，表示中配精英型；
+				3，表示中配豪华型；
+				4，表示高配；
+				0，表示未知【由于精英和豪华是通过CAN消息判断，可能存在延时，在未收到CAN消息之前，默认为0】
+     * @return
+     */
+    private int getCarType() {
+    	int carType = 0;
+    	if(mCanbusService != null) {
+    		try {
+				carType = mCanbusService.getCarConfigType();
+				Log.d(TAG, "get carType : " + carType);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+    	}
+    	
+    	return carType;
+    }
+    
+    
+    
+    
+    
 	
 	
 }
