@@ -882,6 +882,15 @@ public class Radio extends Activity implements OnClickListener,
 
 	@Override
 	public void refreshChannelList(int freq, List<Frequence> list) {
+		
+		//为了防止首次进入闪一下无可用电台，但是没有效果
+//		if(mLvChannelList.getEmptyView() == null) {
+//			if(radioPresenter.getStatus() == -1) {
+//				showLoading();
+//			}
+//			mLvChannelList.setEmptyView(mTvNoChannel);
+//		}
+		
 		// 更新频道列表
 		if (list != null) {
 			mFreqList.clear();
