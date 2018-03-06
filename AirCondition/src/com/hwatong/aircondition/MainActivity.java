@@ -556,6 +556,11 @@ public class MainActivity extends Activity implements OnClickListener, IVoiceVie
 					// 后除霜
 					int rearDefrost = status.getStatus12() & 0x03;
 					setRearDefrost(rearDefrost == 0x01);
+					
+					// 前除霜		前除霜关闭时也可以调控
+					int frontDefrost = status.getStatus6() & 0x03;
+					setFrontDefrost(frontDefrost == 0x01);
+					
 					return;
 				//空调开
 				} else {
